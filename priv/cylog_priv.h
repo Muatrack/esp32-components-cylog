@@ -3,6 +3,7 @@
 
 #include "unistd.h"
 #include "cylog_comm.h"
+#include <stdint.h>
 
 #define CYLOG_PARITI_EVENT_NAME "events"
 #define CYLOG_PARITI_RECORD_NAME "records"

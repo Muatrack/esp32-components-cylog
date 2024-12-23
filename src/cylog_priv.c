@@ -3,10 +3,13 @@
 #include "cylog_comm.h"
 #include "stdio.h"
 #include "memory.h"
-#include "cylog_wrapper_esp32.h"
+#include <stdint.h>
+// #include "cylog_wrapper_esp32.h"
 
 #define CYLOG_PARTI_MMAP_SIZE   (1024)
 #define ESP_PARTITION_SUBTYPE_LOG   0x10
+
+#if 0
 
 /** @brief 查找分区表中的Log 分区  */
 int8_t cylog_partition_find(void *pConf) {
@@ -437,3 +440,5 @@ int8_t cylog_block_select(void *pConf, cylog_block_info_t *pBlockInfo) {
 
     return -1;
 }
+
+#endif

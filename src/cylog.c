@@ -1,11 +1,13 @@
 #include <stdio.h>
+#include <stdint.h>
+#include <malloc.h>
+#include <string.h>
+#include <time.h>
+#include <sys/time.h>
+#include <unistd.h>
+
 #include "cylog.h"
 #include "cylog_priv.h"
-#include "malloc.h"
-#include "string.h"
-#include "time.h"
-#include "sys/time.h"
-#include "unistd.h"
 
 static cylog_partition_t *pCylogPartiWrap[_CYP_CONT];
 
@@ -71,9 +73,10 @@ int8_t cylog_write(cylog_partition_handle_t _pH, cylog_type_t _t, uint8_t _id, c
 
 #ifdef CONFIG_CYLOG_LOG_LEN_IMMUTA
     uint8_t logLen = pCylogConf->_clog_fixed_len;
-#endif
-
-#ifdef CONFIG_CYLOG_LOG_LEN_MUTA
+#elif CONFIG_CYLOG_LOG_LEN_MUTA
+    uint8_t logLen = strlen(_log);
+#else
+    /** default */
     uint8_t logLen = strlen(_log);
 #endif
 

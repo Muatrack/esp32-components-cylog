@@ -1,6 +1,7 @@
 #ifndef _CYLOG_COMMON_H_
 #define _CYLOG_COMMON_H_
 #include "unistd.h"
+#include <stdint.h>
 
 /** @brief 日志分区的类型
  * @param CYP_EVNT 分区用于alamm、warning... 日志
