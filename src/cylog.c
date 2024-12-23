@@ -43,7 +43,7 @@ static int8_t _cylog_partition_traversal(void *_pConf, void *_pBlockInfo) {
         // 检索块信息
         cylog_block_traversal(pCylogConf, tmpBlockIndex, &pBlockInfo[tmpBlockIndex]);
 
-        CY_LOGI("\e[1;32m" "block[%d] traversal done. last_timestamp:%u _ ms:%u .offset:%u \n", 
+        CY_LOGI("\e[1;32m" "block[%d] traversal done. last_timestamp:%lu _ ms:%u .offset:%u \n", 
                         tmpBlockIndex, 
                         pBlockInfo[tmpBlockIndex]._ts, 
                         pBlockInfo[tmpBlockIndex]._ms, 
