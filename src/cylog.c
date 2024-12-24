@@ -1,17 +1,24 @@
 #include <stdio.h>
-#include <stdint.h>
 #include <malloc.h>
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
 #include <unistd.h>
-
 #include "cylog.h"
 #include "cylog_priv.h"
+
+#ifdef SYSTEM_LINUX
+    #include <stdint.h>
+#endif
+
+#ifdef SYSTEM_GENERIC
+    #include <unistd.h>
+#endif
 
 static cylog_partition_t *pCylogPartiWrap[_CYP_CONT];
 
 #define TAG "cylog"
+
 
 static void _cylog_data_assamble (uint8_t *pData, cylog_type_t _t, uint8_t _id, char* _log, uint8_t logLen) {
     cylog_head_t *pHead = pData;
