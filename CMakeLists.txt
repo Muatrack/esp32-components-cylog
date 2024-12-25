@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 project(cylog)
 # PRIV_REQUIRES cylog_esp32_wrapper
 
-set(SRCS 
+set(SRCS        
         src/cylog.cpp
+        src/main.cpp
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
