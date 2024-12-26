@@ -1,14 +1,13 @@
 cmake_minimum_required(VERSION 3.16)
 project(cylog)
-# PRIV_REQUIRES cylog_esp32_wrapper
 
 set(SRCS        
         src/cylog.cpp
-        src/main.cpp
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(cylog ${SRCS})
+    target_sources(cylog PRIVATE main.cpp)    
     add_compile_definitions(USE_SYSTEM_LINUX)
     message("CYLOG_SYSTEM is linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")

@@ -11,7 +11,7 @@
     #include <stdint.h>
 #endif
 
-namespace cylog_generic {
+namespace log_generic {
 
 using namespace std;
 
@@ -22,19 +22,27 @@ public:
     uint32_t offset;        // 文件的写偏移位置
 };
 
-class CYLogFile {
+class LogFile {
 private:
     string name;
     string path;
     FileHead fHead;
+
+    virtual void read() {
+        cout <<"[ LogFile ] read.. " << endl;
+    };
+
+    virtual void write() {
+        cout <<"[ LogFile ] write.. " << endl;
+    };
 };
 
-class CYLogGeneric: CYLogFile {
+class LogGeneric: LogFile {
 private:
-    CYLogFile file;
+    LogFile file;
 public:
     virtual void path_set(string path) = 0;
 };
 
 };
-// namespace cylog;
+// namespace log_generic;
