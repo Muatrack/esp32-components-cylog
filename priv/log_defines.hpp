@@ -5,7 +5,6 @@
 
 #if defined(USE_SYSTEM_FREERTOS)
     #include <unistd.h>
-    #error "dddddddddddd freertos"
 #else
     /** for linux */
     #include <stdint.h>
