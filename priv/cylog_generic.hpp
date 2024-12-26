@@ -26,8 +26,7 @@ class CYLogFile {
 private:
     string name;
     string path;
-    string maxSize;
-    string curSize;
+    FileHead fHead;
 };
 
 class CYLogGeneric: CYLogFile {
