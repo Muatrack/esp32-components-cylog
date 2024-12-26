@@ -1,2 +1,2 @@
-#include "log_defines.hpp"
+#include "priv/log_generic.hpp"
 
