@@ -19,6 +19,6 @@ else()
 endif()
 
 target_include_directories(cylog
-                PRIVATE         priv    inc
+                PRIVATE         ./
                 INTERFACE       inc
 )

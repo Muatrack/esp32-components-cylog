@@ -1,2 +1,2 @@
-#include "log_generic.hpp"
+#include "priv/log_generic.hpp"
 
