@@ -18,7 +18,7 @@ else()
     message(ERROR "No system matched")
 endif()
 
-target_include_directories(cylog  
+target_include_directories(cylog
                 PRIVATE         priv    inc
                 INTERFACE       inc
 )
