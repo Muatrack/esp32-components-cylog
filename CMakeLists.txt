@@ -3,6 +3,7 @@ project(cylog)
 
 set(SRCS        
         src/cylog.cpp
+        src/cylog_generic.cpp
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
