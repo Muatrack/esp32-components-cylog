@@ -7,10 +7,13 @@ set(SRCS
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    add_executable(cylog ${SRCS})
+    add_executable(cylog ${SRCS} 
+                         main.cpp 
+                         src/test/test_cls.cpp
+                        )
     target_sources(cylog PRIVATE main.cpp)    
     add_compile_definitions(USE_SYSTEM_LINUX)
-    message("CYLOG_SYSTEM is linux")
+    message("CYLOG_SYSTEM is Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
     add_library(cylog STATIC ${SRCS})
     add_compile_definitions(USE_SYSTEM_GENERIC)
