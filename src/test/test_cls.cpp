@@ -26,10 +26,7 @@ class ClassC: public ClassA, public ClassB {
 
 void test_cls1() {
     ClassC cc;    
-    // cc.ClassB::mAge = 201;
-    // cc.ClassA::mAge = 100;
-    // cc.mAge = 34;
-    // int a = 102;
+    cc.mAge = 34;
     cout << "[ Class A B C ]" << endl;
     cout << "mAge:" << &cc.mAge << endl;
 }
