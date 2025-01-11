@@ -24,5 +24,5 @@ endif()
 
 target_include_directories(cylog
                 PRIVATE         ./
-                INTERFACE       inc
+                INTERFACE       include
 )

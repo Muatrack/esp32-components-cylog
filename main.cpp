@@ -1,5 +1,5 @@
 #include <iostream>
-#include "inc/cylog_c_api.hpp"
+#include "include/cylog_c_api.hpp"
 
 extern void test_cls1();
 
