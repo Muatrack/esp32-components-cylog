@@ -65,10 +65,35 @@ protected:
 };
 
 
-/** 日志类别-告警日志 */
+/** 
+ * 日志类别-告警日志
+ * - 
+ */
 class AlarmLog : public LogGeneric {
 public:
     AlarmLog(const std::string & dir, const std::string& fPrefix, uint16_t maxFileCount, uint16_t maxFileLen)
-    :LogGeneric(dir,fPrefix,maxFileCount,maxFileLen){};    
+    :LogGeneric(dir,fPrefix,maxFileCount,maxFileLen){};
 private:
 };
+
+/** 
+ * 日志类别-波形记录
+ * - 内容待议（数据突发， 需要内存配合）
+ */
+
+/** 
+ * 日志类别-统计运行 
+ * - 空调机开关记录
+ * - 压缩机启停记录
+ */
+
+/** 
+ * 日志类别-计量数据
+ * - 15分钟写一条（单个采集器）。当有多个采集器时，每15分钟写多条
+ */
+
+/** 
+ * 日志类别-系统异常
+ * - 通信异常
+ * - 数据异常
+ */

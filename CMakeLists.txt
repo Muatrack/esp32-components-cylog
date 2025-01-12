@@ -2,14 +2,13 @@ cmake_minimum_required(VERSION 3.16)
 project(cylog)
 
 set(SRCS        
-        src/cylog.cpp
         src/cylog_generic.cpp
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(cylog ${SRCS} 
                          main.cpp 
-                         src/test/test_cls.cpp
+                         test/test_cls.cpp
                         )
     target_sources(cylog PRIVATE main.cpp)    
     add_compile_definitions(USE_SYSTEM_LINUX)
