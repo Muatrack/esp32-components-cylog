@@ -3,5 +3,10 @@
 #include <iostream>
 #include "cylog_impl.hpp"
 
-class CYLogFactory {
+class CYLogFactoryAbs {
+    
+public:
+    
+
+    virtual ~CYLogFactoryAbs();
 };
