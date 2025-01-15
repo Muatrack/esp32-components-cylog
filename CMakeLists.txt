@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 project(cylog)
 
 set(SRCS        
-        src/cylog_generic.cpp
+        src/cylog_impl.cpp
 )
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
