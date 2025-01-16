@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdbool.h>
 #include <string>
+
 #include "errno.hpp"
 #include "common.hpp"
 #include "cylog_file.hpp"
@@ -15,31 +16,24 @@
 class CYLogImplAbs {
 
 public:
-    CYLogImplAbs(const std::string&dirPath, const std::string&filePrefix,uint8_t fileMaxCount,uint32_t fileMaxLength):
-    mDirPath(dirPath),mFilePrefix(filePrefix),mFileMaxCount(fileMaxCount),mFileMaxLength(fileMaxLength){}
+    CYLogImplAbs(const std::string&dirPath, const std::string&filePrefix,uint8_t fileMaxCount,uint32_t fileMaxLength)
+            :m_DirPath(dirPath),m_FilePrefix(filePrefix),m_FileMaxCount(fileMaxCount),m_FileMaxLength(fileMaxLength){}
 
+    /** 读取日志文件 */
     virtual CL_TYPE_t read(const std::string &path, FileContent &out );
+    /** 写日志到文件 */
     virtual CL_TYPE_t write(const std::string &path, const FileContent &in);
+    /** 删除日志文件 */
     virtual CL_TYPE_t remove(const std::string &path);
-    virtual ~CYLogImplAbs(){};
+    
+    // virtual ~CYLogImplAbs(){};
 protected:
-    std::string mDirPath;        // 日志所属类别的目录
-    std::string mFilePrefix;     // 日志文件名称的前缀
-    uint8_t     mFileMaxCount;   // 所属类别日志文件的数量最大值
-    uint32_t    mFileMaxLength;  // 所属类别日志的单文件大小的上限 <字节>
+    std::string m_DirPath;        // 日志所属类别的目录
+    std::string m_FilePrefix;     // 日志文件名称的前缀
+    uint8_t     m_FileMaxCount;   // 所属类别日志文件的数量最大值
+    uint32_t    m_FileMaxLength;  // 所属类别日志的单文件大小的上限 <字节>
 };
 
-
-/** 
- * 日志类别-告警日志
- * - 
- */
-class AlarmLog : public CYLogImplAbs {
-public:
-    AlarmLog(const std::string & dir, const std::string& fPrefix, uint16_t maxFileCount, uint16_t maxFileLen)
-    :CYLogImplAbs(dir,fPrefix,maxFileCount,maxFileLen){};
-private:
-};
 
 /** 
  * 日志类别-波形记录

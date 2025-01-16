@@ -6,7 +6,13 @@
 class CYLogFactoryAbs {
     
 public:
-    
+    virtual CYLogImplAbs *createLogInstance() = nullptr;
+    virtual ~CYLogFactoryAbs(){};
+};
 
-    virtual ~CYLogFactoryAbs();
+class CyLogAlarmFactory : public CYLogFactoryAbs {
+public:
+    CYLogImplAbs *createLogInstance() override {
+        return nullptr;
+    }
 };
