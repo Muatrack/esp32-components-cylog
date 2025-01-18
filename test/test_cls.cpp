@@ -15,10 +15,10 @@ using namespace std;
 
 void alarm_log_test() {
     CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
-    CYLogImplAbs  *pAlarmLog    = pFactory->createLog( "/tmp/a" );
+    CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a" );
 
     FileContent fc;
-    if( pAlarmLog != nullptr ) {        
+    if( pAlarmLog != nullptr ) {
         pAlarmLog->read("/dddfa", fc);
         pAlarmLog->write("ddddfa", fc);
         pAlarmLog->remove("dfadfa");
