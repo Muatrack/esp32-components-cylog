@@ -1,8 +1,6 @@
 
 #include "common.hpp"
 
-
-
 /* 日志文件-头类 */
 class FileHead {
 public:
