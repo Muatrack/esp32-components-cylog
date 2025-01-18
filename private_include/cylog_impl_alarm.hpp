@@ -26,28 +26,15 @@ public:
         this->m_FilePrefix = "ALARM_LOG_FILE_NAME_PREFIX";
     }
 
-    CL_TYPE_t read(const std::string &path, FileContent &out ) { 
-        std::cout << "Alarm read." << std::endl;
-        return CL_OK; 
-    };
-
-    CL_TYPE_t write(const std::string &path, const FileContent &in){
-        std::cout << "Alarm write." << std::endl;
-        return CL_OK;
-    }
-
-    CL_TYPE_t remove(const std::string &path){
-        std::cout << "Alarm remove." << std::endl;
-        return CL_OK;
-    }
+    CL_TYPE_t read(const std::string &path, FileContent &out ) override;
+    CL_TYPE_t write(const std::string &path, const FileContent &in) override;
+    CL_TYPE_t remove(const std::string &path) override;
+    
 private:
     
 };
 
 class CyLogFactoryAlarm : public CYLogFactoryAbs {
 public:
-    CYLogImplAbs* createLog(const std::string & logDir ){
-        std::cout << "CyLogFactoryAlarm::createLog" << std::endl;
-        return new CYLogImplAlarm(logDir);
-    }
+    CYLogImplAbs* createLog(const std::string & logDir ) override;
 };
