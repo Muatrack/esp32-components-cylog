@@ -15,9 +15,7 @@
  * - 
  */
 class CYLogImplAlarm : public CYLogImplAbs {
-
 public:
-
     CYLogImplAlarm(const std::string & dir ):CYLogImplAbs( dir ) {
         std::cout << "CYLogImplAlarm instance created." << std::endl;
 
@@ -29,9 +27,7 @@ public:
     CL_TYPE_t read(const std::string &path, FileContent &out ) override;
     CL_TYPE_t write(const std::string &path, const FileContent &in) override;
     CL_TYPE_t remove(const std::string &path) override;
-    
 private:
-    
 };
 
 class CyLogFactoryAlarm : public CYLogFactoryAbs {
