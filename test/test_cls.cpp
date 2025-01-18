@@ -4,29 +4,33 @@
 
 #include <iostream>
 
+#include "private_include/cylog_factory.hpp"
+#include "private_include/cylog_impl_alarm.hpp"
+
 #ifdef USE_SYSTEM_LINUX
 #include <stdint.h>
 #endif
 
 using namespace std;
 
-class ClsBase{
-public:
-    int mAge;
-};
+void alarm_log_test() {
+    CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
+    CYLogImplAbs  *pAlarmLog    = pFactory->createLog( "/tmp/a" );
 
-class ClassA: virtual public ClsBase {
-};
+    FileContent fc;
+    if( pAlarmLog != nullptr ) {        
+        pAlarmLog->read("/dddfa", fc);
+        pAlarmLog->write("ddddfa", fc);
+        pAlarmLog->remove("dfadfa");
+    } else {
+        std::cout << "pAlarmLog is NULL" << std::endl;
+    }
 
-class ClassB: virtual public ClsBase {
-};
+    delete pAlarmLog;
+    delete pFactory;
+}
 
-class ClassC: public ClassA, public ClassB {
-};
 
 void test_cls1() {
-    ClassC cc;    
-    cc.mAge = 34;
-    cout << "[ Class A B C ]" << endl;
-    cout << "mAge:" << &cc.mAge << endl;
+    alarm_log_test();
 }

@@ -16,17 +16,18 @@
 class CYLogImplAbs {
 
 public:
-    CYLogImplAbs(const std::string&dirPath, const std::string&filePrefix,uint8_t fileMaxCount,uint32_t fileMaxLength)
-            :m_DirPath(dirPath),m_FilePrefix(filePrefix),m_FileMaxCount(fileMaxCount),m_FileMaxLength(fileMaxLength){}
+    // CYLogImplAbs(const std::string&dirPath, const std::string&filePrefix,uint8_t fileMaxCount,uint32_t fileMaxLength)
+    //         :m_DirPath(dirPath),m_FilePrefix(filePrefix),m_FileMaxCount(fileMaxCount),m_FileMaxLength(fileMaxLength){}
+    CYLogImplAbs( const std::string&dirPath ):m_DirPath(dirPath){}
 
     /** 读取日志文件 */
-    virtual CL_TYPE_t read(const std::string &path, FileContent &out );
+    virtual CL_TYPE_t read(const std::string &path, FileContent &out ) = 0;
     /** 写日志到文件 */
-    virtual CL_TYPE_t write(const std::string &path, const FileContent &in);
+    virtual CL_TYPE_t write(const std::string &path, const FileContent &in) = 0;
     /** 删除日志文件 */
-    virtual CL_TYPE_t remove(const std::string &path);
+    virtual CL_TYPE_t remove(const std::string &path) = 0;
     
-    // virtual ~CYLogImplAbs(){};
+    virtual ~CYLogImplAbs(){};
 protected:
     std::string m_DirPath;        // 日志所属类别的目录
     std::string m_FilePrefix;     // 日志文件名称的前缀

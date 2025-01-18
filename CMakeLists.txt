@@ -9,6 +9,12 @@ set(
         src/cylog_impl_alarm.cpp
 )
 
+SET(CMAKE_BUILD_TYPE "Debug")
+if(CMAKE_BUILD_TYPE)
+    SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")  
+    SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall") 
+endif()
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(cylog ${SRCS}
                          main.cpp

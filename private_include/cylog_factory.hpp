@@ -6,13 +6,16 @@
 class CYLogFactoryAbs {
     
 public:
-    virtual CYLogImplAbs *createLogInstance() = nullptr;
+    /** 
+     * @param dir 日志存储路径
+     */
+    virtual CYLogImplAbs *createLog( const std::string & logDir ) = 0;
+    // {
+    //      std::cout << "CYLogFactoryAbs::createLog" << std::endl;
+    //      return nullptr;
+    // };
+
     virtual ~CYLogFactoryAbs(){};
 };
 
-class CyLogAlarmFactory : public CYLogFactoryAbs {
-public:
-    CYLogImplAbs *createLogInstance() override {
-        return nullptr;
-    }
-};
+
