@@ -19,6 +19,7 @@ void alarm_log_test() {
 
     FileContent fc;
     if( pAlarmLog != nullptr ) {
+        pAlarmLog->create();
         pAlarmLog->read("/dddfa", fc);
         pAlarmLog->write("ddddfa", fc);
         pAlarmLog->remove("dfadfa");

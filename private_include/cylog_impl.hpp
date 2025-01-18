@@ -20,13 +20,18 @@ public:
     //         :m_DirPath(dirPath),m_FilePrefix(filePrefix),m_FileMaxCount(fileMaxCount),m_FileMaxLength(fileMaxLength){}
     CYLogImplAbs( const std::string&dirPath ):m_DirPath(dirPath){}
 
+    /** 新建日志文件 */
+    virtual CL_TYPE_t create() = 0;
     /** 读取日志文件 */
-    virtual CL_TYPE_t read(const std::string &path, FileContent &out ) = 0;
+    virtual CL_TYPE_t read( const std::string &path, FileContent &out ) = 0;
     /** 写日志到文件 */
-    virtual CL_TYPE_t write(const std::string &path, const FileContent &in) = 0;
+    virtual CL_TYPE_t write( const std::string &path, const FileContent &in) = 0;
     /** 删除日志文件 */
-    virtual CL_TYPE_t remove(const std::string &path) = 0;
-    
+    virtual CL_TYPE_t remove( const std::string &path) = 0;
+    /** 查询文件列表 */
+    virtual CL_TYPE_t listGet() = 0;
+    /** 日志目录初始化 */
+    virtual void dirInit() = 0;
     virtual ~CYLogImplAbs(){};
 protected:
     std::string m_DirPath;        // 日志所属类别的目录

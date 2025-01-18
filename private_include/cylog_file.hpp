@@ -12,4 +12,7 @@ public:
 /* 日志文件-内容类*/
 class FileContent {
 public:
+private:
+    void *m_DataPtr;
+    uint32_t m_DataLen;
 };

@@ -24,9 +24,12 @@ public:
         this->m_FilePrefix = "ALARM_LOG_FILE_NAME_PREFIX";
     }
 
+    CL_TYPE_t create() override;
     CL_TYPE_t read(const std::string &path, FileContent &out ) override;
     CL_TYPE_t write(const std::string &path, const FileContent &in) override;
     CL_TYPE_t remove(const std::string &path) override;
+    CL_TYPE_t listGet() override;
+    void dirInit() override;
 private:
 };
 
