@@ -17,25 +17,21 @@
  */
 class CYLogImplAlarm : public CYLogImplAbs {
 public:
-    CYLogImplAlarm(const std::string & dir ):CYLogImplAbs( dir ) {
-        std::cout << "CYLogImplAlarm instance created." << std::endl;
-
-        this->m_FileMaxCount = ALARM_LOG_FILE_MAX_COUNT;
-        this->m_FileMaxLength = ALARM_LOG_FILE_MAX_LEN;
-        this->m_FilePrefix = "ALARM_LOG_FILE_NAME_PREFIX";
-    }
-
     CL_TYPE_t create() override;
     CL_TYPE_t read(const std::string &path, void* out ) override;
     CL_TYPE_t write(const std::string &path, const void* in) override;
     CL_TYPE_t remove(const std::string &path) override;
     CL_TYPE_t listGet() override;
     void dirInit() override;
+
+    CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store );
+    ~CYLogImplAlarm(){
+        std::cout << "~CYLogImplAlarm()" << std::endl;
+    };
 private:
 };
 
 class CyLogFactoryAlarm : public CYLogFactoryAbs {
 public:
-    CYLogImplAbs* createLog(const std::string & logDir ) override;
     CYLogImplAbs* createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
 };
