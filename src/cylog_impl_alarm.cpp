@@ -34,7 +34,7 @@ void CYLogImplAlarm::logInit() {
 CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store ):
                                                                 CYLogImplAbs( store ) {
     std::cout << "CYLogImplAlarm instance created." << std::endl;
-    this->storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, "alarm_" );
+    this->storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, ALARM_LOG_FILE_NAME_PREFIX );
 }
 
 CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
