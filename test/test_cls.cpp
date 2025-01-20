@@ -21,13 +21,13 @@ void alarm_log_test() {
     /** do test */
     // test_adv_prointer();
     //  do test
-    std::shared_ptr<std::string> alarmLogDir    = std::make_shared<std::string>("/tmp/a");
-    std::shared_ptr<std::string> alarmLogPrefix = std::make_shared<std::string>("alarm_");
 
+    std::cout<<"%s.%d" << __func__<< __LINE__ << std::endl;
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
     CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a/", pStore );
 
+    std::cout<<"%s.%d" << __func__<< __LINE__ << std::endl;
     void* fc = nullptr;
     if( pAlarmLog != nullptr ) {
         pAlarmLog->logInit();

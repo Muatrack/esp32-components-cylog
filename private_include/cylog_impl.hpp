@@ -19,9 +19,7 @@ class CYLogImplAbs {
 
 public:
 
-    CYLogImplAbs( const std::string&dirPath ):m_DirPath(dirPath){}
-    CYLogImplAbs( const std::string&dirPath, std::shared_ptr<StoreAbs> &store ):
-                                            m_DirPath(dirPath), m_Store(store){}
+    CYLogImplAbs( std::shared_ptr<StoreAbs> &store ):m_Store(store){}
 
     /** 新建日志文件 */
     virtual CL_TYPE_t create() = 0;
@@ -37,12 +35,9 @@ public:
     virtual void logInit() = 0;
 
     virtual ~CYLogImplAbs(){};
-protected:
-    std::string m_DirPath;        // 日志所属类别的目录
-    std::string m_FilePrefix;     // 日志文件名称的前缀
-    uint8_t     m_FileMaxCount;   // 所属类别日志文件的数量最大值
-    uint32_t    m_FileMaxLength;  // 所属类别日志的单文件大小的上限 <字节>
 
+    std::shared_ptr<StoreAbs> storeGet() { return m_Store; }
+private:
     std::shared_ptr<StoreAbs> m_Store;
 };
 

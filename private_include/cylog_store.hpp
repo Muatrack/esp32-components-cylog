@@ -38,8 +38,8 @@ public:
     };
 
     /* 文件目录初始化. 新建对象后首先执行此函数 */
-    virtual CL_TYPE_t dirInit() = 0;
-    virtual void configSet(uint8_t fMaxCount, uint8_t fMaxLen,const std::string &fDir, const std::string &fPrefix) = 0;
+    virtual CL_TYPE_t init() = 0;
+    virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen,const std::string &fDir, const std::string &fPrefix) = 0;
 private:
     uint8_t     m_fileMaxCount;  // 文件数量上限
     uint8_t     m_fileCurCount;  // 已存在文件数量
