@@ -3,10 +3,12 @@
 #include <iostream>
 #include <stdbool.h>
 #include <string>
+#include <memory>
 
 #include "errno.hpp"
 #include "common.hpp"
 #include "cylog_file.hpp"
+#include "cylog_store.hpp"
 
 ////////////////////////////////////////////////////
 
@@ -16,16 +18,17 @@
 class CYLogImplAbs {
 
 public:
-    // CYLogImplAbs(const std::string&dirPath, const std::string&filePrefix,uint8_t fileMaxCount,uint32_t fileMaxLength)
-    //         :m_DirPath(dirPath),m_FilePrefix(filePrefix),m_FileMaxCount(fileMaxCount),m_FileMaxLength(fileMaxLength){}
+
     CYLogImplAbs( const std::string&dirPath ):m_DirPath(dirPath){}
+    CYLogImplAbs( const std::string&dirPath, std::shared_ptr<StoreAbs> &store ):
+                                            m_DirPath(dirPath), m_Store(store){}
 
     /** 新建日志文件 */
     virtual CL_TYPE_t create() = 0;
     /** 读取日志文件 */
-    virtual CL_TYPE_t read( const std::string &path, FileContent &out ) = 0;
+    virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
     /** 写日志到文件 */
-    virtual CL_TYPE_t write( const std::string &path, const FileContent &in) = 0;
+    virtual CL_TYPE_t write( const std::string &path, const void* in) = 0;
     /** 删除日志文件 */
     virtual CL_TYPE_t remove( const std::string &path) = 0;
     /** 查询文件列表 */
@@ -38,6 +41,8 @@ protected:
     std::string m_FilePrefix;     // 日志文件名称的前缀
     uint8_t     m_FileMaxCount;   // 所属类别日志文件的数量最大值
     uint32_t    m_FileMaxLength;  // 所属类别日志的单文件大小的上限 <字节>
+
+    std::shared_ptr<StoreAbs> m_Store;
 };
 
 

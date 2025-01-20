@@ -10,6 +10,7 @@ public:
      * @param dir 日志存储路径
      */
     virtual CYLogImplAbs *createLog( const std::string & logDir ) = 0;
+    virtual CYLogImplAbs *createLog( const std::string & logDir, std::shared_ptr<StoreAbs> &store ) = 0;
     
     virtual ~CYLogFactoryAbs(){};
 };

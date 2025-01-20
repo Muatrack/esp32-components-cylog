@@ -1,2 +1,50 @@
+#pragma once
 
 #include "common.hpp"
+
+/** 面对系统api, 读取写文件操作 */
+class StoreAbs {
+public:
+    StoreAbs(uint8_t fMaxCount, uint8_t fMaxLen, std::shared_ptr<std::string> &fDir, std::shared_ptr<std::string> &fPrefix):
+        m_fileMaxCount(fMaxCount),m_fileCurCount(0), m_fileMaxLength(fMaxLen), m_fileNamePrefix(fPrefix), m_dirPath(fDir){}
+
+    virtual ~StoreAbs(){}
+
+    /* 读取指定目录，所有文件名称 */
+    virtual CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath ){
+        return CL_OK;
+    };
+
+    /* 读取指定文件头部数据*/
+    virtual CL_TYPE_t headRead( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+        return CL_OK;
+    };
+
+    /* 读取指定文件内容数据，指定偏移量、长度的数据*/
+    virtual CL_TYPE_t itemRead( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+        return CL_OK;
+    };
+
+    /* 写入指定文件头部数据*/
+    virtual CL_TYPE_t headWrite( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+        return CL_OK;
+    };
+
+    /* 读取指定文件内容数据，指定偏移量、长度的数据*/
+    virtual CL_TYPE_t itemWrite( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+        return CL_OK;
+    };
+
+    /* 文件目录初始化. 新建对象后首先执行此函数 */
+    virtual CL_TYPE_t dirInit() = 0;
+
+private:
+    uint8_t     m_fileMaxCount;  // 文件数量上限
+    uint8_t     m_fileCurCount;  // 已存在文件数量
+    uint32_t    m_fileMaxLength; // 单文件的最大长度
+    std::shared_ptr<std::string> m_fileNamePrefix; //文件名称前缀
+    std::shared_ptr<std::string> m_dirPath;     // 文件目录
+};
+
+// class StoreEsp32 : public StoreAbs {
+// };

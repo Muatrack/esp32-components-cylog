@@ -6,6 +6,7 @@
 #else
     #include <stdint.h>
 #endif
+#include <memory>
 
 enum  class CYlogType:char {
     CYT_ALARM,          //告警

@@ -7,6 +7,7 @@ set(
         src/cylog_file.cpp
         src/cylog_store.cpp
         src/cylog_impl_alarm.cpp
+        src/cylog_store_linux.cpp
 )
 
 SET(CMAKE_BUILD_TYPE "Debug")

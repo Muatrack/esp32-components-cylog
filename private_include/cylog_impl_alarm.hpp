@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "cylog_impl.hpp"
 
+
 /* 告警日志文件数量的上限 */
 #define ALARM_LOG_FILE_MAX_COUNT    8
 /* 单个告警日志文件的大小(包含文件头) */
@@ -25,8 +26,8 @@ public:
     }
 
     CL_TYPE_t create() override;
-    CL_TYPE_t read(const std::string &path, FileContent &out ) override;
-    CL_TYPE_t write(const std::string &path, const FileContent &in) override;
+    CL_TYPE_t read(const std::string &path, void* out ) override;
+    CL_TYPE_t write(const std::string &path, const void* in) override;
     CL_TYPE_t remove(const std::string &path) override;
     CL_TYPE_t listGet() override;
     void dirInit() override;
@@ -36,4 +37,5 @@ private:
 class CyLogFactoryAlarm : public CYLogFactoryAbs {
 public:
     CYLogImplAbs* createLog(const std::string & logDir ) override;
+    CYLogImplAbs* createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
 };
