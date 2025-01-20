@@ -30,6 +30,7 @@ void alarm_log_test() {
 
     void* fc = nullptr;
     if( pAlarmLog != nullptr ) {
+        pAlarmLog->logInit();
         pAlarmLog->create();
         pAlarmLog->read("/dddfa", fc);
         pAlarmLog->write("ddddfa", fc);
