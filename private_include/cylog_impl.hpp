@@ -34,7 +34,8 @@ public:
     /** 查询文件列表 */
     virtual CL_TYPE_t listGet() = 0;
     /** 日志目录初始化 */
-    virtual void dirInit() = 0;
+    virtual void logInit() = 0;
+
     virtual ~CYLogImplAbs(){};
 protected:
     std::string m_DirPath;        // 日志所属类别的目录

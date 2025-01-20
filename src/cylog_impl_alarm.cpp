@@ -25,7 +25,7 @@ CL_TYPE_t CYLogImplAlarm::listGet(){
     return CL_OK;
 }
 
-void CYLogImplAlarm::dirInit() {
+void CYLogImplAlarm::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
     /** 
     fStore.traversal(m_Path, list) //遍历目录

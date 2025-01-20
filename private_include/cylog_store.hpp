@@ -38,7 +38,7 @@ public:
     };
 
     /* 文件目录初始化. 新建对象后首先执行此函数 */
-    virtual CL_TYPE_t dirInit() = 0;
+    virtual CL_TYPE_t logInit() = 0;
 
 private:
     uint8_t     m_fileMaxCount;  // 文件数量上限

@@ -16,5 +16,5 @@ public:
         std::cout << "~StoreLinux()" << std::endl;
     }
 
-    CL_TYPE_t dirInit() override;
+    CL_TYPE_t logInit() override;
 };

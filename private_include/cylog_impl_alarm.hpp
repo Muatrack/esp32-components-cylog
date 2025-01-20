@@ -22,7 +22,7 @@ public:
     CL_TYPE_t write(const std::string &path, const void* in) override;
     CL_TYPE_t remove(const std::string &path) override;
     CL_TYPE_t listGet() override;
-    void dirInit() override;
+    void logInit() override;
 
     CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store );
     ~CYLogImplAlarm(){
