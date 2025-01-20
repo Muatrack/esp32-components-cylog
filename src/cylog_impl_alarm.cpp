@@ -48,6 +48,8 @@ CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs
     this->m_FileMaxCount = ALARM_LOG_FILE_MAX_COUNT;
     this->m_FileMaxLength = ALARM_LOG_FILE_MAX_LEN;
     this->m_FilePrefix = "ALARM_LOG_FILE_NAME_PREFIX";
+
+    this->m_Store->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, "ALARM_LOG_FILE_NAME_PREFIX" );
 }
 
 CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {

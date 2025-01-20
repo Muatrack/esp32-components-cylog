@@ -24,7 +24,7 @@ void alarm_log_test() {
     std::shared_ptr<std::string> alarmLogDir    = std::make_shared<std::string>("/tmp/a");
     std::shared_ptr<std::string> alarmLogPrefix = std::make_shared<std::string>("alarm_");
 
-    std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>( 0, 0, alarmLogDir, alarmLogPrefix );
+    std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
     CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a/", pStore );
 
