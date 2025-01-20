@@ -3,7 +3,7 @@
  */
 
 #include <iostream>
-
+#include <memory>
 #include "private_include/cylog_factory.hpp"
 #include "private_include/cylog_impl_alarm.hpp"
 
@@ -11,9 +11,16 @@
 #include <stdint.h>
 #endif
 
+extern void test_adv_prointer();
+
 using namespace std;
 
 void alarm_log_test() {
+    
+    /** do test */
+    test_adv_prointer();
+    //  do test
+
     CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
     CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a" );
 

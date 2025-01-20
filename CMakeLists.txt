@@ -19,6 +19,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_executable(cylog ${SRCS}
                          main.cpp
                          test/test_cls.cpp
+                         test/test_adv_prointer.cpp
                         )
     target_sources(cylog PRIVATE main.cpp)    
     add_compile_definitions(USE_SYSTEM_LINUX)
