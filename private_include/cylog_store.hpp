@@ -8,7 +8,9 @@ public:
     StoreAbs(uint8_t fMaxCount, uint8_t fMaxLen, std::shared_ptr<std::string> &fDir, std::shared_ptr<std::string> &fPrefix):
         m_fileMaxCount(fMaxCount),m_fileCurCount(0), m_fileMaxLength(fMaxLen), m_fileNamePrefix(fPrefix), m_dirPath(fDir){}
 
-    virtual ~StoreAbs(){}
+    virtual ~StoreAbs(){
+        std::cout << "~StoreAbs()" << std::endl;
+    }
 
     /* 读取指定目录，所有文件名称 */
     virtual CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath ){
