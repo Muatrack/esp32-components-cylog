@@ -36,6 +36,8 @@ void CYLogImplAlarm::logInit() {
         if( f.availableSize ) // 文件可用大小与预设阈值比较，判别当前文件是否可以继续写入     
     }
     */
+   std::cout << "CYLogImplAlarm::logInit()" << std::endl;
+   this->m_Store->dirInit();
 }
 
 // CYLogImplAlarm::CYLogImplAlarm(const std::string & dir ):CYLogImplAbs( dir ) {
