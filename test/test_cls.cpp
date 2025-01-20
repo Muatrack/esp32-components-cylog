@@ -19,7 +19,8 @@ using namespace std;
 void alarm_log_test() {
     
     /** do test */
-    // test_adv_prointer();
+    test_adv_prointer();
+    return;
     //  do test
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
