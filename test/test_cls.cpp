@@ -22,12 +22,12 @@ void alarm_log_test() {
     // test_adv_prointer();
     //  do test
 
-    std::cout<<"%s.%d" << __func__<< __LINE__ << std::endl;
+    std::cout<< __func__<< "()." << __LINE__ << std::endl;
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
     CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a/", pStore );
 
-    std::cout<<"%s.%d" << __func__<< __LINE__ << std::endl;
+    std::cout<< __func__<< "()." << __LINE__ << std::endl;
     void* fc = nullptr;
     if( pAlarmLog != nullptr ) {
         pAlarmLog->logInit();

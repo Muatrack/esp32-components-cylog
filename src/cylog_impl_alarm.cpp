@@ -27,15 +27,6 @@ CL_TYPE_t CYLogImplAlarm::listGet(){
 
 void CYLogImplAlarm::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
-    /** 
-    fStore.traversal(m_Path, list) //遍历目录
-    for( f in list ) {
-        f.size() 文件大小
-        f.read(sizeof(HEAD)) //解析头部
-        f.offset    // 解析写操作的偏移位置
-        if( f.availableSize ) // 文件可用大小与预设阈值比较，判别当前文件是否可以继续写入     
-    }
-    */
    std::cout << "CYLogImplAlarm::logInit()" << std::endl;
    this->storeGet()->init();
 }
@@ -43,7 +34,7 @@ void CYLogImplAlarm::logInit() {
 CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store ):
                                                                 CYLogImplAbs( store ) {
     std::cout << "CYLogImplAlarm instance created." << std::endl;
-    this->storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, "ALARM_LOG_FILE_NAME_PREFIX" );
+    this->storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, "alarm_" );
 }
 
 CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {

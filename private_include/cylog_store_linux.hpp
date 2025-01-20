@@ -9,9 +9,9 @@
 class StoreLinux : public StoreAbs {
 
 public:
-    // StoreLinux(uint8_t fMaxCount, uint8_t fMaxLen, std::shared_ptr<std::string> &fDir, std::shared_ptr<std::string> &fPrefix):
-    //                                                                             StoreAbs(fMaxCount, fMaxLen, fDir, fPrefix) {}
 
+    StoreLinux() = default;
+    StoreLinux(StoreLinux&s) = delete;
     void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
 
     ~StoreLinux() {

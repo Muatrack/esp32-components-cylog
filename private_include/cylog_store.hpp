@@ -5,8 +5,6 @@
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
 public:
-    // StoreAbs(uint8_t fMaxCount, uint8_t fMaxLen, std::shared_ptr<std::string> &fDir, std::shared_ptr<std::string> &fPrefix):
-    //     m_fileMaxCount(fMaxCount),m_fileCurCount(0), m_fileMaxLength(fMaxLen), m_fileNamePrefix(fPrefix), m_dirPath(fDir){}
 
     virtual ~StoreAbs(){
         std::cout << "~StoreAbs()" << std::endl;
@@ -39,12 +37,13 @@ public:
 
     /* 文件目录初始化. 新建对象后首先执行此函数 */
     virtual CL_TYPE_t init() = 0;
-    virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen,const std::string &fDir, const std::string &fPrefix) = 0;
-private:
-    uint8_t     m_fileMaxCount;  // 文件数量上限
-    uint8_t     m_fileCurCount;  // 已存在文件数量
-    uint32_t    m_fileMaxLength; // 单文件的最大长度
-    std::shared_ptr<std::string> m_fileNamePrefix;  //文件名称前缀
-    std::shared_ptr<std::string> m_dirPath;         // 文件目录
+    virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
+
+protected:
+    uint32_t     m_fileMaxCount;     // 文件数量上限
+    uint32_t     m_fileCurCount;     // 已存在文件数量
+    uint32_t    m_fileMaxLength;    // 单文件的最大长度
+    std::string m_fileNamePrefix;   //文件名称前缀
+    std::string m_dirPath;          // 文件目录
 };
 
