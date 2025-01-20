@@ -1,7 +1,10 @@
 
 #include "common.hpp"
+#include <vector>
 
 namespace CLFile {
+
+#define FITEM_VALID_FLAG    0x55
 
 enum class FileState:uint8_t {
     FST_EMPTY,      //新文件,空
@@ -34,13 +37,12 @@ private:
     FileState   m_FSt;            // 日志文件当前状态
     uint8_t     m_Ver;            // 头部结构的版本 0-65535    
     uint32_t    m_MaxFLen;        // 文件的最大长度(含头部长度)
-    // uint32_t m_WOffset;        // 文件的写偏移位置
 };
 
 /* 日志文件-item头*/
 class ItemHead : public FileAbs {
 public:
-    ItemHead() = delete;
+    ItemHead():m_validFlag(0),m_dataLen(0){}
     ItemHead(ItemHead&fh) = delete;
     ItemHead& operator=(ItemHead&fh) = delete;
 
@@ -48,9 +50,11 @@ public:
     void serialize(){
         std::cout << "File head serialization ." << std::endl;
     };
+
 private:
-    uint8_t  m_ItemFlag;
-    uint16_t m_DataLen;
+    uint8_t  m_validFlag;            //文件中item数据的标记, FITEM_VALID_FLAG-有效/其他-无效
+    uint16_t m_dataLen;             //item数据长度
+    std::vector<uint8_t> m_data;    //数据集合
 };
 
 /* 日志文件-内容类*/
