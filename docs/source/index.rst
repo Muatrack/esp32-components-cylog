@@ -10,6 +10,7 @@
     * 异常数据，如网络异常、下载中断 ...
 
 .. toctree::
-    :caption: "Component cylog Manual"
+    :caption: 日志组件
 
     chapter/log_rdwr
+    chapter/class_def

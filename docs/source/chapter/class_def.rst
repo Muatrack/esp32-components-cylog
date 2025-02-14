@@ -13,3 +13,7 @@
         * 文件类 cylog_file: 定义日志文件的头部结构、单条消息的结构、记录文件读位置、文件写位置、分类日志的文件数量、文件删除、文件新增、文件名称检索
         * 分类日志 cylog_impl： 定义不同类型的日志，对每种类型定义独立的类。
         * 工厂类 cylog_factory： 
+    
+    日志类UML 
+        .. image:: https://www.badwe.com/wp-content/uploads/2022/09/227a1895c3c9c533023cc05a15c118d7.png
+            :width: 80%
