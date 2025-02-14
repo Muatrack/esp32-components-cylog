@@ -19,8 +19,10 @@ using namespace std;
 void alarm_log_test() {
     
     /** do test */
+    #if 0
     test_adv_prointer();
     return;
+    #endif
     //  do test
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
