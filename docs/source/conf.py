@@ -14,7 +14,9 @@ release = '1.0.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = []
+extensions = [
+    'sphinx.ext.autosectionlabel',
+]
 
 templates_path = ['_templates']
 exclude_patterns = []
@@ -27,3 +29,4 @@ language = 'zh-CN'
 #html_theme = 'alabaster'
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+html_show_sourcelink = False
