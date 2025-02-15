@@ -2,6 +2,7 @@
 #include "common.hpp"
 #include <vector>
 #include <iostream>
+#include "private_include/cylog_utils.hpp"
 
 namespace CLFile {
 
@@ -19,12 +20,11 @@ enum class FileState:uint8_t {
     FST_FULL,       //文件已满
 };
 
+using Serial=CyLogUtils::Serializer;
+
 class FileAbs{
 public:
     virtual ~FileAbs() {};
-
-    // virtual bool   serialize(unsigned char *pByteBuf) = 0;
-    // virtual bool deserialize(unsigned char *pByteBuf) = 0;
 
     virtual const unsigned char * serialize() { return nullptr ;};
 };
@@ -42,9 +42,9 @@ public:
      * @param pBytes 带序列化的字节序列
      */
     FileHead(const unsigned char * pBytes) {
-        m_Ver = pBytes[0];
-        m_FMaxLen = pBytes[1] | (pBytes[2] << 8) | (pBytes[3] << 16) | (pBytes[4] << 24);
-        m_ReWriteTm = pBytes[5] | (pBytes[6] << 8) | (pBytes[7] << 16) | (pBytes[8] << 24);
+        Serial::Deserialize<uint8_t>(&pBytes[0], sizeof(uint8_t), m_Ver);
+        Serial::Deserialize<uint32_t>(&pBytes[1], sizeof(uint32_t), m_FMaxLen);
+        Serial::Deserialize<uint32_t>(&pBytes[5], sizeof(uint32_t), m_ReWriteTm);
     };
 
     ~FileHead() {};
@@ -56,21 +56,11 @@ public:
     /* 对象序列化, 将实例数据转化为字节序列 */
     const unsigned char * serialize() override {
         *(uint32_t*) &m_Bytes[0] = sizeof(m_Bytes);
-        m_Bytes[4] = m_Ver;
-        m_Bytes[5] = m_FMaxLen & 0xFF;
-        m_Bytes[6] = (m_FMaxLen >> 8) & 0xFF;
-        m_Bytes[7] = (m_FMaxLen >> 16) & 0xFF;
-        m_Bytes[8] = (m_FMaxLen >> 24) & 0xFF;
-        m_Bytes[9] = m_ReWriteTm & 0xFF;
-        m_Bytes[10] = (m_ReWriteTm >> 8) & 0xFF;
-        m_Bytes[11] = (m_ReWriteTm >> 16) & 0xFF;
-        m_Bytes[12] = (m_ReWriteTm >> 24) & 0xFF;
+        Serial::Serialize<uint8_t>(m_Ver, sizeof(m_Ver), &m_Bytes[4]);
+        Serial::Serialize<uint32_t>(m_FMaxLen, sizeof(m_FMaxLen), &m_Bytes[5]);
+        Serial::Serialize<uint32_t>(m_ReWriteTm, sizeof(m_ReWriteTm), &m_Bytes[9]);
         return m_Bytes;
     };
-
-    // bool deserialize(unsigned char byteBuf[16]) override {
-    //     return true;
-    // };
 
 private:
     unsigned char m_Bytes[sizeof(uint8_t)+sizeof(uint32_t)+sizeof(uint32_t)+sizeof(uint32_t)] = {0};

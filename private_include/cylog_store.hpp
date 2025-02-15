@@ -50,6 +50,8 @@ protected:
     uint32_t     m_fileMaxCount;     // 文件数量上限
     uint32_t     m_fileCurCount;     // 已存在文件数量
     uint32_t    m_fileMaxLength;    // 单文件的最大长度
+    uint32_t    m_curWriteOffset;   // 当前正在写文件中的写操作偏移位置
+    std::string m_curWriteFile;     // 当前正在写入的文件路径
     std::string m_fileNamePrefix;   //文件名称前缀
     std::string m_dirPath;          // 文件目录
 };

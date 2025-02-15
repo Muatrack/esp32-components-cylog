@@ -58,7 +58,7 @@ CL_TYPE_t StoreLinux::init() {
                 uint32_t byteCount = *(uint32_t*)&pSeried[0];
                 std::cout << "  Head file serialized bytes count:" << std::dec << byteCount << std::endl;
                 
-                for( int i=4; i < byteCount; i++ ) {
+                for( uint32_t i=4; i < byteCount; i++ ) {
                     std::cout << "      byte[" << std::dec << i-4 << "]:" << std::hex << (uint32_t)pSeried[i] << std::endl;
                 }
 
@@ -68,7 +68,7 @@ CL_TYPE_t StoreLinux::init() {
 
                 CLFile::FileHead a(&pSeried[4]);
                 std::cout << "  FileHead Deserialized: ver:" << std::dec << (uint32_t)a.verGet() << " maxLen:" << a.maxLenGet() << " reWriteTm:" << a.reWriteTmGet() << std::endl;
-            }            
+            }
         }
     }
     /** 遍历目录下所有文件 */
