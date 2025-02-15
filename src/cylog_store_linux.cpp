@@ -108,8 +108,6 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
     std::fstream _ff;
     const uint8_t* pSeried = fHead->serialize();
-    const uint8_t* pHeadBytes = &pSeried[4];
-    uint32_t headByteCount = *(uint32_t*)&pSeried[0];
 
     if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
         std::cout << "     StoreLinux::headWrite file closed [ Excep ]"  << std::endl;
@@ -118,7 +116,7 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
 
     // 写入文件头数据
     _ff.seekp(0);
-    _ff.write((char*)pHeadBytes, headByteCount);
+    _ff.write((char*)pSeried, CLFile::FileHead::sizeGet());
     // 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
     _ff << "\0\0";
     _ff.close();

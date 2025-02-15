@@ -58,16 +58,15 @@ public:
 
     /** 
      * 对象序列化, 将实例数据转化为字节序列 
-     * @return 成功： 返回序列化后的字节序列， 其中低4字节( [0 ... 4]==byteCount )保存了有效字节的数量
+     * @return 成功： 返回序列化后的字节序列
     */
     const unsigned char * serialize() override {
         uint8_t zeroByte = 0xFF;
-        *(uint32_t*) &m_Bytes[0] = sizeof(m_Bytes) - 4;     // 后续有效字节的长度
-        Serial::Serialize<uint8_t>(m_Ver, sizeof(m_Ver), &m_Bytes[4]);
-        Serial::Serialize<uint32_t>(m_FMaxLen, sizeof(m_FMaxLen), &m_Bytes[4 + sizeof(uint8_t)]);
-        Serial::Serialize<uint64_t>(m_ReWriteTm=time(nullptr), sizeof(m_ReWriteTm), &m_Bytes[4 + sizeof(uint8_t)+sizeof(uint32_t)]);
+        Serial::Serialize<uint8_t>(m_Ver, sizeof(m_Ver), &m_Bytes[0]);
+        Serial::Serialize<uint32_t>(m_FMaxLen, sizeof(m_FMaxLen), &m_Bytes[sizeof(uint8_t)]);
+        Serial::Serialize<uint64_t>(m_ReWriteTm=time(nullptr), sizeof(m_ReWriteTm), &m_Bytes[sizeof(uint8_t)+sizeof(uint32_t)]);
         for( int i=0; i < 24; i ++ ) {
-            (&m_Bytes[4 + sizeof(uint8_t)+sizeof(uint32_t)+sizeof(uint64_t)])[i]=zeroByte;
+            (&m_Bytes[sizeof(uint8_t)+sizeof(uint32_t)+sizeof(uint64_t)])[i]=zeroByte;
         }
         return m_Bytes;
     };
