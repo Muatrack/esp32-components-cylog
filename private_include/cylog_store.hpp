@@ -18,7 +18,7 @@ public:
     };
 
     /* 读取指定文件头部数据*/
-    virtual CL_TYPE_t headRead( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+    virtual CL_TYPE_t headRead( const std::filesystem::path &fPath ){
         return CL_OK;
     };
 

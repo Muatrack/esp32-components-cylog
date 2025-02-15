@@ -2,6 +2,7 @@
 #include "common.hpp"
 #include <vector>
 #include <iostream>
+#include <cstring>
 #include "private_include/cylog_utils.hpp"
 #include "time.h"
 
@@ -28,6 +29,7 @@ public:
     virtual ~FileAbs() {};
 
     virtual const unsigned char * serialize() { return nullptr ;};
+    virtual bool  deSerialize( uint8_t *pBuf = nullptr) { return false; };
 };
 
 /* 日志文件-头类 */
@@ -71,10 +73,35 @@ public:
     };
 
     /** 
+     * 反序列化字节序列为实例
+     * @param pBytesBuf 传入的字节序列
+     * @return  成功: true,  失败: false
+     */
+    bool  deSerialize( uint8_t *pBytesBuf = nullptr) {
+        if(pBytesBuf == nullptr ) {
+            pBytesBuf = m_Bytes;
+        }
+
+        Serial::Deserialize<uint8_t>(&pBytesBuf[0], sizeof(uint8_t), m_Ver);
+        Serial::Deserialize<uint32_t>(&pBytesBuf[sizeof(uint8_t)], sizeof(uint32_t), m_FMaxLen);
+        Serial::Deserialize<uint64_t>(&pBytesBuf[sizeof(uint8_t)+sizeof(uint32_t)], sizeof(uint64_t), m_ReWriteTm);
+        return true;
+    };
+
+    /** 
      * 获取文件头部占用的字节数
      * @return 返回文件中占用字节数
      */
-    static uint32_t size() { return sizeof(m_Bytes); };
+    static uint32_t sizeGet() { return sizeof(m_Bytes) - 4; };
+
+    /**
+     * 获取头部数据结构字节缓冲区
+     */
+    uint8_t* bytesBufGet() {
+        // 初始化字节序列
+        memset( (void*)m_Bytes, 0, sizeof(m_Bytes));
+        return m_Bytes;
+    };
 
 private:
     /* 字节空间长度组成 表示有效字节长度的数值(4字节) | mVer (1字节) | m_FMaxLen(4字节) | m_ReWriteTm(8字节) + mPreserved(24字节) */

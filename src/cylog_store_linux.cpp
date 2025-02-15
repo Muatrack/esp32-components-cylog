@@ -18,7 +18,7 @@ CL_TYPE_t StoreLinux::init() {
 
     /** 判断目录是否存在 */
     if( std::filesystem::exists(m_dirPath) ) {
-        std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;
+        std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;        
     } else {
         std::cout<< "StoreLinux::init dir " << m_dirPath << " doesn't exists." << std::endl;
 
@@ -52,6 +52,10 @@ CL_TYPE_t StoreLinux::init() {
 
             // 写入头数据到目标文件
             headWrite( f_path );
+
+            /* test */
+            headRead( f_path );
+            // test
         }
     }
     /** 遍历目录下所有文件 */
@@ -101,7 +105,6 @@ CL_TYPE_t StoreLinux::dirRead( const std::shared_ptr<std::string> pDPath ){
  * @param fPath 文件路径
 */
 CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
-
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
     std::fstream _ff;
     const uint8_t* pSeried = fHead->serialize();
@@ -124,3 +127,28 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
 excp:
     return CL_EXCP_UNKNOW;
 };
+
+/** 
+ * 读取文件头部数据, 从指定的文件
+ * @param fPath 文件路径
+*/
+CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
+    std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
+    std::fstream _ff;
+
+    if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
+        std::cout << "     StoreLinux::headWrite file closed [ Excep ]"  << std::endl;
+        goto excp;
+    }
+
+    _ff.seekp(0);
+    _ff.read( (char*)fHead->bytesBufGet(), CLFile::FileHead::sizeGet() );
+    _ff.close();
+
+    fHead->deSerialize();
+    std::cout << "  Got file head ver:" << fHead->verGet() << " fileLen:" << fHead->maxLenGet() << " reWriteTm:" << fHead->reWriteTmGet()  << std::endl;
+
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
+}
