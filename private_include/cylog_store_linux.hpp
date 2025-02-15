@@ -28,4 +28,6 @@ public:
      * - 文件不存在，新建目录，新建全数日志文件
     */
     CL_TYPE_t init() override;
+    /* 写入指定文件头部数据*/
+    CL_TYPE_t headWrite( const std::filesystem::path &fPath ) override;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "common.hpp"
+#include <filesystem>
 
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
@@ -26,9 +27,9 @@ public:
         return CL_OK;
     };
 
-    /* 写入指定文件头部数据*/
-    virtual CL_TYPE_t headWrite( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
-        return CL_OK;
+    /* 写入指定文件头部数据 */
+    virtual CL_TYPE_t headWrite( const std::filesystem::path &fPath ){
+        return CL_OK; 
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/

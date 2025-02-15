@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <unistd.h>
 #include "private_include/cylog_store_linux.hpp"
 #include "private_include/cylog_file.hpp"
 
@@ -38,12 +39,10 @@ CL_TYPE_t StoreLinux::init() {
             ss << std::setw(2) << std::setfill('0') << i ;
             f_path = m_dirPath + ss.str();
             std::cout<< "   gonna create file: " << f_path << std::endl;
-            std::ofstream _of(f_path, std::ios::out | std::ios::binary);
+            std::ofstream _of(f_path, std::ios::out | std::ios::binary | std::ios::app);
             
             std::cout<< "   file: " << f_path << " resize to " << m_fileMaxLength << std::endl;
             std::filesystem::resize_file( f_path, m_fileMaxLength );
-
-            std::cout << "File Head size:" << sizeof(_f_Head) << std::endl;
             
             if( !_of.is_open() ) {
                 // 文件没有打开，新建失败
@@ -51,24 +50,8 @@ CL_TYPE_t StoreLinux::init() {
                 continue;
             }
 
-            {
-                // 写入头数据到目标文件
-                const unsigned char* pSeried = _f_Head.serialize();
-
-                uint32_t byteCount = *(uint32_t*)&pSeried[0];
-                std::cout << "  Head file serialized bytes count:" << std::dec << byteCount << std::endl;
-                
-                for( uint32_t i=4; i < byteCount; i++ ) {
-                    std::cout << "      byte[" << std::dec << i-4 << "]:" << std::hex << (uint32_t)pSeried[i] << std::endl;
-                }
-
-                _of.write((char*)&pSeried[4], byteCount-4);
-
-                _of.close();
-
-                CLFile::FileHead a(&pSeried[4]);
-                std::cout << "  FileHead Deserialized: ver:" << std::dec << (uint32_t)a.verGet() << " maxLen:" << a.maxLenGet() << " reWriteTm:" << a.reWriteTmGet() << std::endl;
-            }
+            // 写入头数据到目标文件
+            headWrite( f_path );
         }
     }
     /** 遍历目录下所有文件 */
@@ -80,8 +63,8 @@ excp:
 }
 
 void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) {
-    std::cout << "maxCount:" << (uint32_t)fMaxCount << std::endl;
-    std::cout << "curCount:" << fMaxLen << std::endl;
+    // std::cout << "maxCount:" << (uint32_t)fMaxCount << std::endl;
+    // std::cout << "curCount:" << fMaxLen << std::endl;
     m_fileMaxCount = fMaxCount;
     m_fileMaxLength = fMaxLen;
     m_fileCurCount = 0;
@@ -112,3 +95,31 @@ CL_TYPE_t StoreLinux::dirRead( const std::shared_ptr<std::string> pDPath ){
     return CL_OK;
 };
 
+
+/* 写入指定文件头部数据*/
+CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
+
+    std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
+    std::fstream _ff;
+    const uint8_t* pSeried = fHead->serialize();
+    const uint8_t* pHeadBytes = &pSeried[4];
+    uint32_t headByteCount = *(uint32_t*)&pSeried[0];
+
+    headByteCount -= 4; //字节序列的低4字节是字节序列的长度，需要减去
+    if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
+        std::cout << "     StoreLinux::headWrite file closed [ Excep ]"  << std::endl;
+        goto excp;
+    }
+
+    _ff.seekp(0);
+    _ff.write((char*)pHeadBytes, headByteCount);
+    /** 
+     * 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
+    */
+    _ff << "\0\0";
+    _ff.close();
+
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
+};

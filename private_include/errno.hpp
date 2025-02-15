@@ -16,6 +16,7 @@ using CL_TYPE_t = uint16_t;
 #define CL_OK                  00   // 执行成功
 #define CL_FILE_NOT_EXIST      01   // 文件不存在
 #define CL_FILE_FULL           02   // 文件已写满
-#define CL_DIR_NOT_EXIST      10    // 目录不存在
+#define CL_DIR_NOT_EXIST       10    // 目录不存在
+#define CL_EXCP_UNKNOW         0xff    // 未知异常
 
 /** 读取日志 */
