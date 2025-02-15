@@ -14,3 +14,4 @@
 
     chapter/log_rdwr
     chapter/class_def
+    chapter/algorithm
