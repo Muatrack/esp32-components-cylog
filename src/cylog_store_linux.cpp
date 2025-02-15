@@ -96,7 +96,10 @@ CL_TYPE_t StoreLinux::dirRead( const std::shared_ptr<std::string> pDPath ){
 };
 
 
-/* 写入指定文件头部数据*/
+/** 
+ * 写入文件头部数据到指定的文件
+ * @param fPath 文件路径
+*/
 CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
 
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
@@ -105,17 +108,15 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
     const uint8_t* pHeadBytes = &pSeried[4];
     uint32_t headByteCount = *(uint32_t*)&pSeried[0];
 
-    headByteCount -= 4; //字节序列的低4字节是字节序列的长度，需要减去
     if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
         std::cout << "     StoreLinux::headWrite file closed [ Excep ]"  << std::endl;
         goto excp;
     }
 
+    // 写入文件头数据
     _ff.seekp(0);
     _ff.write((char*)pHeadBytes, headByteCount);
-    /** 
-     * 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
-    */
+    // 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
     _ff << "\0\0";
     _ff.close();
 
