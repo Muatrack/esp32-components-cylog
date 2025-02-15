@@ -11,8 +11,20 @@ public:
         std::cout << "~StoreAbs()" << std::endl;
     }
 
+    /* 新建指定目录，及所有新文件 */
+    virtual CL_TYPE_t dirCreate() {
+        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
+        return CL_OK;
+    };
+
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath = nullptr) {
+    virtual CL_TYPE_t dirRead() {
+        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
+        return CL_OK;
+    };
+
+    /* 检查指定目录中文件的合法性 */
+    virtual CL_TYPE_t dirCheck() {
         std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
         return CL_OK;
     };

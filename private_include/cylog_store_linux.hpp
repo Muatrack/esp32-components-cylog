@@ -15,8 +15,12 @@ public:
 
     void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
     
+    /* 新建指定目录，及所有新文件 */
+    CL_TYPE_t dirCreate() override;
     /* 读取指定目录，所有文件名称 */
-    CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath ) override;
+    CL_TYPE_t   dirRead() override;
+    /* 检查指定目录中文件的合法性 */
+    CL_TYPE_t dirCheck() override;
     
     ~StoreLinux() {
         std::cout << "~StoreLinux()" << std::endl;

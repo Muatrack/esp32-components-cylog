@@ -10,26 +10,64 @@
 #include "private_include/cylog_store_linux.hpp"
 #include "private_include/cylog_file.hpp"
 
+/** 
+ * 日志目录初始化 
+ *      1 目录存在否,
+ *      2 文件全数存在否， 
+ *      3 遍历文件 找出下一个写数据的目标文件和对应的写数据位置
+ */
 CL_TYPE_t StoreLinux::init() {
-    CL_TYPE_t err = CL_OK;
-    std::stringstream ss;
-
     std::cout<< "------------------- StoreLinux::init() -------------------" << std::endl;
 
-    /** 判断目录是否存在 */
-    if( std::filesystem::exists(m_dirPath) ) {
-        std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;        
-    } else {
-        std::cout<< "StoreLinux::init dir " << m_dirPath << " doesn't exists." << std::endl;
+    // 目录检查
+    if( std::filesystem::exists(m_dirPath) ) { //路径存在,执行检查
+        std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;
+        dirCheck();
+    } else { // 路径不存在， 执行新建
+        dirCreate();
+    }
 
-        /* 新建路径 */
-        if( std::filesystem::create_directories( m_dirPath ) == false ) {
-            std::cout<< "StoreLinux::init dir " << m_dirPath << " fail to create dir." << std::endl;
-            err = CL_DIR_NOT_EXIST;
-            goto excp;
-        }
-        
-        /* 新建全数文件 */
+    // 遍历目录，收集文件信息
+        // traversal dir, list all head struct of files.
+
+    // 依据上步文件信息，计算下一个写数据的文件路径及对应的写数据偏移位置
+        // 选文件计算方法
+
+    std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
+    return CL_OK;
+}
+
+void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) {
+    m_fileMaxCount = fMaxCount;
+    m_fileMaxLength = fMaxLen;
+    m_fileCurCount = 0;
+    m_dirPath = fDir;
+    m_fileNamePrefix = fPrefix;
+
+    std::cout<< "StoreLinux::configSet()" << std::endl;
+}
+
+/* 检查指定目录中文件的合法性 */
+CL_TYPE_t StoreLinux::dirCheck() {
+    std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
+    return CL_OK;
+};
+
+CL_TYPE_t StoreLinux::dirCreate() {
+    CL_TYPE_t err = CL_OK;
+
+    std::cout<< "StoreLinux::init dir " << m_dirPath << " doesn't exists." << std::endl;
+
+    std::stringstream ss;
+    /* 新建路径 */
+    if( std::filesystem::create_directories( m_dirPath ) == false ) {
+        std::cout<< "StoreLinux::init dir " << m_dirPath << " fail to create dir." << std::endl;
+        err = CL_DIR_NOT_EXIST;
+        goto excp;
+    }
+    
+    /* 新建全数文件 */
+    {
         std::cout<< "StoreLinux::init dir " << m_dirPath << " succ to create dir." << std::endl;
         std::filesystem::path f_path;
         CLFile::FileHead _f_Head( m_fileMaxLength );
@@ -58,27 +96,14 @@ CL_TYPE_t StoreLinux::init() {
             // test
         }
     }
-    /** 遍历目录下所有文件 */
 
-    std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
     return err;
 excp:
     return err;
+
 }
 
-void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) {
-    // std::cout << "maxCount:" << (uint32_t)fMaxCount << std::endl;
-    // std::cout << "curCount:" << fMaxLen << std::endl;
-    m_fileMaxCount = fMaxCount;
-    m_fileMaxLength = fMaxLen;
-    m_fileCurCount = 0;
-    m_dirPath = fDir;
-    m_fileNamePrefix = fPrefix;
-
-    std::cout<< "StoreLinux::configSet()" << std::endl;
-}
-
-CL_TYPE_t StoreLinux::dirRead( const std::shared_ptr<std::string> pDPath ){
+CL_TYPE_t StoreLinux::dirRead() {
     std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
     std::cout << "... got dirpath:" << m_dirPath.c_str() << std::endl;
 
