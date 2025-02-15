@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(cylog)
 
+add_compile_definitions(CYLOG_FILE_VER=1)
 set(
     SRCS        
         src/cylog_impl_alarm.cpp

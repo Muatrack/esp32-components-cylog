@@ -38,7 +38,7 @@ void _test3() {
     std::cout << "  bytes size:" << m_bytes.size() << std::endl;
     std::cout << "  array size:" << sizeof(array) << std::endl;
 
-    for( int i=0;i < sizeof(array); i ++ ) { m_bytes.push_back(array[i]); }
+    for( unsigned int i=0;i < (unsigned int)sizeof(array); i ++ ) { m_bytes.push_back(array[i]); }
     // memcpy((void*)m_bytes.data(), array, sizeof(array));
 
     std::cout << "  bytes size:" << m_bytes.size() << std::endl;

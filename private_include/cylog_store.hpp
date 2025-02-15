@@ -11,7 +11,8 @@ public:
     }
 
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath ){
+    virtual CL_TYPE_t dirRead( const std::shared_ptr<std::string> pDPath = nullptr) {
+        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
         return CL_OK;
     };
 
@@ -35,8 +36,14 @@ public:
         return CL_OK;
     };
 
-    /* 文件目录初始化. 新建对象后首先执行此函数 */
+    /** 
+     * 文件目录初始化. 新建对象后首先执行此函数 
+     * - 文件存在，遍历目录下所有文件
+     * - 文件不存在，新建目录，新建全数日志文件
+    */
     virtual CL_TYPE_t init() = 0;
+
+    /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
 
 protected:
