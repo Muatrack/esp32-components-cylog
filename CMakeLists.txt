@@ -1,14 +1,18 @@
 cmake_minimum_required(VERSION 3.16)
 project(cylog)
 
-add_compile_definitions(CYLOG_FILE_VER=1)
+SET(CMAKE_BUILD_TYPE "Debug")
+
 set(
     SRCS        
         src/cylog_impl_alarm.cpp
         src/cylog_store_linux.cpp
 )
 
-SET(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_compile_definitions(CYLOG_FILE_VER=1)
 if(CMAKE_BUILD_TYPE)
     SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")  
     SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall") 
