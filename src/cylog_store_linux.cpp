@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 #include <unistd.h>
 #include "private_include/cylog_store_linux.hpp"
 #include "private_include/cylog_file.hpp"
@@ -18,7 +19,7 @@
  */
 CL_TYPE_t StoreLinux::init() {
     std::cout<< "------------------- StoreLinux::init() -------------------" << std::endl;
-
+    std::shared_ptr<std::vector<CLFile::FileDesc>> spFHeadList = std::make_shared<std::vector<CLFile::FileDesc>>();
     // 目录检查
     if( std::filesystem::exists(m_dirPath) ) { //路径存在,执行检查
         std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;
@@ -27,11 +28,17 @@ CL_TYPE_t StoreLinux::init() {
         dirCreate();
     }
 
-    // 遍历目录，收集文件信息
-        // traversal dir, list all head struct of files.
+    // 遍历目录，收集文件信息, traversal dir, list all head struct of files.
+    dirRead( spFHeadList );
 
     // 依据上步文件信息，计算下一个写数据的文件路径及对应的写数据偏移位置
         // 选文件计算方法
+    for( int i=0;i < spFHeadList->size(); i ++ ) {
+        std::cout   << "  file:" << spFHeadList->at(i).nameGet() 
+                    << " offset:" << spFHeadList->at(i).offsetGet() 
+                    << " rTm:"   << spFHeadList->at(i).rTmGet() 
+                    << std::endl;
+    }
 
     std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
     return CL_OK;
@@ -55,9 +62,6 @@ CL_TYPE_t StoreLinux::dirCheck() {
 
 CL_TYPE_t StoreLinux::dirCreate() {
     CL_TYPE_t err = CL_OK;
-
-    std::cout<< "StoreLinux::init dir " << m_dirPath << " doesn't exists." << std::endl;
-
     std::stringstream ss;
     /* 新建路径 */
     if( std::filesystem::create_directories( m_dirPath ) == false ) {
@@ -78,22 +82,15 @@ CL_TYPE_t StoreLinux::dirCreate() {
             f_path = m_dirPath + ss.str();
             std::cout<< "   gonna create file: " << f_path << std::endl;
             std::ofstream _of(f_path, std::ios::out | std::ios::binary | std::ios::app);
-            
             std::cout<< "   file: " << f_path << " resize to " << m_fileMaxLength << std::endl;
             std::filesystem::resize_file( f_path, m_fileMaxLength );
-            
             if( !_of.is_open() ) {
                 // 文件没有打开，新建失败
                 std::cout << "Fail to create file:" << f_path << " with errno:" << errno << std::endl;
                 continue;
             }
-
             // 写入头数据到目标文件
             headWrite( f_path );
-
-            /* test */
-            headRead( f_path );
-            // test
         }
     }
 
@@ -103,23 +100,23 @@ excp:
 
 }
 
-CL_TYPE_t StoreLinux::dirRead() {
-    std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
-    std::cout << "... got dirpath:" << m_dirPath.c_str() << std::endl;
+CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
 
-    /* try read */
-    if( 0 ) {
-        std::filesystem::path f_path;
-        char buf[36] = {0};
-        std::ifstream _if(f_path, std::ios::in | std::ios::binary);
-        if( _if.is_open() ) {
-            _if.read(buf, 12);
-            std::cout << "  file: " << f_path << " read val:: " << buf << std::endl;
+    std::filesystem::path fPath;
+    auto spFileHead = std::make_shared<CLFile::FileHead>();
+    auto spFileItem = std::make_shared<CLFile::FileItem>();
 
-            _if.close();
+    {
+        std::filesystem::directory_iterator _dir_iter(m_dirPath);
+        for( auto & _dir : _dir_iter ) {
+            fPath = _dir.path();
+            spFileHead->deSerialize( fPath );;
+            // ??? 读取文件中wOffset ???
+            pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
+                                    spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
+            std::cout << "  file:" << fPath << std::endl;
         }
     }
-    // try read
 
     return CL_OK;
 };

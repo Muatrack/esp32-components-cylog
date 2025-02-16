@@ -3,7 +3,7 @@
 
 CL_TYPE_t CYLogImplAlarm::read(const std::string &path, void* out ) {
     std::cout << "Alarm read." << std::endl;
-    storeGet()->dirRead();
+    // storeGet()->dirRead();
     return CL_OK; 
 };
 

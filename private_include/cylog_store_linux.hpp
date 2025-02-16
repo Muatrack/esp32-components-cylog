@@ -4,6 +4,7 @@
 #include "errno.hpp"
 #include "common.hpp"
 #include "cylog_store.hpp"
+#include "private_include/cylog_file.hpp"
 
 
 class StoreLinux : public StoreAbs {
@@ -17,8 +18,10 @@ public:
     
     /* 新建指定目录，及所有新文件 */
     CL_TYPE_t dirCreate() override;
-    /* 读取指定目录，所有文件名称 */
-    CL_TYPE_t   dirRead() override;
+    /** 
+     * 遍历目录下所有文件，收集文件的名称，文件开写的时间戳（位于头部), 文件的写数据
+     */
+    CL_TYPE_t   dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
     /* 检查指定目录中文件的合法性 */
     CL_TYPE_t dirCheck() override;
     

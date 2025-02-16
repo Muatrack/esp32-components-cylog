@@ -2,6 +2,7 @@
 
 #include "common.hpp"
 #include <filesystem>
+#include <private_include/cylog_file.hpp>
 
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
@@ -18,7 +19,7 @@ public:
     };
 
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead() {
+    virtual CL_TYPE_t dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
         std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
         return CL_OK;
     };
