@@ -185,6 +185,7 @@ CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen) {
 
     CL_TYPE_t _err = CL_OK;
     bool _bReWriten = false;
+    uint8_t _buf[2] = {0};
 
     // 判断参数有效性
     if( (in==nullptr) || (iLen<1) ) {
@@ -193,7 +194,7 @@ CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen) {
     
 re_write:
     // 判断当前文件是否能够写下 iLen 长的数据
-    if( m_curWriteOffset + sizeof(iLen) + iLen > m_fileMaxLength ) {
+    if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
         std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
         // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
         if( _bReWriten ) {
@@ -217,9 +218,13 @@ re_write:
                             " offset:" << std::setw(4) << m_curWriteOffset << 
                             " len:" << iLen << std::endl;
 
+        CyLogUtils::Serializer::Serialize<decltype(iLen)>( iLen, sizeof(iLen), _buf );
         _ff.seekp( m_curWriteOffset );
-        _ff.write( (char*)&iLen, sizeof(iLen));
+        // _ff.write( (char*)&iLen, sizeof(iLen));
+        _ff.write( (char*)&_buf, sizeof(iLen));
         _ff.write( (char*)in, iLen );
+        memset( _buf, 0, sizeof(iLen) );
+        _ff.write( (char*)&_buf, sizeof(iLen));  // 此处用于将覆盖写过程中，刚刚写入的数据其后紧跟的字节置零，否则文件写位置的检索将异常。
         _ff.close();
         m_curWriteOffset += (sizeof(iLen) + iLen);
     }
