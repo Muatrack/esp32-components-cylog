@@ -5,7 +5,7 @@
 
 
 /* 告警日志文件数量的上限 */
-#define ALARM_LOG_FILE_MAX_COUNT    8
+#define ALARM_LOG_FILE_MAX_COUNT    4
 /* 单个告警日志文件的大小(包含文件头) */
 #define ALARM_LOG_FILE_MAX_LEN      (1024*1)
 /* 文件名称前缀 */
