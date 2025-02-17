@@ -40,9 +40,14 @@ public:
     CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
 
     /** 
-     * 可写文件及offset定位
+     * 找到最后写入的文件。
      */
-    void writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
+    void latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
+
+    /** 
+     * 选择下一个文件，并初始化文件头部。
+     */
+    void nextFileSelect() override;
 
 private:
     uint16_t    m_fileHoleSize;     /* 文件尾部的空洞大小 32字节 */

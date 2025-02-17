@@ -58,9 +58,14 @@ public:
     virtual CL_TYPE_t init() = 0;
 
     /**
-     * 选择可写文件名称及文件绝对偏移量
+     * 选择最后写入的文件
      */
-    virtual void writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) = 0;
+    virtual void latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) = 0;
+
+    /** 
+     * 选择下一个文件，并初始化文件头部。
+     */
+    virtual void nextFileSelect() = 0;
 
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;

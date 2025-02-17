@@ -33,7 +33,13 @@ CL_TYPE_t StoreLinux::init() {
 
     // 依据上步文件信息，计算下一个写数据的文件路径及对应的写数据偏移位置
         // 选文件计算方法
-    writableLocate( spFHeadList );
+    latestFileSelect( spFHeadList );
+
+    /* test */
+    for( int i=0; i < 10; i ++ ) {
+        nextFileSelect();
+    }
+    // test
 
     std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
     return CL_OK;
@@ -59,6 +65,7 @@ CL_TYPE_t StoreLinux::dirCheck() {
 CL_TYPE_t StoreLinux::dirCreate() {
     CL_TYPE_t err = CL_OK;
     std::stringstream ss;
+
     /* 新建路径 */
     if( std::filesystem::create_directories( m_dirPath ) == false ) {
         std::cout<< "StoreLinux::init dir " << m_dirPath << " fail to create dir." << std::endl;
@@ -169,7 +176,7 @@ excp:
     return CL_EXCP_UNKNOW;
 }
 
-void StoreLinux::writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
+void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
     uint64_t _reWriteTs = 0;       // 最后重写入时间
     uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
 
@@ -186,7 +193,6 @@ void StoreLinux::writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> 
                 _listIndexSelected = i;
             }
         }
-
         m_curWriteFilePath = m_dirPath + spFHeadList->at(_listIndexSelected).nameGet();
     }
 
@@ -196,6 +202,34 @@ void StoreLinux::writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> 
         std::filesystem::path fPath = m_curWriteFilePath;
         m_curWriteOffset = spFileItem->wOffsetGet( fPath );
     }
-
+    
     std::cout << "    [ Current Writable File: " << m_curWriteFilePath << ", offset: " << m_curWriteOffset << std::endl;
+}
+
+void StoreLinux::nextFileSelect() {
+    /** 
+     * 依据当前已使用的文件名称，拼接下一个选中的文件
+     */
+    
+    uint16_t _curFileIdx = 0xff;
+    std::stringstream ss;
+    std::shared_ptr<CLFile::FileHead> spFHead = std::make_shared<CLFile::FileHead>();
+
+    // 获取当前日志分类文件的数量， 依据当前使用的文件名拼接下一个文件名
+    std::cout << "StoreLinux::nextFileSelect cur file path:" << m_curWriteFilePath;
+    std::filesystem::path curPath = m_curWriteFilePath;
+    std::cout << "  root path:" << m_dirPath;
+    _curFileIdx = atoi(curPath.stem().c_str());
+    _curFileIdx = (_curFileIdx + 1) % m_fileMaxCount;
+    std::cout << "  next file idx:" << _curFileIdx;
+
+    { // 拼接新路径
+        ss.str("");
+        ss << std::setw(2) << std::setfill('0') << _curFileIdx ;
+        m_curWriteFilePath = m_dirPath + ss.str();
+    }
+
+    // 执行文件头更新
+    headWrite( m_curWriteFilePath );
+    std::cout << "  write offset:" << m_curWriteOffset << std::endl;
 }
