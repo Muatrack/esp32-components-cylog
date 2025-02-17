@@ -26,7 +26,7 @@ public:
     /** 读取日志文件 */
     virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
     /** 写日志到文件 */
-    virtual CL_TYPE_t write( const std::string &path, const void* in) = 0;
+    virtual CL_TYPE_t write(const uint8_t* in, uint16_t iLen) = 0;
     /** 删除日志文件 */
     virtual CL_TYPE_t remove( const std::string &path) = 0;
     /** 查询文件列表 */

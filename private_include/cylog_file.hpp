@@ -168,28 +168,31 @@ public:
     /** 定位文件中可写的绝对offset */
     static uint32_t wOffsetGet( std::filesystem::path & fPath ) {
         std::fstream _ff;
-        uint32_t wOffset = 0;
+        uint32_t _wOffset = 0;
+        uint8_t  _itemBuf[8] = {0};
         uint16_t itemLen = 0;
-        std::shared_ptr<FileHead> spFHead = std::make_shared<FileHead>();
-        
+        std::shared_ptr<FileHead> spFHead = std::make_shared<FileHead>();        
+
         if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), _ff.is_open() ) {
             // 跳过文件头部
-            _ff.seekp( FileHead::sizeGet() );
-            wOffset = FileHead::sizeGet();
+            _wOffset = FileHead::sizeGet();
+            _ff.seekp( _wOffset );
+
             // 遍历文件
-            while( wOffset >= spFHead->maxLenGet() ) {
-                _ff.read( (char*)&itemLen, sizeof(uint16_t) );
+            while( _wOffset < spFHead->maxLenGet() ) {
+                _ff.read( (char*)&_itemBuf, sizeof(uint16_t) );
+                CyLogUtils::Serializer::Deserialize<uint16_t>((const uint8_t *)_itemBuf, sizeof(itemLen), itemLen);
                 // 读取到的item长度为0, 表示此处无item， 则当前写位置可用
                 if( itemLen==0 ) {
                     break;
                 }
                 // 读取到的item长度不为0, 表示当前位置已写入有效item数据，继续增加读偏移量
-                wOffset += itemLen + sizeof(uint16_t);
-                _ff.seekp( wOffset );
+                _wOffset += itemLen + sizeof(uint16_t);
+                _ff.seekp( _wOffset );
             }
             _ff.close();
         }
-        return wOffset;
+        return _wOffset;
     }
 
 private:

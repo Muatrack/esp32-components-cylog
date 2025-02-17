@@ -12,7 +12,11 @@ set(
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# 定义文件数据结构的版本
 add_compile_definitions(CYLOG_FILE_VER=1)
+# 定义文件判断是否已满时用到的空洞大小
+add_compile_definitions(CYLOG_FILE_HOLE_SIZE=64)
+
 if(CMAKE_BUILD_TYPE)
     SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g2 -ggdb")  
     SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall") 

@@ -35,11 +35,8 @@ CL_TYPE_t StoreLinux::init() {
         // 选文件计算方法
     latestFileSelect( spFHeadList );
 
-    /* test */
-    for( int i=0; i < 10; i ++ ) {
-        nextFileSelect();
-    }
-    // test
+    // 执行一次选择文件
+    nextFileSelect();
 
     std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
     return CL_OK;
@@ -126,15 +123,17 @@ CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & 
 
 
 /** 
- * 写入文件头部数据到指定的文件
- * @param fPath 文件路径
+ * 
+ * 此成员函数将会改名为 fileReset( ... )
+ *  - 写入文件头部数据到指定的文件 v1.1
+ *  - 将文件数据部分全写0，否则会造成文件写偏移量的计算错误 v1.1
 */
 CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
     std::fstream _ff;
     const uint8_t* pSeried = fHead->serialize();
 
-    if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
+    if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in | std::ios::trunc ), !_ff.is_open() ) {
         std::cout << "     StoreLinux::headWrite file closed [ Excep ]"  << std::endl;
         goto excp;
     }
@@ -142,9 +141,12 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
     // 写入文件头数据
     _ff.seekp(0);
     _ff.write((char*)pSeried, CLFile::FileHead::sizeGet());
-    // 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
-    _ff << "\0\0";
-    _ff.close();
+
+    #if 1   // v1.0
+        // 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
+        _ff << "\0\0";
+    #else   // v1.1
+    #endif
 
     return CL_OK;
 excp:
@@ -176,6 +178,52 @@ excp:
     return CL_EXCP_UNKNOW;
 }
 
+CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen) {
+
+    CL_TYPE_t _err = CL_OK;
+    bool _bReWriten = false;
+
+    // 判断参数有效性
+    if( (in==nullptr) || (iLen<1) ) {
+        goto excp;
+    }
+    
+re_write:
+    // 判断当前文件是否能够写下 iLen 长的数据
+    if( m_curWriteOffset + sizeof(iLen) + iLen > m_fileMaxLength ) {
+        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
+        if( _bReWriten ) {
+            _err = CL_FILE_FULL;
+            goto excp;
+        }
+        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        // 当前文件已写满，选择下一个文件
+        nextFileSelect();
+        _bReWriten = true;
+        goto re_write;
+    }
+    {
+        // 写数据到文件
+        std::fstream _ff;
+        if( _ff.open( m_curWriteFilePath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
+            std::cout << "     StoreLinux::itemWrite file closed [ Excep ]"  << std::endl;
+            goto excp;
+        }
+        std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
+                            " offset:" << std::setw(4) << m_curWriteOffset << 
+                            " len:" << iLen << std::endl;
+
+        _ff.seekp( m_curWriteOffset );
+        _ff.write( (char*)&iLen, sizeof(iLen));
+        _ff.write( (char*)in, iLen );
+        _ff.close();
+        m_curWriteOffset += (sizeof(iLen) + iLen);
+    }
+excp:
+    return _err;
+};
+
 void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
     uint64_t _reWriteTs = 0;       // 最后重写入时间
     uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
@@ -184,7 +232,7 @@ void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>
     {
         for( uint32_t i=0;i < spFHeadList->size(); i ++ ) {
             std::cout   << "  file:" << spFHeadList->at(i).nameGet() 
-                        << " offset:" << spFHeadList->at(i).offsetGet() 
+                        << " offset:" << std::setw(4) << spFHeadList->at(i).offsetGet() 
                         << " rTm:"   << spFHeadList->at(i).rTmGet() 
             << std::endl;
             
@@ -215,21 +263,32 @@ void StoreLinux::nextFileSelect() {
     std::stringstream ss;
     std::shared_ptr<CLFile::FileHead> spFHead = std::make_shared<CLFile::FileHead>();
 
-    // 获取当前日志分类文件的数量， 依据当前使用的文件名拼接下一个文件名
-    std::cout << "StoreLinux::nextFileSelect cur file path:" << m_curWriteFilePath;
-    std::filesystem::path curPath = m_curWriteFilePath;
-    std::cout << "  root path:" << m_dirPath;
-    _curFileIdx = atoi(curPath.stem().c_str());
-    _curFileIdx = (_curFileIdx + 1) % m_fileMaxCount;
-    std::cout << "  next file idx:" << _curFileIdx;
+    // if( isCurFileFull() == false ) {
+    //     // 当前文件未写满， 继续使用
+    //     goto done;
+    // }
 
-    { // 拼接新路径
-        ss.str("");
-        ss << std::setw(2) << std::setfill('0') << _curFileIdx ;
-        m_curWriteFilePath = m_dirPath + ss.str();
+    {
+        // 获取当前日志分类文件的数量， 依据当前使用的文件名拼接下一个文件名
+        std::cout << "StoreLinux::nextFileSelect cur file path:" << m_curWriteFilePath;
+        std::filesystem::path curPath = m_curWriteFilePath;
+        std::cout << "  root path:" << m_dirPath;
+        _curFileIdx = atoi(curPath.stem().c_str());
+        _curFileIdx = (_curFileIdx + 1) % m_fileMaxCount;
+        std::cout << "  next file idx:" << _curFileIdx;
+
+        { // 拼接新路径, 重置 写操作的偏移量
+            ss.str("");
+            ss << std::setw(2) << std::setfill('0') << _curFileIdx ;
+            m_curWriteFilePath = m_dirPath + ss.str();
+            m_curWriteOffset = spFHead->sizeGet();
+        }
+
+        // 执行文件头更新
+        headWrite( m_curWriteFilePath );
+
+        std::cout << "  write offset:" << m_curWriteOffset << std::endl;
     }
-
-    // 执行文件头更新
-    headWrite( m_curWriteFilePath );
-    std::cout << "  write offset:" << m_curWriteOffset << std::endl;
+// done:
+    return;
 }

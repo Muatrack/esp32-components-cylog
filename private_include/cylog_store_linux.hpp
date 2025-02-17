@@ -38,6 +38,7 @@ public:
     /* 写入指定文件头部数据*/
     CL_TYPE_t headWrite( const std::filesystem::path &fPath ) override;
     CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
+    CL_TYPE_t itemWrite( const uint8_t* in, uint16_t iLen ) override;
 
     /** 
      * 找到最后写入的文件。
@@ -46,6 +47,9 @@ public:
 
     /** 
      * 选择下一个文件，并初始化文件头部。
+     * - 当前文件如已写满，则选择下一个文件. 
+     * - 如未写满继续使用当前文件.
+     * 
      */
     void nextFileSelect() override;
 

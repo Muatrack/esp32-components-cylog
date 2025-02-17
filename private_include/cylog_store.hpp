@@ -46,7 +46,7 @@ public:
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+    virtual CL_TYPE_t itemWrite(const uint8_t* in, uint16_t iLen) {
         return CL_OK;
     };
 
@@ -69,6 +69,14 @@ public:
 
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
+
+    /**
+     * 判断当前文件是否已满 
+     * - 判断逻辑使用当前的写偏移量 + 空洞大小 与文件大小比较
+    */
+    bool isCurFileFull() {
+        return ( (m_curWriteOffset + CYLOG_FILE_HOLE_SIZE) >= m_fileMaxLength);
+    }
 
 protected:
     uint32_t     m_fileMaxCount;     // 文件数量上限

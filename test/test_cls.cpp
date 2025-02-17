@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <memory>
+#include <unistd.h>
 #include "private_include/cylog_factory.hpp"
 #include "private_include/cylog_impl_alarm.hpp"
 #include "private_include/cylog_store_linux.hpp"
@@ -17,7 +18,8 @@ extern void test_adv_prointer();
 using namespace std;
 
 void alarm_log_test() {
-    
+
+    uint8_t _dataBuf[64] = { 0x0 };
     /** do test */
     #if 0
     test_adv_prointer();
@@ -31,13 +33,18 @@ void alarm_log_test() {
     CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a/", pStore );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
-    void* fc = nullptr;
+
     if( pAlarmLog != nullptr ) {
         pAlarmLog->logInit();
         pAlarmLog->create();
-        pAlarmLog->read("/dddfa", fc);
-        pAlarmLog->write("ddddfa", fc);
-        pAlarmLog->remove("dfadfa");
+        // pAlarmLog->read("/dddfa", fc);
+        for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
+        
+        for( int i=0; i < 200; i ++ ) {
+            pAlarmLog->write(_dataBuf, sizeof(_dataBuf));
+            sleep(1);
+        }
+        // pAlarmLog->remove("dfadfa");
     } else {
         std::cout << "pAlarmLog is NULL" << std::endl;
     }
