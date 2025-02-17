@@ -43,7 +43,7 @@ void alarm_log_test() {
     #if 1
         for( int i=0; i < 200; i ++ ) {
             pAlarmLog->write(_dataBuf, sizeof(_dataBuf));
-            sleep(1);
+            usleep(500000);
         }
     #endif
 
