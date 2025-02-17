@@ -57,6 +57,11 @@ public:
     */
     virtual CL_TYPE_t init() = 0;
 
+    /**
+     * 选择可写文件名称及文件绝对偏移量
+     */
+    virtual void writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) = 0;
+
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
 
@@ -65,7 +70,7 @@ protected:
     uint32_t     m_fileCurCount;     // 已存在文件数量
     uint32_t    m_fileMaxLength;    // 单文件的最大长度
     uint32_t    m_curWriteOffset;   // 当前正在写文件中的写操作偏移位置
-    std::string m_curWriteFile;     // 当前正在写入的文件路径
+    std::string m_curWriteFilePath;     // 当前正在写入的文件路径
     std::string m_fileNamePrefix;   //文件名称前缀
     std::string m_dirPath;          // 文件目录
 };

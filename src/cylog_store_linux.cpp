@@ -33,12 +33,7 @@ CL_TYPE_t StoreLinux::init() {
 
     // 依据上步文件信息，计算下一个写数据的文件路径及对应的写数据偏移位置
         // 选文件计算方法
-    for( int i=0;i < spFHeadList->size(); i ++ ) {
-        std::cout   << "  file:" << spFHeadList->at(i).nameGet() 
-                    << " offset:" << spFHeadList->at(i).offsetGet() 
-                    << " rTm:"   << spFHeadList->at(i).rTmGet() 
-                    << std::endl;
-    }
+    writableLocate( spFHeadList );
 
     std::cout<< "------------------- StoreLinux::init DONE -------------------" << std::endl;
     return CL_OK;
@@ -50,6 +45,7 @@ void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::strin
     m_fileCurCount = 0;
     m_dirPath = fDir;
     m_fileNamePrefix = fPrefix;
+    m_fileHoleSize   = 32;
 
     std::cout<< "StoreLinux::configSet()" << std::endl;
 }
@@ -171,4 +167,35 @@ CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
     return CL_OK;
 excp:
     return CL_EXCP_UNKNOW;
+}
+
+void StoreLinux::writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
+    uint64_t _reWriteTs = 0;       // 最后重写入时间
+    uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
+
+    // 遍历列表，筛选重写时间戳最大的文件作为写操作目标文件
+    {
+        for( uint32_t i=0;i < spFHeadList->size(); i ++ ) {
+            std::cout   << "  file:" << spFHeadList->at(i).nameGet() 
+                        << " offset:" << spFHeadList->at(i).offsetGet() 
+                        << " rTm:"   << spFHeadList->at(i).rTmGet() 
+            << std::endl;
+            
+            if( spFHeadList->at(i).rTmGet() > _reWriteTs ) {
+                _reWriteTs = spFHeadList->at(i).rTmGet();
+                _listIndexSelected = i;
+            }
+        }
+
+        m_curWriteFilePath = m_dirPath + spFHeadList->at(_listIndexSelected).nameGet();
+    }
+
+    // 遍历目标文件中可写数据的绝对位置(写入偏移量)
+    {
+        std::shared_ptr<CLFile::FileItem> spFileItem = std::make_shared<CLFile::FileItem>();
+        std::filesystem::path fPath = m_curWriteFilePath;
+        m_curWriteOffset = spFileItem->wOffsetGet( fPath );
+    }
+
+    std::cout << "    [ Current Writable File: " << m_curWriteFilePath << ", offset: " << m_curWriteOffset << std::endl;
 }

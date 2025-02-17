@@ -38,4 +38,12 @@ public:
     /* 写入指定文件头部数据*/
     CL_TYPE_t headWrite( const std::filesystem::path &fPath ) override;
     CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
+
+    /** 
+     * 可写文件及offset定位
+     */
+    void writableLocate( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
+
+private:
+    uint16_t    m_fileHoleSize;     /* 文件尾部的空洞大小 32字节 */
 };
