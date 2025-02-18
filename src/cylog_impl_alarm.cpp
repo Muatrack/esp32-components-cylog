@@ -1,29 +1,14 @@
 #include "private_include/cylog_factory.hpp"
 #include "private_include/cylog_impl_alarm.hpp"
 
-CL_TYPE_t CYLogImplAlarm::read(const std::string &path, void* out ) {
-    std::cout << "Alarm read." << std::endl;
-    // storeGet()->dirRead();
-    return CL_OK; 
-};
-
 CL_TYPE_t CYLogImplAlarm::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
     storeGet()->itemWrite( in, iLen );
     return CL_OK;
 }
 
-CL_TYPE_t CYLogImplAlarm::remove(const std::string &path){
-    std::cout << "Alarm remove." << std::endl;
-    return CL_OK;
-}
-
 CL_TYPE_t CYLogImplAlarm::create() {
     std::cout << "Alarm create." << std::endl;
-    return CL_OK;
-}
-
-CL_TYPE_t CYLogImplAlarm::listGet(){
     return CL_OK;
 }
 
@@ -43,3 +28,22 @@ CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shar
     std::cout << "CyLogFactoryAlarm::createLog" << std::endl;
     return new CYLogImplAlarm(logDir, store);
 }
+
+#if 0
+
+CL_TYPE_t CYLogImplAlarm::remove(const std::string &path){
+    std::cout << "Alarm remove." << std::endl;
+    return CL_OK;
+}
+
+CL_TYPE_t CYLogImplAlarm::listGet(){
+    return CL_OK;
+}
+
+CL_TYPE_t CYLogImplAlarm::read(const std::string &path, void* out ) {
+    std::cout << "Alarm read." << std::endl;
+    // storeGet()->dirRead();
+    return CL_OK; 
+};
+
+#endif

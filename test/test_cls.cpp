@@ -41,7 +41,7 @@ void alarm_log_test() {
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
 
     #if 1
-        for( int i=0; i < 200; i ++ ) {
+        for( int i=0; i < 1000; i ++ ) {
             pAlarmLog->write(_dataBuf, sizeof(_dataBuf));
             usleep(500000);
         }
