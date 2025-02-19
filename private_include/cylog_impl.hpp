@@ -23,8 +23,6 @@ public:
 
     /** 新建日志文件 */
     virtual CL_TYPE_t create() = 0;
-    /** 读取日志文件 */
-    virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
     /** 写日志到文件 */
     virtual CL_TYPE_t write(const uint8_t* in, uint16_t iLen) = 0;    
     /** 日志目录初始化 */
@@ -35,6 +33,8 @@ public:
     virtual CL_TYPE_t listGet() { return CL_OK; } ;
     /** 删除日志文件 */
     virtual CL_TYPE_t remove( const std::string &path) { return CL_OK; };
+    /** 读取日志文件 */
+    // virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
 
     virtual ~CYLogImplAbs(){};
 
