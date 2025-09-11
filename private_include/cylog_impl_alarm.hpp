@@ -17,6 +17,9 @@
  */
 class CYLogImplAlarm : public CYLogImplAbs {
 public:
+
+    void logInit() override;
+
     CL_TYPE_t create() override;
 
     /**
@@ -25,8 +28,8 @@ public:
      * @param iLen 待写数据的共计长度
      */
     CL_TYPE_t write(const uint8_t* in, uint16_t iLen) override;    
-
-    void logInit() override;
+    
+    CL_TYPE_t traverse(log_read_cb_t cb) override;
 
     CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store );
     ~CYLogImplAlarm(){

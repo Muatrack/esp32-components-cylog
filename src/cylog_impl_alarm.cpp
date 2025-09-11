@@ -29,6 +29,18 @@ CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shar
     return new CYLogImplAlarm(logDir, store);
 }
 
+CL_TYPE_t CYLogImplAlarm::traverse(log_read_cb_t cb=nullptr) {
+    if( cb==nullptr ) { goto excp; }
+
+    while( 0 ) {
+        if( cb(NULL, 0)<0 ) { break; }
+    }
+
+    return CL_OK;
+excp:
+    return CL_PARAM_INVALID;
+}
+
 #if 0
 
 CL_TYPE_t CYLogImplAlarm::remove(const std::string &path){

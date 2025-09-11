@@ -4,7 +4,7 @@ project(cylog)
 SET(CMAKE_BUILD_TYPE "Debug")
 
 set(
-    SRCS        
+    SRCS
         src/cylog_impl_excp.cpp
         src/cylog_impl_alarm.cpp
         src/cylog_store_linux.cpp
@@ -41,6 +41,6 @@ else()
 endif()
 
 target_include_directories(cylog
-                PRIVATE         ./
-                INTERFACE       include
+                PRIVATE      ./
+                PUBLIC       include
 )

@@ -17,6 +17,9 @@
  */
 class CYLogImplExcp : public CYLogImplAbs {
 public:
+    
+void logInit() override;
+    
     CL_TYPE_t create() override;
 
     /**
@@ -24,9 +27,9 @@ public:
      * @param in 待写数据的地址
      * @param iLen 待写数据的共计长度
      */
-    CL_TYPE_t write(const uint8_t* in, uint16_t iLen) override;    
+    CL_TYPE_t write(const uint8_t* in, uint16_t iLen) override;        
 
-    void logInit() override;
+    CL_TYPE_t traverse(log_read_cb_t cb) override;
 
     CYLogImplExcp(const std::string & dir, std::shared_ptr<StoreAbs> &store );
     ~CYLogImplExcp(){

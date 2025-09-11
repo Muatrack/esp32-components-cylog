@@ -29,6 +29,19 @@ CYLogImplAbs* CyLogFactoryExcp::createLog(const std::string & logDir, std::share
     return new CYLogImplExcp(logDir, store);
 }
 
+
+CL_TYPE_t CYLogImplExcp::traverse(log_read_cb_t cb) {
+    if( cb==nullptr ) { goto excp; }
+
+    while( 0 ) {
+        if( cb(NULL, 0)<0 ) { break; }
+    }
+
+    return CL_OK;
+excp:
+    return CL_PARAM_INVALID;
+}
+
 #if 0
 
 CL_TYPE_t CYLogImplExcp::remove(const std::string &path){
