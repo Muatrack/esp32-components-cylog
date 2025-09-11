@@ -3,10 +3,19 @@
 #include "common.hpp"
 #include <filesystem>
 #include <private_include/cylog_file.hpp>
+#include <semaphore.h>
+
+#ifdef  CYLOG_MAX_RW_CUROPTS
+    #define STORE_CURR_OPTS_COUNT CYLOG_MAX_RW_CUROPTS
+#else
+    #define STORE_CURR_OPTS_COUNT 1 /*缺省值*/
+#endif
 
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
 public:
+
+    StoreAbs(){ sem_init(&m_signal, 0, STORE_CURR_OPTS_COUNT); }
 
     virtual ~StoreAbs(){
         std::cout << "~StoreAbs()" << std::endl;
@@ -78,7 +87,31 @@ public:
         return ( (m_curWriteOffset + CYLOG_FILE_HOLE_SIZE) >= m_fileMaxLength);
     }
 
+    /**
+     * 向存储发起读写请求前，获取操作锁
+     * 
+     * @param wait_tms 等待锁超时时间(ms), 缺省值10ms
+     * @return 
+     * 
+     * - true: 加锁成功
+     * 
+     * - false: 加锁失败
+     */
+    bool optLock(uint32_t wait_tms=10) {
+        timespec wt = { .tv_sec = wait_tms/1000, .tv_nsec = (wait_tms%1000)*1000000};
+        return sem_timedwait(&m_signal, &wt)==0;
+    }
+
+    /**
+     * 对操作所解锁(增加信号量的值)
+     */
+    void optUnLock() {
+        sem_post(&m_signal);
+    }
+
 protected:
+
+/* v1 */
     uint32_t     m_fileMaxCount;     // 文件数量上限
     uint32_t     m_fileCurCount;     // 已存在文件数量
     uint32_t    m_fileMaxLength;    // 单文件的最大长度
@@ -86,5 +119,11 @@ protected:
     std::string m_curWriteFilePath;     // 当前正在写入的文件路径
     std::string m_fileNamePrefix;   //文件名称前缀
     std::string m_dirPath;          // 文件目录
+/* v1 done */
+
+/* v2 */
+    // 信号量
+    sem_t m_signal;
+/* v2 done */
 };
 

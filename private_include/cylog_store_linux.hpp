@@ -6,11 +6,11 @@
 #include "cylog_store.hpp"
 #include "private_include/cylog_file.hpp"
 
+using namespace std;
 
 class StoreLinux : public StoreAbs {
 
-public:
-
+public:    
     StoreLinux() = default;
     StoreLinux(StoreLinux&s) = delete;
 

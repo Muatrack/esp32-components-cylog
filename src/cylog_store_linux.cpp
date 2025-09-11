@@ -182,7 +182,6 @@ excp:
 }
 
 CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen) {
-
     CL_TYPE_t _err = CL_OK;
     bool _bReWriten = false;
     uint8_t _buf[2] = {0};
@@ -192,6 +191,13 @@ CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen) {
         goto excp;
     }
     
+    // 获取读写资源 
+    if( optLock() == false ) {
+        cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
+        _err = CL_LOG_BUSY;
+        goto lock_excp;
+    }
+
 re_write:
     // 判断当前文件是否能够写下 iLen 长的数据
     if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
@@ -229,6 +235,10 @@ re_write:
         m_curWriteOffset += (sizeof(iLen) + iLen);
     }
 excp:
+    optUnLock();    
+    return _err;
+
+lock_excp:
     return _err;
 };
 

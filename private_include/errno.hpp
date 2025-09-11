@@ -18,6 +18,7 @@ using CL_TYPE_t = uint16_t;
 #define CL_FILE_FULL           02   // 文件已写满
 #define CL_DIR_NOT_EXIST       10    // 目录不存在
 #define CL_PARAM_INVALID       20    // 参数无效
+#define CL_LOG_BUSY            21    // 获取存储锁(资源)失败
 #define CL_EXCP_UNKNOW         0xff    // 未知异常
 
 /** 读取日志 */
