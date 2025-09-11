@@ -31,6 +31,7 @@ using Serial=CyLogUtils::Serializer;
 /** 文件描述类 */
 class FileDesc {
 public:
+    FileDesc()=default;
     FileDesc(std::string name, std::string path, uint32_t fMaxSize, uint32_t wOffset, uint64_t rTms): m_Name(name), m_Path(path), m_Size(fMaxSize), m_Offset(wOffset), m_RTm(rTms) {};
     ~FileDesc() {};
 

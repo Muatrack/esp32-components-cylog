@@ -55,7 +55,7 @@ public:
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite(const uint8_t* in, uint16_t iLen) {
+    virtual CL_TYPE_t itemWrite(const uint8_t* in, uint16_t iLen, CLFile::FileDesc &fDesc) {
         return CL_OK;
     };
 

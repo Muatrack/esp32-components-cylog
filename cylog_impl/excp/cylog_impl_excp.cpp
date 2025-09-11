@@ -3,12 +3,14 @@
 
 CL_TYPE_t CYLogImplExcp::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Excp write." << std::endl;
-    storeGet()->itemWrite( in, iLen );
+    storeGet()->itemWrite( in, iLen, m_fDesc );
     return CL_OK;
 }
 
 CL_TYPE_t CYLogImplExcp::create() {
     std::cout << "Excp create." << std::endl;
+
+    m_fDesc = CLFile::FileDesc("excp", "/tmp/logs", 1024, 0, 1024);
     return CL_OK;
 }
 

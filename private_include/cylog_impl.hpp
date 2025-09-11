@@ -43,6 +43,9 @@ public:
     virtual ~CYLogImplAbs(){};
 
     std::shared_ptr<StoreAbs> storeGet() { return m_Store; }
+
+protected:
+    CLFile::FileDesc m_fDesc;
 private:
     std::shared_ptr<StoreAbs> m_Store;
 };

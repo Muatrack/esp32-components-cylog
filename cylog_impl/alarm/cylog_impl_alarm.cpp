@@ -3,12 +3,13 @@
 
 CL_TYPE_t CYLogImplAlarm::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
-    storeGet()->itemWrite( in, iLen );
+    storeGet()->itemWrite( in, iLen, m_fDesc);
     return CL_OK;
 }
 
 CL_TYPE_t CYLogImplAlarm::create() {
     std::cout << "Alarm create." << std::endl;
+    m_fDesc = CLFile::FileDesc("alarm", "/tmp/logs", 1024, 0, 1024);
     return CL_OK;
 }
 
