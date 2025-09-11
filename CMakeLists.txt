@@ -1,10 +1,11 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 project(cylog)
 
 SET(CMAKE_BUILD_TYPE "Debug")
 
 set(
     SRCS        
+        src/cylog_impl_excp.cpp
         src/cylog_impl_alarm.cpp
         src/cylog_store_linux.cpp
 )

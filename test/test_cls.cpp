@@ -6,8 +6,10 @@
 #include <memory>
 #include <unistd.h>
 #include "private_include/cylog_factory.hpp"
-#include "private_include/cylog_impl_alarm.hpp"
 #include "private_include/cylog_store_linux.hpp"
+#include "private_include/cylog_impl_alarm.hpp"
+#include "private_include/cylog_impl_excp.hpp"
+
 
 #ifdef USE_SYSTEM_LINUX
 #include <stdint.h>
@@ -29,20 +31,28 @@ void alarm_log_test() {
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
-    CYLogFactoryAbs *pFactory     = new CyLogFactoryAlarm();
-    CYLogImplAbs    *pAlarmLog    = pFactory->createLog( "/tmp/a/", pStore );
+    CYLogFactoryAbs *pAlarmFactory     = new CyLogFactoryAlarm();
+    CYLogFactoryAbs *pExcpFactory      = new CyLogFactoryExcp();
+    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->createLog( "/tmp/alarm/", pStore );
+    CYLogImplAbs    *pExcpLog     = pExcpFactory->createLog( "/tmp/excp/", pStore );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
 
     if( pAlarmLog != nullptr ) {
         pAlarmLog->logInit();
         pAlarmLog->create();
+
+        pExcpLog->logInit();
+        pExcpLog->create();
+
         // pAlarmLog->read("/dddfa", fc);
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
 
     #if 1
-        for( int i=0; i < 1000; i ++ ) {
+        for( int i=0; i < 60; i ++ ) {
             pAlarmLog->write(_dataBuf, sizeof(_dataBuf));
+            usleep(500000);
+            pExcpLog->write(_dataBuf, sizeof(_dataBuf));
             usleep(500000);
         }
     #endif
@@ -53,7 +63,7 @@ void alarm_log_test() {
     }
 
     delete pAlarmLog;
-    delete pFactory;
+    delete pAlarmFactory;
 }
 
 
