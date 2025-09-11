@@ -1,5 +1,5 @@
 #include "private_include/cylog_factory.hpp"
-#include "private_include/cylog_impl_excp.hpp"
+#include "cylog_impl_excp.hpp"
 
 CL_TYPE_t CYLogImplExcp::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Excp write." << std::endl;

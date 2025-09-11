@@ -7,8 +7,8 @@
 #include <unistd.h>
 #include "private_include/cylog_factory.hpp"
 #include "private_include/cylog_store_linux.hpp"
-#include "private_include/cylog_impl_alarm.hpp"
-#include "private_include/cylog_impl_excp.hpp"
+#include "cylog_alarm/cylog_impl_alarm.hpp"
+#include "cylog_excp/cylog_impl_excp.hpp"
 
 
 #ifdef USE_SYSTEM_LINUX

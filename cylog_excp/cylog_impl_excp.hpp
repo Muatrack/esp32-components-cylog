@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common.hpp"
-#include "cylog_impl.hpp"
+#include "private_include/common.hpp"
+#include "private_include/cylog_impl.hpp"
 
 
 /* 告警日志文件数量的上限 */

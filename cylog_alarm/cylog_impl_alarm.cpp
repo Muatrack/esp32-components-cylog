@@ -1,5 +1,5 @@
 #include "private_include/cylog_factory.hpp"
-#include "private_include/cylog_impl_alarm.hpp"
+#include "cylog_impl_alarm.hpp"
 
 CL_TYPE_t CYLogImplAlarm::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
