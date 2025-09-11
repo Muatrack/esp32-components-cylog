@@ -11,7 +11,8 @@
 
 .. toctree::
     :caption: 日志组件
-
+    
+    chapter/requirements
     chapter/log_rdwr
     chapter/class_def
     chapter/algorithm
