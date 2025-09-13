@@ -8,7 +8,7 @@
 #include "errno.hpp"
 #include "common.hpp"
 #include "cylog_file.hpp"
-#include "cylog_store.hpp"
+#include "cylog_store_abs.hpp"
 #include "cylog_c_api.hpp"
 
 ////////////////////////////////////////////////////
