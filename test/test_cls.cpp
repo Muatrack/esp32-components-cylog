@@ -15,12 +15,12 @@
 #include <stdint.h>
 #endif
 
-#ifdef  CYLOG_MAX_RW_CUROPTS
+#ifdef  CYLOG_MAX_RW_CUROPTS    /* 定义同时执行读写操作的数量 */
     #define STORE_CURR_OPTS_COUNT CYLOG_MAX_RW_CUROPTS
 #else
     #define STORE_CURR_OPTS_COUNT 1 /*缺省值*/
 #endif
-#define STORE_LOG_ROOT_DIR  "/tmp/logroot/"
+#define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
 
 
 extern void test_adv_prointer();
