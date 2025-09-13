@@ -30,6 +30,7 @@ void alarm_log_test() {
     //  do test
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
+    StoreLinux::StoreInit();
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pAlarmFactory     = new CyLogFactoryAlarm();
     CYLogFactoryAbs *pExcpFactory      = new CyLogFactoryExcp();
