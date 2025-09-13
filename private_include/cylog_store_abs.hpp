@@ -4,18 +4,13 @@
 #include <filesystem>
 #include <private_include/cylog_file.hpp>
 #include <semaphore.h>
-
-#ifdef  CYLOG_MAX_RW_CUROPTS
-    #define STORE_CURR_OPTS_COUNT CYLOG_MAX_RW_CUROPTS
-#else
-    #define STORE_CURR_OPTS_COUNT 1 /*缺省值*/
-#endif
+#include <private_include/errno.hpp>
 
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
 public:
 
-    StoreAbs(){ sem_init(&m_signal, 0, STORE_CURR_OPTS_COUNT); }
+    StoreAbs(){};
 
     virtual ~StoreAbs(){
         std::cout << "~StoreAbs()" << std::endl;
@@ -109,6 +104,10 @@ public:
         sem_post(&m_signal);
     }
 
+public:
+    static sem_t m_signal;
+    static void StoreInit();
+
 protected:
 
 /* v1 */
@@ -120,10 +119,5 @@ protected:
     std::string m_fileNamePrefix;   //文件名称前缀
     std::string m_dirPath;          // 文件目录
 /* v1 done */
-
-/* v2 */
-    // 信号量
-    sem_t m_signal;
-/* v2 done */
 };
 
