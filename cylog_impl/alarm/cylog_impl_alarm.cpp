@@ -25,8 +25,8 @@ CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs
     storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, ALARM_LOG_FILE_NAME_PREFIX );
 }
 
-CYLogImplAbs* CyLogFactoryAlarm::createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
-    std::cout << "CyLogFactoryAlarm::createLog" << std::endl;
+CYLogImplAbs* CyLogFactoryAlarm::dirInit(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+    std::cout << "CyLogFactoryAlarm::dirInit" << std::endl;
     return new CYLogImplAlarm(logDir, store);
 }
 

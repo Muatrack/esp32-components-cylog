@@ -26,8 +26,8 @@ CYLogImplExcp::CYLogImplExcp(const std::string & dir, std::shared_ptr<StoreAbs> 
     storeGet()->configSet( EXCP_LOG_FILE_MAX_COUNT, EXCP_LOG_FILE_MAX_LEN, dir, EXCP_LOG_FILE_NAME_PREFIX );
 }
 
-CYLogImplAbs* CyLogFactoryExcp::createLog(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
-    std::cout << "CyLogFactoryExcp::createLog" << std::endl;
+CYLogImplAbs* CyLogFactoryExcp::dirInit(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+    std::cout << "CyLogFactoryExcp::dirInit" << std::endl;
     return new CYLogImplExcp(logDir, store);
 }
 
