@@ -34,20 +34,21 @@ using Serial=CyLogUtils::Serializer;
  */
 class FileDesc {
 public:
-    FileDesc()=delete;
+    FileDesc()=default;
+    // FileDesc(FileDesc&)=delete;
 
-    /** 
-     * prefix: 文件名称的前缀
+    /**      
      * logPath: 分类日志存储的相对路径
+     * prefix: 文件名称的前缀
      * fSize: 单个文件的大小
      * fCount: 日志文件的总数
      */
-    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount): 
-                    m_LogPath(logPath),m_Prefix(prefix), m_FSize(), m_FCount(fCount){};
+    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount):
+                m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount){};
     ~FileDesc() {};
 
     /** 读取文件名称前缀 */
-    std::string fileNamePrefixGet() { return m_Prefix; };
+    std::string filePrefixGet() { return m_Prefix; };
     /** 读取文件相对路径 */
     std::string relativePathGet() { return m_LogPath; };
     /** 读取文件的数量 */
@@ -67,10 +68,10 @@ public:
 private:
 
     /*immutable member */
+    std::string m_LogPath;      // 日志文件的相对路径
     std::string m_Prefix;       // 文件名称前缀
     uint32_t    m_FSize;        // 单个日志文件大小
     uint8_t     m_FCount;       // 日志文件的数量
-    std::string m_LogPath;      // 日志文件的相对路径
 
     /* mutable member */
     std::string m_WPath;        // 当前可写文件文件相对路径

@@ -18,9 +18,9 @@
 class CYLogImplExcp : public CYLogImplAbs {
 public:
     
-void logInit() override;
+    void logInit() override;
     
-    CL_TYPE_t create() override;
+    // CL_TYPE_t create() override;
 
     /**
      * 写数据到日志文件

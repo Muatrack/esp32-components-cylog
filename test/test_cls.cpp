@@ -50,10 +50,10 @@ void alarm_log_test() {
 
     if( pAlarmLog != nullptr ) {
         pAlarmLog->logInit();
-        pAlarmLog->create();
+        // pAlarmLog->create();
 
         pExcpLog->logInit();
-        pExcpLog->create();
+        // pExcpLog->create();
 
         // pAlarmLog->read("/dddfa", fc);
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }

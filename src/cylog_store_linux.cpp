@@ -113,8 +113,8 @@ CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & 
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
             spFileHead->deSerialize( fPath );
-            pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
-                                    spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
+            // pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
+            //                         spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
             // std::cout << "  file:" << fPath << std::endl;
         }
     }
@@ -186,7 +186,7 @@ CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen, CLFile::FileDe
     bool _bReWriten = false;
     uint8_t _buf[2] = {0};
 
-    cout << "Gonna write data to " << fDesc.pathGet() << "/" << fDesc.nameGet() << "/..." << endl;
+    cout << "Gonna write data to " << fDesc.wFilePathGet() << "/" << fDesc.filePrefixGet() << "/..." << endl;
 
     // 判断参数有效性
     if( (in==nullptr) || (iLen<1) ) {
@@ -245,24 +245,18 @@ lock_excp:
 };
 
 void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
-    uint64_t _reWriteTs = 0;       // 最后重写入时间
+    // uint64_t _reWriteTs = 0;       // 最后重写入时间
     uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
 
     std::cout << "**************** " << __func__ << " **************" << std::endl;
     // 遍历列表，筛选重写时间戳最大的文件作为写操作目标文件
     {
         for( uint32_t i=0;i < spFHeadList->size(); i ++ ) {
-            std::cout   << "  file:" << spFHeadList->at(i).nameGet() 
-                        << " offset:" << std::setw(4) << spFHeadList->at(i).offsetGet() 
-                        << " rTm:"   << spFHeadList->at(i).rTmGet() 
+            std::cout   << "  file:" << spFHeadList->at(i).filePrefixGet() 
+                        << " offset:" << std::setw(4) << spFHeadList->at(i).wFileOffsetGet() 
             << std::endl;
-            
-            if( spFHeadList->at(i).rTmGet() > _reWriteTs ) {
-                _reWriteTs = spFHeadList->at(i).rTmGet();
-                _listIndexSelected = i;
-            }
         }
-        m_curWriteFilePath = m_dirPath + spFHeadList->at(_listIndexSelected).nameGet();
+        m_curWriteFilePath = m_dirPath + spFHeadList->at(_listIndexSelected).filePrefixGet();
     }
 
     // 遍历目标文件中可写数据的绝对位置(写入偏移量)

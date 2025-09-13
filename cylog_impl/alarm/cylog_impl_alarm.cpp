@@ -7,11 +7,11 @@ CL_TYPE_t CYLogImplAlarm::write(const uint8_t* in, uint16_t iLen){
     return CL_OK;
 }
 
-CL_TYPE_t CYLogImplAlarm::create() {
-    std::cout << "Alarm create." << std::endl;
-    m_fDesc = CLFile::FileDesc("alarm", "/tmp/logs", 1024, 0, 1024);
-    return CL_OK;
-}
+// CL_TYPE_t CYLogImplAlarm::create() {
+//     std::cout << "Alarm create." << std::endl;
+//     m_fDesc = CLFile::FileDesc("alarm", "al", 4*1024, 4);
+//     return CL_OK;
+// }
 
 void CYLogImplAlarm::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
@@ -23,11 +23,6 @@ CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs
                                                                 CYLogImplAbs( store ) {
     std::cout << "CYLogImplAlarm instance created." << std::endl;
     storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, ALARM_LOG_FILE_NAME_PREFIX );
-}
-
-CYLogImplAbs* CyLogFactoryAlarm::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
-    std::cout << "CyLogFactoryAlarm::create" << std::endl;
-    return new CYLogImplAlarm(logDir, store);
 }
 
 CL_TYPE_t CYLogImplAlarm::traverse(log_read_cb_t cb=nullptr) {
@@ -55,8 +50,14 @@ CL_TYPE_t CYLogImplAlarm::listGet(){
 
 CL_TYPE_t CYLogImplAlarm::read(const std::string &path, void* out ) {
     std::cout << "Alarm read." << std::endl;
-    // storeGet()->dirRead();
     return CL_OK; 
 };
 
 #endif
+
+/*************************************************** Factory ******************************************************/
+
+CYLogImplAbs* CyLogFactoryAlarm::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+    std::cout << "CyLogFactoryAlarm::create" << std::endl;
+    return new CYLogImplAlarm(logDir, store);
+}

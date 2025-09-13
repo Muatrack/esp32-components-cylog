@@ -20,13 +20,10 @@ class CYLogImplAbs {
 
 public:
 
-    CYLogImplAbs( std::shared_ptr<StoreAbs> &store ):m_Store(store){}
+    CYLogImplAbs( std::shared_ptr<StoreAbs> &store ):m_Store(store){};
 
     /** 日志目录初始化 */
     virtual void logInit() = 0;
-
-    /** 新建日志文件 */
-    virtual CL_TYPE_t create() = 0;
     
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
@@ -38,7 +35,7 @@ public:
     // virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
 
     /** 删除日志文件 */
-    virtual CL_TYPE_t remove( const std::string &path) { return CL_OK; };
+    // virtual CL_TYPE_t remove( const std::string &path) { return CL_OK; };
 
     virtual ~CYLogImplAbs(){};
 

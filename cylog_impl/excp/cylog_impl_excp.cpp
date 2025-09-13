@@ -7,12 +7,12 @@ CL_TYPE_t CYLogImplExcp::write(const uint8_t* in, uint16_t iLen){
     return CL_OK;
 }
 
-CL_TYPE_t CYLogImplExcp::create() {
-    std::cout << "Excp create." << std::endl;
+// CL_TYPE_t CYLogImplExcp::create() {
+//     std::cout << "Excp create." << std::endl;
 
-    m_fDesc = CLFile::FileDesc("excp", "/tmp/logs", 1024, 0, 1024);
-    return CL_OK;
-}
+//     m_fDesc = CLFile::FileDesc("exec", "ex", 4*1024, 4);
+//     return CL_OK;
+// }
 
 void CYLogImplExcp::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
@@ -25,12 +25,6 @@ CYLogImplExcp::CYLogImplExcp(const std::string & dir, std::shared_ptr<StoreAbs> 
     std::cout << "CYLogImplExcp instance created." << std::endl;
     storeGet()->configSet( EXCP_LOG_FILE_MAX_COUNT, EXCP_LOG_FILE_MAX_LEN, dir, EXCP_LOG_FILE_NAME_PREFIX );
 }
-
-CYLogImplAbs* CyLogFactoryExcp::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
-    std::cout << "CyLogFactoryExcp::create" << std::endl;
-    return new CYLogImplExcp(logDir, store);
-}
-
 
 CL_TYPE_t CYLogImplExcp::traverse(log_read_cb_t cb) {
     if( cb==nullptr ) { goto excp; }
@@ -62,3 +56,10 @@ CL_TYPE_t CYLogImplExcp::read(const std::string &path, void* out ) {
 };
 
 #endif
+
+/******************************************************* Factory *********************************************************/
+
+CYLogImplAbs* CyLogFactoryExcp::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+    std::cout << "CyLogFactoryExcp::create" << std::endl;
+    return new CYLogImplExcp(logDir, store);
+}
