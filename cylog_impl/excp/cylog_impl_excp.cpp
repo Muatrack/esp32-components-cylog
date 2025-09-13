@@ -10,7 +10,7 @@ CL_TYPE_t CYLogImplExcp::write(const uint8_t* in, uint16_t iLen){
 void CYLogImplExcp::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
    std::cout << "CYLogImplExcp::logInit()" << std::endl;
-   storeGet()->init();
+//    storeGet()->init();
 }
 
 CL_TYPE_t CYLogImplExcp::traverse(log_read_cb_t cb) {
@@ -28,7 +28,7 @@ excp:
 CYLogImplExcp::CYLogImplExcp(const std::string & dir, std::shared_ptr<StoreAbs> &store ):
                                                                 CYLogImplAbs( store ) {
     std::cout << "CYLogImplExcp instance created." << std::endl;
-    storeGet()->configSet( EXCP_LOG_FILE_MAX_COUNT, EXCP_LOG_FILE_MAX_LEN, dir, EXCP_LOG_FILE_NAME_PREFIX );
+    // storeGet()->configSet( EXCP_LOG_FILE_MAX_COUNT, EXCP_LOG_FILE_MAX_LEN, dir, EXCP_LOG_FILE_NAME_PREFIX );
 }
 
 /******************************************************* Factory *********************************************************/

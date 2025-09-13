@@ -14,7 +14,7 @@ public:
     StoreLinux() = default;
     StoreLinux(StoreLinux&s) = delete;
 
-    void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
+    // void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
     
     /* 新建指定目录，及所有新文件 */
     CL_TYPE_t dirCreate() override;
