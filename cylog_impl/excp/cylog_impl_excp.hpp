@@ -44,5 +44,5 @@ private:
 
 class CyLogFactoryExcp : public CYLogFactoryAbs {
 public:
-    CYLogImplAbs* dirInit(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
+    CYLogImplAbs* create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
 };
