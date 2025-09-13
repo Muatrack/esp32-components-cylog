@@ -28,25 +28,53 @@ enum class FileState:uint8_t {
 
 using Serial=CyLogUtils::Serializer;
 
-/** 文件描述类 */
+/** 
+ * 文件描述类
+ * 文件名称的组成由文件名称前缀+ '_' + [00-FF] 组成
+ */
 class FileDesc {
 public:
-    FileDesc()=default;
-    FileDesc(std::string name, std::string path, uint32_t fMaxSize, uint32_t wOffset, uint64_t rTms): m_Name(name), m_Path(path), m_Size(fMaxSize), m_Offset(wOffset), m_RTm(rTms) {};
+    FileDesc()=delete;
+
+    /** 
+     * prefix: 文件名称的前缀
+     * logPath: 分类日志存储的相对路径
+     * fSize: 单个文件的大小
+     * fCount: 日志文件的总数
+     */
+    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount): 
+                    m_LogPath(logPath),m_Prefix(prefix), m_FSize(), m_FCount(fCount){};
     ~FileDesc() {};
 
-    std::string nameGet() { return m_Name; };
-    std::string pathGet() { return m_Path; };
-    uint32_t sizeGet() { return m_Size; };
-    uint32_t offsetGet() { return m_Offset; };
-    uint32_t rTmGet() { return m_RTm; };
+    /** 读取文件名称前缀 */
+    std::string fileNamePrefixGet() { return m_Prefix; };
+    /** 读取文件相对路径 */
+    std::string relativePathGet() { return m_LogPath; };
+    /** 读取文件的数量 */
+    uint8_t     fileCountGet() { return m_FCount; }
+    /** 读取单个文件的大小 */
+    uint32_t    fileSizeGet() { return m_FSize; };
+    /** 读取当前可写文件的相对路径 */
+    std::string wFilePathGet() { return m_WPath; };
+    /** 读取当前可写文件的写入偏移量 */
+    uint32_t    wFileOffsetGet() { return m_WOffset; };
+
+    /* 设置分类日志，当前可写的文件相对路径 */
+    void writableFilePathSet(std::string & path) { m_WPath = path; }
+    /* 设置分类日志，当前可写文件中的写时偏移量*/
+    void writableFileOffsetSet(uint32_t offset) { m_WOffset = offset; }
 
 private:
-    std::string m_Name; // 文件名称
-    std::string m_Path; // 文件路径
-    uint32_t m_Size;    // 文件大小
-    uint32_t m_Offset;  // 文件偏移
-    uint32_t m_RTm;    // 文件重写的时间戳
+
+    /*immutable member */
+    std::string m_Prefix;       // 文件名称前缀
+    uint32_t    m_FSize;        // 单个日志文件大小
+    uint8_t     m_FCount;       // 日志文件的数量
+    std::string m_LogPath;      // 日志文件的相对路径
+
+    /* mutable member */
+    std::string m_WPath;        // 当前可写文件文件相对路径
+    uint32_t    m_WOffset;      // 当前可写文件的位置偏移量
 };
 
 /**
