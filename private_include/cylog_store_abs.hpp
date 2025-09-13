@@ -105,8 +105,17 @@ public:
     }
 
 public:
+    /**
+     * 初始化存储资源
+     * 
+     * @param concurrCount 读写并行操作数量
+     * @param logDir 日志的存储路径
+     */
+    static void StoreInit(uint8_t concurCount, std::string & logDir);
+
+private:
+    static std::string m_absDir;
     static sem_t m_signal;
-    static void StoreInit();
 
 protected:
 
