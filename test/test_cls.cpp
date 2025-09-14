@@ -43,8 +43,8 @@ void alarm_log_test() {
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
-    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( "alarm", pStore );
-    CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  "excp",  pStore );
+    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", "alm", 1024, 4 );
+    CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  pStore, "excp", "ex", 1024, 4 );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
 

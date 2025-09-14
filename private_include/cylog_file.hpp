@@ -35,7 +35,7 @@ using Serial=CyLogUtils::Serializer;
 class FileDesc {
 public:
     FileDesc()=default;
-    // FileDesc(FileDesc&)=delete;
+    // FileDesc(FileDesc&)=default;
 
     /**      
      * logPath: 分类日志存储的相对路径

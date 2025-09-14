@@ -31,7 +31,7 @@ public:
     
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store );
+    CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc );
     ~CYLogAlarmImpl(){
         std::cout << "~CYLogAlarmImpl()" << std::endl;
     };
@@ -48,5 +48,5 @@ public:
          * @param logDir 存储日志的相对路径
          * @param store  存储对象
      */
-    CYLogImplAbs* create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
+    CYLogImplAbs* create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) override;
 };

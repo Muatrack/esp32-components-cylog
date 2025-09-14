@@ -19,8 +19,6 @@ class CYLogExcpImpl : public CYLogImplAbs {
 public:
     
     void logInit() override;
-    
-    // CL_TYPE_t create() override;
 
     /**
      * 写数据到日志文件
@@ -31,18 +29,15 @@ public:
 
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store );
+    CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc );
     ~CYLogExcpImpl(){
         std::cout << "~CYLogExcpImpl()" << std::endl;
     };
 
-    // CL_TYPE_t read(const std::string &path, void* out ) override;
-    // CL_TYPE_t remove(const std::string &path) override;
-    // CL_TYPE_t listGet() override;
 private:
 };
 
 class CyLogExcpFactory : public CYLogFactoryAbs {
 public:
-    CYLogImplAbs* create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
+    CYLogImplAbs* create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) override;
 };

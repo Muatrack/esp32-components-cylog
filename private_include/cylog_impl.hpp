@@ -20,7 +20,7 @@ class CYLogImplAbs {
 
 public:
 
-    CYLogImplAbs( std::shared_ptr<StoreAbs> &store ):m_Store(store){};
+    CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):m_Store(store){};
 
     /** 日志目录初始化 */
     virtual void logInit() = 0;

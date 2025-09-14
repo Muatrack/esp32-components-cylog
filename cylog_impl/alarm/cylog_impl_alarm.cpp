@@ -25,14 +25,14 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store ):CYLogImplAbs( store ) {
+CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
     std::cout << "CYLogAlarmImpl instance created." << std::endl;
-    // storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, ALARM_LOG_FILE_NAME_PREFIX );
 }
 
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogAlarmFactory::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) {
     std::cout << "CyLogAlarmFactory::create" << std::endl;
-    return new CYLogAlarmImpl(logDir, store);
+    std::shared_ptr<CLFile::FileDesc> pAlarmFD = std::make_shared<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    return new CYLogAlarmImpl(logDir, store, pAlarmFD);
 }

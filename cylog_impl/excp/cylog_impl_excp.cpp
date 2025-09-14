@@ -25,14 +25,14 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogExcpImpl::CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store ):CYLogImplAbs( store ) {
+CYLogExcpImpl::CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
     std::cout << "CYLogExcpImpl instance created." << std::endl;
-    // storeGet()->configSet( EXCP_LOG_FILE_MAX_COUNT, EXCP_LOG_FILE_MAX_LEN, dir, EXCP_LOG_FILE_NAME_PREFIX );
 }
 
 /******************************************************* Factory *********************************************************/
 
-CYLogImplAbs* CyLogExcpFactory::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) {
     std::cout << "CyLogExcpFactory::create" << std::endl;
-    return new CYLogExcpImpl(logDir, store);
+    std::shared_ptr<CLFile::FileDesc> pExcpFD = std::make_shared<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    return new CYLogExcpImpl(logDir, store, pExcpFD);
 }
