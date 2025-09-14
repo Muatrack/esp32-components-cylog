@@ -1,19 +1,19 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_alarm.hpp"
 
-CL_TYPE_t CYLogImplAlarm::write(const uint8_t* in, uint16_t iLen){
+CL_TYPE_t CYLogAlarmImpl::write(const uint8_t* in, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
     storeGet()->itemWrite( in, iLen, m_fDesc);
     return CL_OK;
 }
 
-void CYLogImplAlarm::logInit() {
+void CYLogAlarmImpl::logInit() {
     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
-   std::cout << "CYLogImplAlarm::logInit()" << std::endl;
+   std::cout << "CYLogAlarmImpl::logInit()" << std::endl;
 //    storeGet()->init();
 }
 
-CL_TYPE_t CYLogImplAlarm::traverse(log_read_cb_t cb=nullptr) {
+CL_TYPE_t CYLogAlarmImpl::traverse(log_read_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {
@@ -25,15 +25,14 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogImplAlarm::CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store ):
-                                                                CYLogImplAbs( store ) {
-    std::cout << "CYLogImplAlarm instance created." << std::endl;
+CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store ):CYLogImplAbs( store ) {
+    std::cout << "CYLogAlarmImpl instance created." << std::endl;
     // storeGet()->configSet( ALARM_LOG_FILE_MAX_COUNT, ALARM_LOG_FILE_MAX_LEN, dir, ALARM_LOG_FILE_NAME_PREFIX );
 }
 
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogFactoryAlarm::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
-    std::cout << "CyLogFactoryAlarm::create" << std::endl;
-    return new CYLogImplAlarm(logDir, store);
+CYLogImplAbs* CyLogAlarmFactory::create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) {
+    std::cout << "CyLogAlarmFactory::create" << std::endl;
+    return new CYLogAlarmImpl(logDir, store);
 }

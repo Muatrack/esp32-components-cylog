@@ -15,7 +15,7 @@
  * 日志类别-告警日志
  * - 
  */
-class CYLogImplExcp : public CYLogImplAbs {
+class CYLogExcpImpl : public CYLogImplAbs {
 public:
     
     void logInit() override;
@@ -31,9 +31,9 @@ public:
 
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogImplExcp(const std::string & dir, std::shared_ptr<StoreAbs> &store );
-    ~CYLogImplExcp(){
-        std::cout << "~CYLogImplExcp()" << std::endl;
+    CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store );
+    ~CYLogExcpImpl(){
+        std::cout << "~CYLogExcpImpl()" << std::endl;
     };
 
     // CL_TYPE_t read(const std::string &path, void* out ) override;
@@ -42,7 +42,7 @@ public:
 private:
 };
 
-class CyLogFactoryExcp : public CYLogFactoryAbs {
+class CyLogExcpFactory : public CYLogFactoryAbs {
 public:
     CYLogImplAbs* create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
 };

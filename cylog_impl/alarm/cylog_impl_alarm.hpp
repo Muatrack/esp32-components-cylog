@@ -15,7 +15,7 @@
  * 日志类别-告警日志
  * - 
  */
-class CYLogImplAlarm : public CYLogImplAbs {
+class CYLogAlarmImpl : public CYLogImplAbs {
 public:
 
     void logInit() override;
@@ -31,9 +31,9 @@ public:
     
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogImplAlarm(const std::string & dir, std::shared_ptr<StoreAbs> &store );
-    ~CYLogImplAlarm(){
-        std::cout << "~CYLogImplAlarm()" << std::endl;
+    CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store );
+    ~CYLogAlarmImpl(){
+        std::cout << "~CYLogAlarmImpl()" << std::endl;
     };
 
     // CL_TYPE_t read(const std::string &path, void* out ) override;
@@ -42,7 +42,11 @@ public:
 private:
 };
 
-class CyLogFactoryAlarm : public CYLogFactoryAbs {
+class CyLogAlarmFactory : public CYLogFactoryAbs {
 public:
+    /** 
+         * @param logDir 存储日志的相对路径
+         * @param store  存储对象
+     */
     CYLogImplAbs* create(const std::string & logDir, std::shared_ptr<StoreAbs> &store ) override;
 };
