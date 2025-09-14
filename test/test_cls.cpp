@@ -38,7 +38,7 @@ void alarm_log_test() {
     //  do test
 
     std::string rootPath = STORE_LOG_ROOT_DIR;
-    std::cout<< __func__<< "()." << __LINE__ << std::endl;
+    std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
