@@ -27,18 +27,24 @@ excp:
 
 CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
     std::cout << "CYLogExcpImpl instance created." << std::endl;
-
-    /* 初始化 异常日志目录 */
-    std::string excpLogAbsPath = store->rootDirGet() + "/" + logDir;
-    if( m_Store->dirCreate(excpLogAbsPath)==CL_OK ) {
-        std::cout << "CYLogExcpImpl log directory " << excpLogAbsPath << " get ready." << std::endl;
-    }
 }
 
 /******************************************************* Factory *********************************************************/
 
 CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) {
     std::cout << "CyLogExcpFactory::create" << std::endl;
+    
+    /** 建立文件对象 */
     std::shared_ptr<CLFile::FileDesc> pExcpFD = std::make_shared<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+
+    /** 建立日志绝对目录 */
+    std::string alarmLogAbsPath = store->rootDirGet() + "/" + logDir;
+    if( store->dirCreate(alarmLogAbsPath)==CL_OK ) {
+        std::cout << "CYLogAlarmImpl log directory " << alarmLogAbsPath << " get ready." << std::endl;
+    }
+
+    /** 建立日志文件 */
+    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
+
     return new CYLogExcpImpl(logDir, store, pExcpFD);
 }

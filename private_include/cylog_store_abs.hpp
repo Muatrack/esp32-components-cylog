@@ -17,10 +17,7 @@ public:
     }
 
     /* 新建指定目录, 如存在则不重复新建 */
-    virtual CL_TYPE_t dirCreate( const std::string & absPath ) {
-        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
-        return CL_OK;
-    };
+    virtual CL_TYPE_t dirCreate( const std::string & absPath );
 
     /* 新建指定目录，及所有新文件 */
     virtual CL_TYPE_t dirCreate_bak(){};
@@ -30,6 +27,16 @@ public:
         std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
         return CL_OK;
     };
+
+    /** 
+     * 建立全部日志文件
+     * 
+     * @param  absPath:  在此目录下新建文件
+     * @param  prefix:   新见文件的前缀
+     * @param  fCount:   新建文件的数量 
+     * @param  fSize:    单文件的大小-预占方式
+     */
+    CL_TYPE_t fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize );
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, CLFile::FileDesc &fDesc){
