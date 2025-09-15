@@ -125,9 +125,9 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
         std::filesystem::directory_iterator _dir_iter( absDir );
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
-//            spFileHead->deSerialize( fPath );
+            // spFileHead->deSerialize( fPath );
             // pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
-            //                         spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
+            // spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
             std::cout << "  file:" << fPath << std::endl;
         }
     }
@@ -328,3 +328,23 @@ void StoreLinux::nextFileSelect() {
 //done:
     return;
 }
+
+CL_TYPE_t StoreLinux::traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
+
+    std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem::path fPath;
+    std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl;
+
+    {
+        std::filesystem::directory_iterator _dir_iter( absDir );
+        for( auto & _dir : _dir_iter ) {
+            fPath = _dir.path();
+            std::cout << "  file:" << fPath << std::endl;
+        }
+    }
+
+    std::cout << "************** " << __func__ << " done **************" << std::endl;
+    return CL_OK;
+}
+
+

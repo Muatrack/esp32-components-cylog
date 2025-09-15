@@ -42,6 +42,14 @@ public:
     // CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
     CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) override;
 
+    // CL_TYPE_t dirCreate( const std::string & absPath) override;
+    // CL_TYPE_t dirCreate( const std::string & absPath ) override; // { return CL_OK; };
+    // CL_TYPE_t fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize ) override;
+
+    /**
+     * 遍历目录，找到可写文件，可写位置
+     */
+    CL_TYPE_t traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) override;
     /** 
      * 找到最后写入的文件。
      */

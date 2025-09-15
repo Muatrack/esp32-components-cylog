@@ -33,6 +33,9 @@ public:
     /* 读取指定目录，所有文件名称 */
     virtual CL_TYPE_t dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
 
+    /* 遍历目录，查找可写文件、可写偏移量 */
+    virtual CL_TYPE_t traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
+
     /** 
      * 建立全部日志文件
      * 

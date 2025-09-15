@@ -28,7 +28,8 @@ excp:
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {
 
-    m_Store->dirRead( m_pFDesc );
+    // m_Store->dirRead( m_pFDesc );
+    m_Store->traverse( m_pFDesc );
     /**
      * 遍历日志，找到可写文件的相对路径和可写offset 
      * 

@@ -28,7 +28,8 @@ CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAb
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {    
     std::cout << "CYLogExcpImpl instance created." << std::endl;
 
-    m_Store->dirRead( m_pFDesc );
+    // m_Store->dirRead( m_pFDesc );
+    m_Store->traverse( m_pFDesc );
 }
 
 /******************************************************* Factory *********************************************************/

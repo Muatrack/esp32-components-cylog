@@ -33,7 +33,7 @@ done:;
 }
 
 CL_TYPE_t StoreAbs::dirCreate( const std::string & absPath ) {
-        bool bRet = false;
+    bool bRet = false;
     CL_TYPE_t err = CL_OK;
 
     std::stringstream ss;
@@ -75,3 +75,5 @@ CL_TYPE_t StoreAbs::fileCreate( const std::string & absPath, const std::string p
 excp:
     return CL_EXCP_UNKNOW;
 }
+
+
