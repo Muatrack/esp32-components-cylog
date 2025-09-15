@@ -55,25 +55,6 @@ void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::strin
 }
 #endif
 
-CL_TYPE_t StoreLinux::dirCreate( const std::string & absPath) {
-    bool bRet = false;
-    CL_TYPE_t err = CL_OK;
-
-    std::stringstream ss;
-
-    /* 检查路径是否已存在 */
-    if( std::filesystem::exists(absPath) ) { goto done; }
-
-    /* 不存在，新建 */
-    if( bRet=std::filesystem::create_directories(absPath), bRet ) { goto done; } 
-    else { err = CL_EXCP_UNKNOW; goto excp; }
-
-excp:
-    return err;
-done:
-    return CL_OK;
-}
-
 CL_TYPE_t StoreLinux::dirCreate_bak() {
     CL_TYPE_t err = CL_OK;
     std::stringstream ss;

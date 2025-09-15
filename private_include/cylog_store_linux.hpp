@@ -13,11 +13,7 @@ class StoreLinux : public StoreAbs {
 public:    
     StoreLinux() = default;
     StoreLinux(StoreLinux&s) = delete;
-
-    // void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
-    
-    /* 新建指定目录，及所有新文件 */
-    CL_TYPE_t dirCreate( const std::string & absPath) override;
+    ~StoreLinux() { std::cout << "~StoreLinux()" << std::endl; }
 
     CL_TYPE_t dirCreate_bak() override;
     /** 
@@ -25,11 +21,6 @@ public:
      */
     CL_TYPE_t   dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) override;
     /* 检查指定目录中文件的合法性 */
-    // CL_TYPE_t dirCheck() override;
-
-    ~StoreLinux() {
-        std::cout << "~StoreLinux()" << std::endl;
-    }
 
     /** 
      * 文件目录初始化. 新建对象后首先执行此函数 
@@ -37,15 +28,7 @@ public:
      * - 文件不存在，新建目录，新建全数日志文件
     */
     CL_TYPE_t init() override;
-    /* 写入指定文件头部数据*/
-    // CL_TYPE_t headWrite( const std::filesystem::path &fPath ) override;
-    // CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
     CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) override;
-
-    // CL_TYPE_t dirCreate( const std::string & absPath) override;
-    // CL_TYPE_t dirCreate( const std::string & absPath ) override; // { return CL_OK; };
-    // CL_TYPE_t fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize ) override;
-
     /**
      * 遍历目录，找到可写文件，可写位置
      */
