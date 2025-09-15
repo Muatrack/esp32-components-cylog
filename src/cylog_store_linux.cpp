@@ -115,25 +115,23 @@ CL_TYPE_t StoreLinux::dirCreate_bak() {
 
 }
 
-CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
-#if 0
-    std::filesystem::path fPath;
-    auto spFileHead = std::make_shared<CLFile::FileHead>();
-    auto spFileItem = std::make_shared<CLFile::FileItem>();
+CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
 
-    std::cout << "************** " << __func__ << " **************" << std::endl;
+    std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem::path fPath;
+    std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl;
 
     {
-        std::filesystem::directory_iterator _dir_iter(m_dirPath);
+        std::filesystem::directory_iterator _dir_iter( absDir );
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
-            spFileHead->deSerialize( fPath );
+//            spFileHead->deSerialize( fPath );
             // pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
             //                         spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
-            // std::cout << "  file:" << fPath << std::endl;
+            std::cout << "  file:" << fPath << std::endl;
         }
     }
-#endif
+
     std::cout << "************** " << __func__ << " done **************" << std::endl;
     return CL_OK;
 };

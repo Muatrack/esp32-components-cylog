@@ -24,8 +24,11 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):CYLogImplAbs( store, std::move(pFDesc) ) {
+CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
+                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) {    
     std::cout << "CYLogExcpImpl instance created." << std::endl;
+
+    m_Store->dirRead( m_pFDesc );
 }
 
 /******************************************************* Factory *********************************************************/

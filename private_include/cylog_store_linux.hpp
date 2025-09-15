@@ -23,7 +23,7 @@ public:
     /** 
      * 遍历目录下所有文件，收集文件的名称，文件开写的时间戳（位于头部), 文件的写数据
      */
-    CL_TYPE_t   dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
+    CL_TYPE_t   dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) override;
     /* 检查指定目录中文件的合法性 */
     // CL_TYPE_t dirCheck() override;
 

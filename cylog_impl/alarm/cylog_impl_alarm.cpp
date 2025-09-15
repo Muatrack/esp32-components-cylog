@@ -25,9 +25,10 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):CYLogImplAbs( store, std::move(pFDesc) ) {
-    std::cout << "CYLogAlarmImpl instance created." << std::endl;
-    
+CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
+                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) {
+
+    m_Store->dirRead( m_pFDesc );
     /**
      * 遍历日志，找到可写文件的相对路径和可写offset 
      * 
@@ -49,8 +50,12 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
         std::cout << "CYLogAlarmImpl log directory " << alarmLogAbsPath << " get ready." << std::endl;
     }
 
+    if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
+    else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;
     /** 建立日志文件 */
-    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);    
+    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
 
+    if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
+    else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;
     return new CYLogAlarmImpl(logDir, store, std::move(pFileDesc) );
 }

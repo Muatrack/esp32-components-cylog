@@ -31,10 +31,7 @@ public:
     virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
 
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
-        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
-        return CL_OK;
-    };
+    virtual CL_TYPE_t dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
 
     /** 
      * 建立全部日志文件
