@@ -56,10 +56,18 @@ void alarm_log_test() {
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
 
     #if 1
+        /*  */
+        std::unique_ptr<uint8_t[]> alarmItemArray = std::make_unique<uint8_t[]>(sizeof(_dataBuf));
+        std::copy( _dataBuf, _dataBuf + sizeof(_dataBuf), alarmItemArray.get());
+
+        std::unique_ptr<uint8_t[]> excpItemArray = std::make_unique<uint8_t[]>(sizeof(_dataBuf));
+        std::copy( _dataBuf, _dataBuf + sizeof(_dataBuf),  excpItemArray.get());
+        /* Done */
+
         for( int i=0; i < 60; i ++ ) {
-            pAlarmLog->write(_dataBuf, sizeof(_dataBuf));
+            pAlarmLog->write(std::move(alarmItemArray), sizeof(_dataBuf));
             usleep(500000);
-            pExcpLog->write(_dataBuf, sizeof(_dataBuf));
+            pExcpLog->write(std::move(excpItemArray), sizeof(_dataBuf));
             usleep(500000);
         }
     #endif

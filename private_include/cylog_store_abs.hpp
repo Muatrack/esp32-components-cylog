@@ -29,12 +29,12 @@ public:
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemRead( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
+    virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, CLFile::FileDesc &fDesc){
         return CL_OK;
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite(const uint8_t* in, uint16_t iLen, CLFile::FileDesc &fDesc) {
+    virtual CL_TYPE_t itemWrite(CLFile::FileDesc &fDesc, std::unique_ptr<uint8_t[]> pOData, uint16_t iLen) {
         return CL_OK;
     };
 

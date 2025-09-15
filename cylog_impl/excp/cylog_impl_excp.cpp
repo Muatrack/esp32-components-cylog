@@ -1,9 +1,9 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_excp.hpp"
 
-CL_TYPE_t CYLogExcpImpl::write(const uint8_t* in, uint16_t iLen){
+CL_TYPE_t CYLogExcpImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
     // std::cout << "Excp write." << std::endl;
-    storeGet()->itemWrite( in, iLen, m_fDesc );
+    storeGet()->itemWrite( m_fDesc, std::move(pIn), iLen );
     return CL_OK;
 }
 

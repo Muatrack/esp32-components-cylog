@@ -38,7 +38,7 @@ public:
     /* 写入指定文件头部数据*/
     // CL_TYPE_t headWrite( const std::filesystem::path &fPath ) override;
     // CL_TYPE_t  headRead( const std::filesystem::path &fPath ) override;
-    CL_TYPE_t itemWrite( const uint8_t* in, uint16_t iLen, CLFile::FileDesc &fDesc ) override;
+    CL_TYPE_t itemWrite(CLFile::FileDesc &fDesc, std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) override;
 
     /** 
      * 找到最后写入的文件。
