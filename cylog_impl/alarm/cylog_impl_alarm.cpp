@@ -28,13 +28,23 @@ excp:
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {
 
-    // m_Store->dirRead( m_pFDesc );
-    m_Store->traverse( m_pFDesc );
+    /** 遍历日志目录下的文件 */
+    std::vector<std::string> fList;
+    m_Store->dirTraverse( m_pFDesc, fList );
+    std::cout << "TESTCASE_dirtraverse | ALARM | size: " << fList.size()<<std::endl;
+    for( auto & p: fList ) {
+        std::cout << "TESTCASE_dirtraverse | ALARM | " << static_cast<std::string>(p)<<std::endl;
+    }
+
     /**
      * 遍历日志，找到可写文件的相对路径和可写offset 
      * 
      * - 对每个日志文件，遍历其中的全部数据,判定日志文件是否已满
     */
+    std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
+    for( auto & p: fList ) {
+        m_Store->fileTraverse( p, pBuf, 4 ); //static_cast<std::string>(p) );
+    }
 }
 
 /*************************************************** Factory ******************************************************/

@@ -28,8 +28,13 @@ CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAb
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {    
     std::cout << "CYLogExcpImpl instance created." << std::endl;
 
-    // m_Store->dirRead( m_pFDesc );
-    m_Store->traverse( m_pFDesc );
+    std::vector<std::string> fList;
+    m_Store->dirTraverse( m_pFDesc, fList );
+
+    std::cout << "TESTCASE_dirtraverse | EXCP | size: " << fList.size()<<std::endl;
+    for( auto & p: fList ) {
+        std::cout << "TESTCASE_dirtraverse | EXCP | " << static_cast<std::string>(p)<<std::endl;
+    }
 }
 
 /******************************************************* Factory *********************************************************/

@@ -34,7 +34,9 @@ public:
     virtual CL_TYPE_t dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
 
     /* 遍历目录，查找可写文件、可写偏移量 */
-    virtual CL_TYPE_t traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
+    virtual CL_TYPE_t dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, std::vector<std::string> & fList )=0;
+    /* 遍历文件，查找可写位置 */
+    virtual CL_TYPE_t fileTraverse( std::string & pFDesc,  std::unique_ptr<uint8_t[]> & buf, uint16_t bufSize )=0;
 
     /** 
      * 建立全部日志文件

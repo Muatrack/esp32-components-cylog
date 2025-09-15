@@ -106,9 +106,6 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
         std::filesystem::directory_iterator _dir_iter( absDir );
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
-            // spFileHead->deSerialize( fPath );
-            // pfHeadList->push_back( CLFile::FileDesc( fPath.filename(), fPath.root_directory(), spFileHead->sizeGet(), 
-            // spFileItem->wOffsetGet(fPath), spFileHead->reWriteTmGet()) );
             std::cout << "  file:" << fPath << std::endl;
         }
     }
@@ -310,20 +307,28 @@ void StoreLinux::nextFileSelect() {
     return;
 }
 
-CL_TYPE_t StoreLinux::traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
+CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, std::vector<std::string> & fList ) {
 
-    std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem:: path logDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
-    std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl;
+    std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl;
 
-    {
-        std::filesystem::directory_iterator _dir_iter( absDir );
-        for( auto & _dir : _dir_iter ) {
-            fPath = _dir.path();
-            std::cout << "  file:" << fPath << std::endl;
-        }
+    std::filesystem::directory_iterator _dir_iter( logDir );
+    for( auto & _dir : _dir_iter ) {
+        fList.push_back(static_cast<std::string>( _dir.path() ));
     }
 
     std::cout << "************** " << __func__ << " done **************" << std::endl;
     return CL_OK;
+}
+
+/* 遍历文件，查找可写位置 */
+CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
+    std::ifstream ifs( fPath, std::ostream::in );
+    ifs.read( reinterpret_cast<char*>(pBuf.get()), bufSize );
+    ifs.close();
+
+    // std::cout << "Gonna read file:" << fPath << "  " << buf[0] << buf[1] << buf[2] << buf[3] << std::endl;
+
+    return CL_EXCP_UNKNOW;
 }
