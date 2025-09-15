@@ -31,7 +31,7 @@ public:
     
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc );
+    CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogAlarmImpl(){
         std::cout << "~CYLogAlarmImpl()" << std::endl;
     };

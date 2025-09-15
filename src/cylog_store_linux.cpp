@@ -197,12 +197,12 @@ excp:
 }
 #endif
 
-CL_TYPE_t StoreLinux::itemWrite(CLFile::FileDesc &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
+CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
     CL_TYPE_t _err = CL_OK;
     // bool _bReWriten = false;
     // uint8_t _buf[2] = {0};
 
-    cout << "Gonna write data to " << fDesc.wFilePathGet() << "/" << fDesc.filePrefixGet() << "/..." << endl;
+    cout << "Gonna write data to " << pFDesc->wFilePathGet() << "/" << pFDesc->filePrefixGet() << "/..." << endl;
 
     // 判断参数有效性
     if( (pIn==nullptr) || (iLen<1) ) {

@@ -3,7 +3,7 @@
 
 CL_TYPE_t CYLogAlarmImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
-    storeGet()->itemWrite( m_fDesc, pIn, iLen);
+    storeGet()->itemWrite( m_pFDesc, pIn, iLen);
     return CL_OK;
 }
 
@@ -25,7 +25,7 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogAlarmImpl::CYLogAlarmImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
+CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):CYLogImplAbs( store, std::move(pFDesc) ) {
     std::cout << "CYLogAlarmImpl instance created." << std::endl;
     
     /**
@@ -41,7 +41,7 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     std::cout << "CyLogAlarmFactory::create" << std::endl;
     
     /** 建立文件对象 */
-    std::shared_ptr<CLFile::FileDesc> pAlarmFD = std::make_shared<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    std::unique_ptr<CLFile::FileDesc> pFileDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
 
     /** 建立日志绝对目录 */
     std::string alarmLogAbsPath = store->rootDirGet() + "/" + logDir;
@@ -52,5 +52,5 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     /** 建立日志文件 */
     store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);    
 
-    return new CYLogAlarmImpl(logDir, store, pAlarmFD);
+    return new CYLogAlarmImpl(logDir, store, std::move(pFileDesc) );
 }

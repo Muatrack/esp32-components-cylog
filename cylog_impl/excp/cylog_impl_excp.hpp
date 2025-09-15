@@ -29,7 +29,7 @@ public:
 
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc );
+    CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogExcpImpl(){
         std::cout << "~CYLogExcpImpl()" << std::endl;
     };

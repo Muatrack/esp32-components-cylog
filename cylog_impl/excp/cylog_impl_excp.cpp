@@ -2,8 +2,7 @@
 #include "cylog_impl_excp.hpp"
 
 CL_TYPE_t CYLogExcpImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
-    // std::cout << "Excp write." << std::endl;
-    storeGet()->itemWrite( m_fDesc, pIn, iLen );
+    storeGet()->itemWrite( m_pFDesc, pIn, iLen );
     return CL_OK;
 }
 
@@ -25,7 +24,7 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
+CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):CYLogImplAbs( store, std::move(pFDesc) ) {
     std::cout << "CYLogExcpImpl instance created." << std::endl;
 }
 
@@ -35,7 +34,7 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
     std::cout << "CyLogExcpFactory::create" << std::endl;
     
     /** 建立文件对象 */
-    std::shared_ptr<CLFile::FileDesc> pExcpFD = std::make_shared<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    std::unique_ptr<CLFile::FileDesc> pExcpFD = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
 
     /** 建立日志绝对目录 */
     std::string alarmLogAbsPath = store->rootDirGet() + "/" + logDir;
@@ -46,5 +45,5 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
     /** 建立日志文件 */
     store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
 
-    return new CYLogExcpImpl(logDir, store, pExcpFD);
+    return new CYLogExcpImpl(logDir, store, std::move(pExcpFD));
 }
