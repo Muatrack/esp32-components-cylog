@@ -126,6 +126,7 @@ CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & 
 };
 
 
+#if 0
 /** 
  * 
  * 此成员函数将会改名为 fileReset( ... )
@@ -133,7 +134,6 @@ CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & 
  *  - 将文件数据部分全写0，否则会造成文件写偏移量的计算错误 v1.1
 */
 CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
-#if 0
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
     std::fstream _ff;
     const uint8_t* pSeried = fHead->serialize();
@@ -152,11 +152,10 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
         _ff << "\0\0";
     #else   // v1.1
     #endif
-#endif
     std::cout << __func__ << "()." << __LINE__ << std::endl;
     return CL_OK;
-// excp:
-//     return CL_EXCP_UNKNOW;
+excp:
+    return CL_EXCP_UNKNOW;
 };
 
 /** 
@@ -164,7 +163,7 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
  * @param fPath 文件路径
 */
 CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
-#if 0
+
     std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
     std::fstream _ff;
 
@@ -179,11 +178,11 @@ CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
 
     fHead->deSerialize();
     std::cout << "  Got file head ver:" << fHead->verGet() << " fileLen:" << fHead->maxLenGet() << " reWriteTm:" << fHead->reWriteTmGet()  << std::endl;
-#endif
     return CL_OK;
-// excp:
-//     return CL_EXCP_UNKNOW;
+excp:
+    return CL_EXCP_UNKNOW;
 }
+#endif
 
 CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen, CLFile::FileDesc &fDesc) {
     CL_TYPE_t _err = CL_OK;
