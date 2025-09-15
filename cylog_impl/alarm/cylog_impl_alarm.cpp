@@ -26,7 +26,13 @@ excp:
 }
 
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
-    std::cout << "CYLogAlarmImpl instance created." << std::endl;    
+    std::cout << "CYLogAlarmImpl instance created." << std::endl;
+    
+    /**
+     * 遍历日志，找到可写文件的相对路径和可写offset 
+     * 
+     * - 对每个日志文件，遍历其中的全部数据,判定日志文件是否已满
+    */
 }
 
 /*************************************************** Factory ******************************************************/
@@ -44,7 +50,7 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     }
 
     /** 建立日志文件 */
-    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
+    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);    
 
     return new CYLogAlarmImpl(logDir, store, pAlarmFD);
 }

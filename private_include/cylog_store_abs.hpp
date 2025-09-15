@@ -6,6 +6,14 @@
 #include <semaphore.h>
 #include <private_include/errno.hpp>
 
+/**
+ * 日志文件写入方案
+ * 
+ * 对于每个日志文件，其中的数据由 HEAD + DATA 组成
+ * - HEAD：标识当前item是否有效，标识item的长度, valid: 1byte, len:2 bytes
+ * - DATA: 即上层需要写入的数据，与日志类别相关
+ */
+
 /** 面对系统api, 读取写文件操作 */
 class StoreAbs {
 public:
@@ -116,17 +124,5 @@ private:
     static sem_t m_signal;
     /* 存储日志的根目录 */
     static std::string m_LogRootDir;    
-
-/* v1 */
-#if 0
-    uint32_t     m_fileMaxCount;     // 文件数量上限
-    uint32_t     m_fileCurCount;     // 已存在文件数量
-    uint32_t    m_fileMaxLength;    // 单文件的最大长度
-    uint32_t    m_curWriteOffset;   // 当前正在写文件中的写操作偏移位置
-    std::string m_curWriteFilePath;     // 当前正在写入的文件路径
-    std::string m_fileNamePrefix;   //文件名称前缀
-    std::string m_dirPath;          // 文件目录
-#endif
-/* v1 done */
 };
 
