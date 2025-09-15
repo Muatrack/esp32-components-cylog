@@ -27,7 +27,7 @@ public:
      * @param in 待写数据的地址
      * @param iLen 待写数据的共计长度
      */
-    CL_TYPE_t write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) override;    
+    CL_TYPE_t write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) override;    
     
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 

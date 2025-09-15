@@ -1,9 +1,9 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_alarm.hpp"
 
-CL_TYPE_t CYLogAlarmImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
+CL_TYPE_t CYLogAlarmImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen){
     // std::cout << "Alarm write." << std::endl;
-    storeGet()->itemWrite( m_fDesc, std::move(pIn), iLen);
+    storeGet()->itemWrite( m_fDesc, pIn, iLen);
     return CL_OK;
 }
 

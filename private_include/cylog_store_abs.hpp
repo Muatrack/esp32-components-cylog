@@ -34,7 +34,7 @@ public:
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite(CLFile::FileDesc &fDesc, std::unique_ptr<uint8_t[]> pOData, uint16_t iLen) {
+    virtual CL_TYPE_t itemWrite(CLFile::FileDesc &fDesc, const std::unique_ptr<uint8_t[]> & pOData, uint16_t iLen) {
         return CL_OK;
     };
 

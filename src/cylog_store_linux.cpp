@@ -184,7 +184,7 @@ excp:
 }
 #endif
 
-CL_TYPE_t StoreLinux::itemWrite(CLFile::FileDesc &fDesc, std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) {
+CL_TYPE_t StoreLinux::itemWrite(CLFile::FileDesc &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
     CL_TYPE_t _err = CL_OK;
     bool _bReWriten = false;
     uint8_t _buf[2] = {0};
