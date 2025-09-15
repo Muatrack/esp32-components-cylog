@@ -116,13 +116,13 @@ CL_TYPE_t StoreLinux::dirCreate_bak() {
 }
 
 CL_TYPE_t StoreLinux::dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
-
+#if 0
     std::filesystem::path fPath;
     auto spFileHead = std::make_shared<CLFile::FileHead>();
     auto spFileItem = std::make_shared<CLFile::FileItem>();
 
     std::cout << "************** " << __func__ << " **************" << std::endl;
-#if 0
+
     {
         std::filesystem::directory_iterator _dir_iter(m_dirPath);
         for( auto & _dir : _dir_iter ) {
@@ -199,8 +199,8 @@ excp:
 
 CL_TYPE_t StoreLinux::itemWrite(CLFile::FileDesc &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
     CL_TYPE_t _err = CL_OK;
-    bool _bReWriten = false;
-    uint8_t _buf[2] = {0};
+    // bool _bReWriten = false;
+    // uint8_t _buf[2] = {0};
 
     cout << "Gonna write data to " << fDesc.wFilePathGet() << "/" << fDesc.filePrefixGet() << "/..." << endl;
 
@@ -264,7 +264,7 @@ lock_excp:
 
 void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
     // uint64_t _reWriteTs = 0;       // 最后重写入时间
-    uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
+    // uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
 #if 0
     std::cout << "**************** " << __func__ << " **************" << std::endl;
     // 遍历列表，筛选重写时间戳最大的文件作为写操作目标文件
@@ -293,7 +293,7 @@ void StoreLinux::nextFileSelect() {
     /** 
      * 依据当前已使用的文件名称，拼接下一个选中的文件
      */
-    
+#if 0    
     uint16_t _curFileIdx = 0xff;
     std::stringstream ss;
     std::shared_ptr<CLFile::FileHead> spFHead = std::make_shared<CLFile::FileHead>();
@@ -302,7 +302,7 @@ void StoreLinux::nextFileSelect() {
         // 当前文件未写满， 继续使用
         goto done;
     }
-#if 0
+
     {
         // 获取当前日志分类文件的数量， 依据当前使用的文件名拼接下一个文件名
         std::cout << "StoreLinux::nextFileSelect cur file path:" << m_curWriteFilePath;
@@ -327,6 +327,6 @@ void StoreLinux::nextFileSelect() {
     }
 #endif
 
-done:
+//done:
     return;
 }

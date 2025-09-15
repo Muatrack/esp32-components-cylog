@@ -9,6 +9,7 @@ set(
         cylog_impl/alarm/cylog_impl_alarm.cpp
         src/cylog_store_linux.cpp
         src/cylog_store_abs.cpp
+        src/cylog_file.cpp
 )
 
 set(CMAKE_CXX_STANDARD 17)

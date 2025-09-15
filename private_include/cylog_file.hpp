@@ -12,7 +12,7 @@
 
 namespace CLFile {
 
-#define FITEM_VALID_FLAG    0x55
+#define ITEM_VALID_FLAG    0x55
 
 #ifdef CYLOG_FILE_VER
     #define FILE_VERSION        CYLOG_FILE_VER
@@ -82,13 +82,53 @@ private:
  * 文件中的数据抽象类
  */
 class DataAbs{
+
 public:
+    // class Head{
+    //     Head()=delete;
+    // private:
+    //     uint8_t                     m_Ver;          // 版本
+    //     uint8_t                     m_ValidFlag;    // 数据是否有效标志
+    //     uint16_t                    m_OriDlen;   // 输入数据的长度
+    // };
+
     virtual ~DataAbs() {};
 
-    virtual const unsigned char * serialize() = 0;// { return nullptr ;};
-    virtual bool  deSerialize( uint8_t *pBuf = nullptr) = 0;// { return false; };
+    virtual const unsigned char * serialize(){ return nullptr; };
+    virtual bool  deSerialize( uint8_t *pBuf = nullptr){ return false; };
+
+    /** 解析文件头 */
+
+    /** 序列化文件头 */
+
+protected:
+    // DataAbs::Head               m_DataHead; // 数据头
+    std::unique_ptr<uint8_t[]>  m_OriData;   // 输入数据的指针
 };
 
+class ItemDesc : public DataAbs {
+
+public:
+    // ItemDesc() = delete;
+    // ItemDesc(ItemDesc&) = default;
+    ItemDesc(std::unique_ptr<uint8_t[]> pData, uint16_t dLen, bool bWithHead=false) {
+        if( bWithHead ) {   // 数据带头部，即数据为文件中读取到的数据
+
+        } else {    // 数据不带头部，即数据为新生成的日志
+
+        }
+
+        // m_DataHead.m_OriData = std::move(pData);
+        // m_OriDlen = dLen;
+    };
+
+public:    
+    static std::unique_ptr<ItemDesc> itemSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);    // 序列化    
+    static std::unique_ptr<ItemDesc> itemDeSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);  // 实例化
+};
+
+/******************************* @deprecated *********************************/
+#if 0
 /* 日志文件-头类 */
 class FileHead : public DataAbs {
 public:
@@ -230,4 +270,7 @@ private:
     uint32_t m_DataLen;
 };
 
-}
+#endif
+/******************************* @deprecated END *********************************/
+
+} // namespace CLFile

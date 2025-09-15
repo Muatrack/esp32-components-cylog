@@ -28,7 +28,7 @@ public:
     virtual CL_TYPE_t dirCreate( const std::string & absPath );
 
     /* 新建指定目录，及所有新文件 */
-    virtual CL_TYPE_t dirCreate_bak(){};
+    virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
 
     /* 读取指定目录，所有文件名称 */
     virtual CL_TYPE_t dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
