@@ -7,11 +7,11 @@ CL_TYPE_t CYLogExcpImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t 
     return CL_OK;
 }
 
-void CYLogExcpImpl::logInit() {
-    /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
-   std::cout << "CYLogExcpImpl::logInit()" << std::endl;
-//    storeGet()->init();
-}
+// void CYLogExcpImpl::logInit() {
+//     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
+//    std::cout << "CYLogExcpImpl::logInit()" << std::endl;
+// //    storeGet()->init();
+// }
 
 CL_TYPE_t CYLogExcpImpl::traverse(log_read_cb_t cb) {
     if( cb==nullptr ) { goto excp; }

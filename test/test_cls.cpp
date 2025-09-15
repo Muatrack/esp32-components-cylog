@@ -48,13 +48,10 @@ void alarm_log_test() {
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
 
-    if( pAlarmLog != nullptr ) {
-        pAlarmLog->logInit();
-        pExcpLog->logInit();
-
-        // pAlarmLog->read("/dddfa", fc);
+    // 写入日志测试
+    {
+        // 初始化数组
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
-
     #if 1
         /*  */
         std::unique_ptr<uint8_t[]> alarmItemArray = std::make_unique<uint8_t[]>(sizeof(_dataBuf));
@@ -73,8 +70,6 @@ void alarm_log_test() {
     #endif
 
         // pAlarmLog->remove("dfadfa");
-    } else {
-        std::cout << "pAlarmLog is NULL" << std::endl;
     }
 
     delete pAlarmLog;

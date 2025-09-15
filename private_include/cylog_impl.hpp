@@ -23,7 +23,7 @@ public:
     CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):m_Store(store){};
 
     /** 日志目录初始化 */
-    virtual void logInit() = 0;
+    // virtual void logInit() = 0;
     
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
