@@ -102,6 +102,9 @@ public:
     /** 序列化文件头 */
 
 protected:
+    uint8_t                     m_Ver;          // 版本
+    uint8_t                     m_ValidFlag;    // 数据是否有效标志
+    uint16_t                    m_OriDlen;   // 输入数据的长度
     // DataAbs::Head               m_DataHead; // 数据头
     std::unique_ptr<uint8_t[]>  m_OriData;   // 输入数据的指针
 };
@@ -109,20 +112,42 @@ protected:
 class ItemDesc : public DataAbs {
 
 public:
-    // ItemDesc() = delete;
-    // ItemDesc(ItemDesc&) = default;
+    ItemDesc() = delete;
+    ItemDesc(ItemDesc&) = default;
     ItemDesc(std::unique_ptr<uint8_t[]> pData, uint16_t dLen, bool bWithHead=false) {
+
         if( bWithHead ) {   // 数据带头部，即数据为文件中读取到的数据
-
+            parseHead( pData );
+            m_OriData = std::make_unique<uint8_t[]>(dLen-4);
+            std::copy(pData.get()+4, pData.get()+dLen, m_OriData.get());
         } else {    // 数据不带头部，即数据为新生成的日志
-
+            makeHead( dLen );
+            m_OriData = std::move(pData);
         }
-
-        // m_DataHead.m_OriData = std::move(pData);
-        // m_OriDlen = dLen;
     };
 
-public:    
+private:
+
+    /**
+     * uint8_t[0] : ver
+     * uint8_t[1] : valid flag
+     * uint8_t[2] : data length
+     */
+    void parseHead(std::unique_ptr<uint8_t[]> & pData) {
+        m_Ver       = pData[0];
+        m_ValidFlag = pData[1];
+        m_OriDlen   = *((uint16_t*)&pData[2]);
+    }
+
+    void makeHead( uint16_t dLen ){
+        m_Ver       = FILE_VERSION;
+        m_ValidFlag = ITEM_VALID_FLAG;
+        m_OriDlen   = dLen;
+    }
+
+    bool isValid() { return (m_ValidFlag==ITEM_VALID_FLAG); }
+
+public:
     static std::unique_ptr<ItemDesc> itemSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);    // 序列化    
     static std::unique_ptr<ItemDesc> itemDeSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);  // 实例化
 };
