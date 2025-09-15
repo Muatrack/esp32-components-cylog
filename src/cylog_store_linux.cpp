@@ -327,5 +327,3 @@ CL_TYPE_t StoreLinux::traverse( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
     std::cout << "************** " << __func__ << " done **************" << std::endl;
     return CL_OK;
 }
-
-
