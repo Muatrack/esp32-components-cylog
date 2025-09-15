@@ -17,7 +17,9 @@ public:
     // void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) override;
     
     /* 新建指定目录，及所有新文件 */
-    CL_TYPE_t dirCreate() override;
+    CL_TYPE_t dirCreate( const std::string & absPath) override;
+
+    CL_TYPE_t dirCreate_bak() override;
     /** 
      * 遍历目录下所有文件，收集文件的名称，文件开写的时间戳（位于头部), 文件的写数据
      */

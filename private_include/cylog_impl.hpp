@@ -43,7 +43,7 @@ public:
 
 protected:
     CLFile::FileDesc m_fDesc;
-private:
+// private:
     std::shared_ptr<StoreAbs> m_Store;
 };
 

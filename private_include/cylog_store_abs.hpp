@@ -16,11 +16,14 @@ public:
         std::cout << "~StoreAbs()" << std::endl;
     }
 
-    /* 新建指定目录，及所有新文件 */
-    virtual CL_TYPE_t dirCreate() {
+    /* 新建指定目录, 如存在则不重复新建 */
+    virtual CL_TYPE_t dirCreate( const std::string & absPath ) {
         std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
         return CL_OK;
     };
+
+    /* 新建指定目录，及所有新文件 */
+    virtual CL_TYPE_t dirCreate_bak(){};
 
     /* 读取指定目录，所有文件名称 */
     virtual CL_TYPE_t dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) {
@@ -82,6 +85,9 @@ public:
         return sem_timedwait(&m_signal, &wt)==0;
     }
 
+    /* 获取存储日志的根目录 */
+    std::string rootDirGet() { return m_LogRootDir; }
+
     /**
      * 对操作所解锁(增加信号量的值)
      */
@@ -96,13 +102,13 @@ public:
      * @param concurrCount 读写并行操作数量
      * @param logDir 日志的存储路径
      */
-    static void StoreInit(uint8_t concurCount, std::string & logDir);
+    static void StoreInit(uint8_t concurCount, std::string & logRootDir);
 
 private:
     /** 文件系统读写信号量 */
     static sem_t m_signal;
-
-protected:
+    /* 存储日志的根目录 */
+    static std::string m_LogRootDir;    
 
 /* v1 */
 #if 0

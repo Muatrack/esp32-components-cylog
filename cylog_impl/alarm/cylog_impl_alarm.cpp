@@ -25,8 +25,14 @@ excp:
     return CL_PARAM_INVALID;
 }
 
-CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
+CYLogAlarmImpl::CYLogAlarmImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::shared_ptr<CLFile::FileDesc>&fDesc ):CYLogImplAbs( store, fDesc ) {
     std::cout << "CYLogAlarmImpl instance created." << std::endl;
+
+    /* 初始化 告警日志目录 */
+    std::string alarmLogAbsPath = store->rootDirGet() + "/" + logDir;
+    if( m_Store->dirCreate(alarmLogAbsPath)==CL_OK ) {
+        std::cout << "CYLogAlarmImpl log directory " << alarmLogAbsPath << " get ready." << std::endl;
+    }
 }
 
 /*************************************************** Factory ******************************************************/
