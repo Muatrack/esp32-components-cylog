@@ -23,8 +23,8 @@ public:
      */
     CL_TYPE_t   dirRead( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) override;
     /* 检查指定目录中文件的合法性 */
-    CL_TYPE_t dirCheck() override;
-    
+    // CL_TYPE_t dirCheck() override;
+
     ~StoreLinux() {
         std::cout << "~StoreLinux()" << std::endl;
     }

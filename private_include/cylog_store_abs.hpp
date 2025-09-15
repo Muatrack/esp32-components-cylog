@@ -28,25 +28,9 @@ public:
         return CL_OK;
     };
 
-    /* 检查指定目录中文件的合法性 */
-    virtual CL_TYPE_t dirCheck() {
-        std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
-        return CL_OK;
-    };
-
-    /* 读取指定文件头部数据*/
-    virtual CL_TYPE_t headRead( const std::filesystem::path &fPath ){
-        return CL_OK;
-    };
-
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     virtual CL_TYPE_t itemRead( const std::shared_ptr<std::string> pFPath, uint32_t readSize, std::shared_ptr<uint8_t[]> &pOData){
         return CL_OK;
-    };
-
-    /* 写入指定文件头部数据 */
-    virtual CL_TYPE_t headWrite( const std::filesystem::path &fPath ){
-        return CL_OK; 
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
@@ -93,7 +77,7 @@ public:
      * 
      * - false: 加锁失败
      */
-    bool optLock(uint32_t wait_tms=10) {
+    bool lockTake(uint32_t wait_tms=10) {
         timespec wt = { .tv_sec = wait_tms/1000, .tv_nsec = (wait_tms%1000)*1000000};
         return sem_timedwait(&m_signal, &wt)==0;
     }
@@ -101,7 +85,7 @@ public:
     /**
      * 对操作所解锁(增加信号量的值)
      */
-    void optUnLock() {
+    void lockGive() {
         sem_post(&m_signal);
     }
 

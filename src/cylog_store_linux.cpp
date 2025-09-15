@@ -56,10 +56,10 @@ void StoreLinux::configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::strin
 #endif
 
 /* 检查指定目录中文件的合法性 */
-CL_TYPE_t StoreLinux::dirCheck() {
-    std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
-    return CL_OK;
-};
+// CL_TYPE_t StoreLinux::dirCheck() {
+//     std::cout << __FILE__ << "::" << __func__ <<"()." << __LINE__<< std::endl;
+//     return CL_OK;
+// };
 
 CL_TYPE_t StoreLinux::dirCreate() {
     CL_TYPE_t err = CL_OK;
@@ -197,7 +197,7 @@ CL_TYPE_t StoreLinux::itemWrite(const uint8_t* in, uint16_t iLen, CLFile::FileDe
     }
 
     // 获取读写资源 
-    if( optLock() == false ) {
+    if( lockTake() == false ) {
         cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
         _err = CL_LOG_BUSY;
         goto lock_excp;
@@ -242,7 +242,7 @@ re_write:
 #endif
 
 excp:
-    optUnLock();    
+    lockGive();    
     return _err;
 
 lock_excp:
