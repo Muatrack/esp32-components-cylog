@@ -121,12 +121,10 @@ public:
 
     /** 获取带头部数据的封装 */
     std::unique_ptr<uint8_t[]> packData() {
-        auto packItem = std::make_unique<uint8_t[]>(m_OriDlen+4);
+        std::unique_ptr<uint8_t[]> packItem = std::make_unique<uint8_t[]>(m_OriDlen+4);
         std::copy(m_OriData.get(), m_OriData.get() + m_OriDlen, packItem.get()+4);
-        // std::cout << "ItemDesc constructor: " << std::hex << static_cast<int>(m_OriData[0]) << static_cast<int>(m_OriData[1]) <<  std::endl;
         makeHead( packItem );
-        // std::cout << "ItemDesc constructor: " << std::hex << static_cast<int>(m_OriData[0]) << static_cast<int>(m_OriData[1]) <<  std::endl;
-        return std::move(packItem); 
+        return packItem; 
     };
 
 private:

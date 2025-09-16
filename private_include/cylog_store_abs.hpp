@@ -73,7 +73,7 @@ public:
     /** 
      * 选择下一个文件，并初始化文件头部。
      */
-    virtual void nextFileSelect(FileDesc & fDesc) = 0;
+    virtual void nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) = 0;
 
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     // virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;

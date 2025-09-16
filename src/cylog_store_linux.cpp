@@ -242,7 +242,8 @@ void StoreLinux::nextFileSelect(FileDesc & fDesc) {
 }
 #endif
 
-void StoreLinux::nextFileSelect(FileDesc & fDesc) {
+void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
+    rootDirGet();
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
