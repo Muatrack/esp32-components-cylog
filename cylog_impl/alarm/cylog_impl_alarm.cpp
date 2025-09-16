@@ -6,7 +6,7 @@ using namespace CLFile;
 CL_TYPE_t CYLogAlarmImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
 
     std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
-    storeGet()->itemWrite( m_pFDesc, pItem->itemPack(), iLen+4);
+    storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4);
     return CL_OK;
 }
 
@@ -32,12 +32,9 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
     for( auto & p: fList ) {
         std::cout << "TESTCASE_dirtraverse | ALARM | " << static_cast<std::string>(p)<<std::endl;
-
         m_Store->fileTraverse( p, pBuf, 4 );
-        std::cout << "Alarm file:" << static_cast<uint8_t>(pBuf[0]) << std::endl;
     }
 
-    std::cout << "TESTCASE_dirtraverse | ALARM 1" << std::endl;
     /**
      * 遍历日志，找到可写文件的相对路径和可写offset 
      * 

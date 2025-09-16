@@ -98,13 +98,15 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
     if( ofe.is_open()==false ) {
         std::cout << "Fail to open file: " << fPath << std::endl;
         goto excp;
-    }
-    std::cout << "Succ to open file: " << fPath << std::endl;
+    }    
 
+    ofe.seekp( pFDesc->wFileOffsetGet(), std::ios::beg);
+    std::cout << "Succ to open file: " << fPath << " offset:" << pFDesc->wFileOffsetGet() << std::endl;
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), 8);    
     ofe.close();
 
+    pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
     std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl;
 
 #if 0
