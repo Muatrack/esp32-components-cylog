@@ -57,14 +57,15 @@ void alarm_log_test() {
         std::unique_ptr<uint8_t[]> excpItemArray;
         std::cout << std::endl << "---------------------- Gonna write log to file ----------------------" << std::endl;
 
-        for( int i=0; i < 4; i ++ ) {
+        uint8_t dLen = 2;
+        for( int i=0; i < 12; i ++ ) {
             std::cout << "log write " << i+1 << " times" << std::endl;
-            alarmItemArray = std::make_unique<uint8_t[]>(8);
-            for( int i=0; i<8; i ++ ) { alarmItemArray[i] = 65 + i; }
+            alarmItemArray = std::make_unique<uint8_t[]>(dLen);
+            for( int j=0; j<dLen; j ++ ) { alarmItemArray[j] = i + 1 + j + 1; }
             
-            pAlarmLog->write( std::move(alarmItemArray), 8);//sizeof(_dataBuf));
+            pAlarmLog->write( std::move(alarmItemArray), dLen);
             // usleep(500000);
-            sleep(5);
+            sleep(2);
             // pExcpLog->write( excpItemArray,  sizeof(_dataBuf));
             // usleep(500000);
         }

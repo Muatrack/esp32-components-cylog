@@ -6,6 +6,7 @@
 // #include <unistd.h>
 #include <filesystem>
 #include "private_include/cylog_store_abs.hpp"
+#include <unistd.h>
 
 sem_t           StoreAbs::m_signal;
 std::string     StoreAbs::m_LogRootDir;
@@ -81,6 +82,7 @@ excp:
 CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
 
     CL_TYPE_t _err = CL_OK;
+    uint32_t wOff = 0;
 
     std::ofstream ofe;
     std::string fPath = rootDirGet() + pFDesc->wFilePathGet();
@@ -94,19 +96,23 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
         goto lock_excp;
     }
 
-    ofe = std::ofstream( fPath, std::ios::binary );
+    ofe = std::ofstream( fPath, std::ios::in | std::ios::out | std::ios::binary );
     if( ofe.is_open()==false ) {
         std::cout << "Fail to open file: " << fPath << std::endl;
         goto excp;
-    }    
+    }
 
-    ofe.seekp( pFDesc->wFileOffsetGet(), std::ios::beg);
-    std::cout << "Succ to open file: " << fPath << " offset:" << pFDesc->wFileOffsetGet() << std::endl;
+    wOff = pFDesc->wFileOffsetGet();
+    ofe.seekp( wOff, std::ios::beg);
+    std::cout << "Succ to open file: " << fPath << " offset:" << wOff << std::endl;
+
     // 写数据到文件
-    ofe.write( reinterpret_cast<const char*>(pIn.get()), 8);    
+    ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
+    pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
+
+    ofe.flush();
     ofe.close();
 
-    pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
     std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl;
 
 #if 0

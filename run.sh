@@ -1,6 +1,7 @@
 if [ -d "/tmp/logroot" ];
 then
-	rm /tmp/logroot -rf;
+	#rm /tmp/logroot -rf;
+	echo "";
 fi
 
 if [ ! -d "build" ];
