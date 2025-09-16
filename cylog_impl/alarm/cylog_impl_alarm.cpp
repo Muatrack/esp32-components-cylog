@@ -56,12 +56,6 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     if( item->isValid() ) std::cout << "Item valid" << std::endl;
     else std::cout << "Item invalid" << std::endl;
     std::cout << "Item len:" << item->itemSizeGet() << std::endl;
-
-    // std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
-    // for( auto & p: fList ) {
-    //     m_Store->fileTraverse( p, pBuf, 4 );
-    //     std::cout << "Alarm file:" << static_cast<uint8_t>(pBuf[0]) << std::endl;
-    // }
 }
 
 /*************************************************** Factory ******************************************************/
