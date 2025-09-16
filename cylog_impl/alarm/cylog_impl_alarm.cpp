@@ -25,6 +25,9 @@ excp:
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {
 
+    m_Store->nextFileSelect( m_pFDesc );
+
+#if 0
     /** 遍历日志目录下的文件 */
     std::vector<std::string> fList;
     m_Store->dirTraverse( m_pFDesc, fList );
@@ -44,11 +47,12 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     if( item->isValid() ) std::cout << "Item valid" << std::endl;
     else std::cout << "Item invalid" << std::endl;
     std::cout << "Item len:" << item->itemSizeGet() << std::endl;
+#endif
 
     m_pFDesc->wFileOffsetSet(0);
-
     std::string fP = m_pFDesc->relativePathGet() + "/alm_00";
     m_pFDesc->wFilePathSet( fP );
+
 }
 
 /*************************************************** Factory ******************************************************/

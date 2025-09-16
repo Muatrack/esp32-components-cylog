@@ -32,7 +32,7 @@ public:
     /*** 遍历目录，找到可写文件，可写位置*/
     CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) override;
     /* 遍历文件，查找可写位置 */
-    CL_TYPE_t fileTraverse( std::string & pFDesc,  std::unique_ptr<uint8_t[]> & buf, uint16_t bufSize ) override;
+    CL_TYPE_t fileTraverse( std::string &,  FileUsage & ) override;
     /** 
      * 找到最后写入的文件。
      */

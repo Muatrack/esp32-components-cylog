@@ -8,6 +8,14 @@
 
 using namespace CLFile;
 
+/** 记录文件的名称，大小，写入偏移量 */
+class FileUsage {
+public:
+    std::string m_Path;     /* 文件名称 */
+    uint32_t    m_Size;     /* 文件大小 */
+    uint32_t    m_WOfSet;   /* 可写偏移量*/
+};
+
 /**
  * 日志文件写入方案
  * 
@@ -38,7 +46,7 @@ public:
     /* 遍历目录，查找可写文件、可写偏移量 */
     virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList )=0;
     /* 遍历文件，查找可写位置 */
-    virtual CL_TYPE_t fileTraverse( std::string & pFDesc,  std::unique_ptr<uint8_t[]> & buf, uint16_t bufSize )=0;
+    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & )=0;
 
     /** 
      * 建立全部日志文件
@@ -127,4 +135,3 @@ private:
     /* 存储日志的根目录 */
     static std::string m_LogRootDir;    
 };
-

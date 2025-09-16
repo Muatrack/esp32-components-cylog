@@ -11,6 +11,12 @@
 #include "private_include/cylog_store_linux.hpp"
 #include "private_include/cylog_file.hpp"
 
+typedef struct {
+    std::string name;   /* 文件名称 */
+    uint32_t    size;   /* 文件大小 */
+    uint32_t    wOfSet; /* 可写偏移量 */
+} file_usage_t;
+
 /** 
  * 日志目录初始化 
  *      1 目录存在否,
@@ -242,8 +248,30 @@ void StoreLinux::nextFileSelect(FileDesc & fDesc) {
 }
 #endif
 
+/** 
+ * 遍历分类日志目录
+ * 目的： 选择下一个可写的文件，文件中的可写偏移量
+ */
 void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
-    rootDirGet();
+    
+    std::string fPath;
+    auto fList  = std::vector<std::string>();
+    std::vector<FileUsage> fUsage;
+
+    /* 遍历目录下的文件名称及大小 */
+    dirTraverse( pFDesc, fList );
+    std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl;    
+
+    fUsage = std::vector<FileUsage>(fList.size());
+    /* 遍历文件内的记录，找出下一个可写的位置 */
+    for( size_t i=0;i < fList.size(); i++ ) {
+        fPath = static_cast<std::string>(fList[i]);
+        fUsage[i].m_Path = fPath;
+        fileTraverse(fPath, fUsage[i]);
+        std::cout<<"File:"<<fUsage[i].m_Path<<" size:"<< fUsage[i].m_Size<<" wOffset:"<< fUsage[i].m_WOfSet<<std::endl;
+    }
+
+    std::cout << std::endl;    
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
@@ -262,11 +290,40 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vect
 }
 
 /* 遍历文件，查找可写位置 */
-CL_TYPE_t StoreLinux::fileTraverse(  std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
+CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
+
+    uint32_t remainSize = 0;
+    uint32_t rOfSet   = 0;
+    std::unique_ptr<uint8_t[]> pData;
 
     std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
-    ifs.read(reinterpret_cast<char*>(pBuf.get()), 8);
-    ifs.close();
+    if( ifs.is_open()==false ) { goto excp; }
+    
+    /* 读取文件大小 */
+    ifs.seekg(0, std::ios::end);
+    fUsage.m_Size = ifs.tellg();
 
+    {
+        /* 设置读取偏移量 */
+        rOfSet = 0;
+        ifs.seekg(rOfSet, std::ios::beg);
+        remainSize = fUsage.m_Size;
+
+        while( remainSize>0 ) {
+            pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
+            ifs.read(reinterpret_cast<char*>(pData.get()), 4);
+            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
+
+            rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
+            remainSize -= rOfSet+4;
+        }
+
+        fUsage.m_WOfSet = rOfSet;
+    }
+    
+    ifs.close();
+    return CL_OK;
+excp:
     return CL_EXCP_UNKNOW;
 }
