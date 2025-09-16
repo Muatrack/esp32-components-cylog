@@ -126,6 +126,11 @@ public:
         }
     };
 
+    bool isValid() { return (m_ValidFlag==ITEM_VALID_FLAG); };
+    uint16_t itemSizeGet() { return m_OriDlen; };
+    uint16_t itemVerGet() { return m_Ver; };
+    std::unique_ptr<uint8_t[]> itemGet() { return std::move(m_OriData); };
+
 private:
 
     /**
@@ -144,8 +149,6 @@ private:
         m_ValidFlag = ITEM_VALID_FLAG;
         m_OriDlen   = dLen;
     }
-
-    bool isValid() { return (m_ValidFlag==ITEM_VALID_FLAG); }
 
 public:
     static std::unique_ptr<ItemDesc> itemSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);    // 序列化    

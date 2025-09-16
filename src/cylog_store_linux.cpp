@@ -260,15 +260,10 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, s
 /* 遍历文件，查找可写位置 */
 CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
 
-    char aaa[16] = {0};
-
     std::ifstream ifs( fPath, std::ostream::in );
     // ifs.read( reinterpret_cast<char*>(pBuf.get()), bufSize );
-    ifs.read( aaa, 8 );
+    ifs.read(reinterpret_cast<char*>(pBuf.get()), 8);
     ifs.close();
-
-    printf("%s().%d, 0x%02X%02X%02X%02X\n", __func__, __LINE__, aaa[0], aaa[1], aaa[2], aaa[3]);
-    // std::cout << "Gonna read file:" << fPath << "  " << buf[0] << buf[1] << buf[2] << buf[3] << std::endl;
 
     return CL_EXCP_UNKNOW;
 }

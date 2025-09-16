@@ -26,7 +26,6 @@ std::unique_ptr<ItemDesc>  ItemDesc::itemSerialize(std::unique_ptr<uint8_t[]> pD
 **/
 std::unique_ptr<ItemDesc>  ItemDesc::itemDeSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen) {
     return std::make_unique<ItemDesc>(std::move(pData), dLen, true);
-    // return nullptr;
 };
 
 #endif
