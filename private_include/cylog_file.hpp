@@ -84,28 +84,14 @@ private:
 class DataAbs{
 
 public:
-    // class Head{
-    //     Head()=delete;
-    // private:
-    //     uint8_t                     m_Ver;          // 版本
-    //     uint8_t                     m_ValidFlag;    // 数据是否有效标志
-    //     uint16_t                    m_OriDlen;   // 输入数据的长度
-    // };
-
     virtual ~DataAbs() {};
-
     virtual const unsigned char * serialize(){ return nullptr; };
     virtual bool  deSerialize( uint8_t *pBuf = nullptr){ return false; };
-
-    /** 解析文件头 */
-
-    /** 序列化文件头 */
-
 protected:
     uint8_t                     m_Ver;          // 版本
     uint8_t                     m_ValidFlag;    // 数据是否有效标志
     uint16_t                    m_OriDlen;   // 输入数据的长度
-    // DataAbs::Head               m_DataHead; // 数据头
+    
     std::unique_ptr<uint8_t[]>  m_OriData;   // 输入数据的指针
 };
 
