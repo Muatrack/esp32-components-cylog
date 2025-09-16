@@ -69,10 +69,10 @@ void alarm_log_test() {
 
         //for( int i=0; i < 16; i ++ ) 
         {
-            pAlarmLog->write(alarmItemArray, sizeof(_dataBuf));
+            pAlarmLog->write( std::move(alarmItemArray), sizeof(_dataBuf));
             usleep(500000);
-            pExcpLog->write( excpItemArray,  sizeof(_dataBuf));
-            usleep(500000);
+            // pExcpLog->write( excpItemArray,  sizeof(_dataBuf));
+            // usleep(500000);
         }
     #endif
 

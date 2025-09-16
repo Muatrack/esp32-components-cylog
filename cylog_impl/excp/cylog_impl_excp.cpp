@@ -1,7 +1,7 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_excp.hpp"
 
-CL_TYPE_t CYLogExcpImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
+CL_TYPE_t CYLogExcpImpl::write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) {
     storeGet()->itemWrite( m_pFDesc, pIn, iLen );
     return CL_OK;
 }

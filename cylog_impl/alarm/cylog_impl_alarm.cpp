@@ -3,20 +3,12 @@
 
 using namespace CLFile;
 
-CL_TYPE_t CYLogAlarmImpl::write(const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen){
-    // std::cout << "Alarm write." << std::endl;
-    /* 新建 */
+CL_TYPE_t CYLogAlarmImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
 
-    // std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize(pIn, iLen);
-    storeGet()->itemWrite( m_pFDesc, pIn, iLen);
+    std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
+    storeGet()->itemWrite( m_pFDesc, pItem->itemPack(), iLen+4);
     return CL_OK;
 }
-
-// void CYLogAlarmImpl::logInit() {
-//     /* 读取告警日志目录所有的文件，记录文件的数量，和当前可写文件及其位置 */
-//    std::cout << "CYLogAlarmImpl::logInit()" << std::endl;
-// //    storeGet()->init();
-// }
 
 CL_TYPE_t CYLogAlarmImpl::traverse(log_read_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }

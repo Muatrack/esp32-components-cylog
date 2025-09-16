@@ -17,7 +17,7 @@ namespace CLFile {
 #ifdef CYLOG_FILE_VER
     #define FILE_VERSION        CYLOG_FILE_VER
 #else
-    #define FILE_VERSION        0
+    #define FILE_VERSION        1
 #endif
 
 enum class FileState:uint8_t {
@@ -107,15 +107,20 @@ public:
             m_OriData = std::make_unique<uint8_t[]>(dLen-4);
             std::copy(pData.get()+4, pData.get()+dLen, m_OriData.get());
         } else {    // 数据不带头部，即数据为新生成的日志
-            makeHead( dLen );
-            m_OriData = std::move(pData);
+            m_OriData = std::make_unique<uint8_t[]>(dLen+4);
+            std::copy(pData.get(), pData.get() + dLen, m_OriData.get()+4);
+            std::cout << "ItemDesc constructor: " << std::hex << static_cast<int>(m_OriData[0]) << static_cast<int>(m_OriData[1]) <<  std::endl;
+            makeHead( dLen, m_OriData );
+            std::cout << "ItemDesc constructor: " << std::hex << static_cast<int>(m_OriData[0]) << static_cast<int>(m_OriData[1]) <<  std::endl;
         }
     };
 
     bool isValid() { return (m_ValidFlag==ITEM_VALID_FLAG); };
     uint16_t itemSizeGet() { return m_OriDlen; };
     uint16_t itemVerGet() { return m_Ver; };
-    std::unique_ptr<uint8_t[]> itemGet() { return std::move(m_OriData); };
+    
+    /** 获取带头部数据的封装 */
+    std::unique_ptr<uint8_t[]> itemPack() { return std::move(m_OriData); };
 
 private:
 
@@ -130,10 +135,13 @@ private:
         m_OriDlen   = *((uint16_t*)&pData[2]);
     }
 
-    void makeHead( uint16_t dLen ){
+    void makeHead( uint16_t dLen, std::unique_ptr<uint8_t[]> & pData) {
         m_Ver       = FILE_VERSION;
         m_ValidFlag = ITEM_VALID_FLAG;
         m_OriDlen   = dLen;
+        pData[0] = m_Ver;
+        pData[1] = m_ValidFlag;
+        *(uint16_t*)&pData[2] = m_OriDlen;
     }
 
 public:

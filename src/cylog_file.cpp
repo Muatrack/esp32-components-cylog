@@ -15,7 +15,6 @@ namespace CLFile {
 **/
 std::unique_ptr<ItemDesc>  ItemDesc::itemSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen){
     return std::make_unique<ItemDesc>(std::move(pData), dLen, false);
-    // return nullptr;
 };
 
 /** 
