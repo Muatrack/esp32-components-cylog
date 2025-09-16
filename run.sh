@@ -23,7 +23,5 @@ cmake --build ./
 
 cd ../
 
-echo "-------------- read alarm log file--------------"
-cat /tmp/logroot/alarm/alm_00
 echo ""
 

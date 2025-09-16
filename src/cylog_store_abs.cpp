@@ -110,7 +110,7 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
     pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
 
-    ofe.flush();
+    // ofe.flush();
     ofe.close();
 
     std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl;
