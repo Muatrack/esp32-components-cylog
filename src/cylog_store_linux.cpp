@@ -306,12 +306,14 @@ CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
     {
         /* 设置读取偏移量 */
         rOfSet = 0;
-        ifs.seekg(rOfSet, std::ios::beg);
         remainSize = fUsage.m_Size;
 
         while( remainSize>0 ) {
+            ifs.seekg(rOfSet, std::ios::beg);
+            // std::cout<<  fPath << " Next offset:" << rOfSet << std::endl;
             pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), 4);
+            
             auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
 
