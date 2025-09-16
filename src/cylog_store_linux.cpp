@@ -20,7 +20,7 @@
 CL_TYPE_t StoreLinux::init() {
     std::cout<< "------------------- StoreLinux::init() -------------------" << std::endl;
 #if 0
-    std::shared_ptr<std::vector<CLFile::FileDesc>> spFHeadList = std::make_shared<std::vector<CLFile::FileDesc>>();
+    std::shared_ptr<std::vector<FileDesc>> spFHeadList = std::make_shared<std::vector<FileDesc>>();
     // 目录检查
     if( std::filesystem::exists(m_dirPath) ) { //路径存在,执行检查
         std::cout<< "StoreLinux::init dir " << m_dirPath << " exists." << std::endl;
@@ -70,7 +70,7 @@ CL_TYPE_t StoreLinux::dirCreate_bak() {
     {
         std::cout<< "StoreLinux::init dir " << m_dirPath << " succ to create dir." << std::endl;
         std::filesystem::path f_path;
-        CLFile::FileHead _f_Head( m_fileMaxLength );
+        FileHead _f_Head( m_fileMaxLength );
 
         for( uint32_t i=0; i<m_fileMaxCount; i++ ) {
             ss.str("");
@@ -96,7 +96,7 @@ CL_TYPE_t StoreLinux::dirCreate_bak() {
 
 }
 
-CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
+CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 
     std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
@@ -123,7 +123,7 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) {
  *  - 将文件数据部分全写0，否则会造成文件写偏移量的计算错误 v1.1
 */
 CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
-    std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
+    std::shared_ptr<FileHead> fHead = std::make_shared<FileHead>(m_fileMaxLength);
     std::fstream _ff;
     const uint8_t* pSeried = fHead->serialize();
 
@@ -134,7 +134,7 @@ CL_TYPE_t StoreLinux::headWrite( const std::filesystem::path &fPath ){
 
     // 写入文件头数据
     _ff.seekp(0);
-    _ff.write((char*)pSeried, CLFile::FileHead::sizeGet());
+    _ff.write((char*)pSeried, FileHead::sizeGet());
 
     #if 1   // v1.0
         // 将文件头后面的2个字节清0, 表示紧邻的一包数据大小为0。否则，虽然文件头部数据被刷新，当此文件被遍历是依旧能够读取到旧数据
@@ -153,7 +153,7 @@ excp:
 */
 CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
 
-    std::shared_ptr<CLFile::FileHead> fHead = std::make_shared<CLFile::FileHead>(m_fileMaxLength);
+    std::shared_ptr<FileHead> fHead = std::make_shared<FileHead>(m_fileMaxLength);
     std::fstream _ff;
 
     if( _ff.open( fPath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
@@ -162,7 +162,7 @@ CL_TYPE_t StoreLinux::headRead( const std::filesystem::path &fPath ) {
     }
 
     _ff.seekp(0);
-    _ff.read( (char*)fHead->bytesBufGet(), CLFile::FileHead::sizeGet() );
+    _ff.read( (char*)fHead->bytesBufGet(), FileHead::sizeGet() );
     _ff.close();
 
     fHead->deSerialize();
@@ -173,7 +173,7 @@ excp:
 }
 #endif
 
-void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
+void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & spFHeadList ) {
     // uint64_t _reWriteTs = 0;       // 最后重写入时间
     // uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
 #if 0
@@ -190,7 +190,7 @@ void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>
 
     // 遍历目标文件中可写数据的绝对位置(写入偏移量)
     {
-        std::shared_ptr<CLFile::FileItem> spFileItem = std::make_shared<CLFile::FileItem>();
+        std::shared_ptr<FileItem> spFileItem = std::make_shared<FileItem>();
         std::filesystem::path fPath = m_curWriteFilePath;
         m_curWriteOffset = spFileItem->wOffsetGet( fPath );
     }
@@ -200,14 +200,15 @@ void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>
     std::cout << "************* " << __func__ << " done **************" << std::endl;
 }
 
-void StoreLinux::nextFileSelect() {
+#if 0
+void StoreLinux::nextFileSelect(FileDesc & fDesc) {
     /** 
      * 依据当前已使用的文件名称，拼接下一个选中的文件
      */
-#if 0    
+    
     uint16_t _curFileIdx = 0xff;
     std::stringstream ss;
-    std::shared_ptr<CLFile::FileHead> spFHead = std::make_shared<CLFile::FileHead>();
+    std::shared_ptr<FileHead> spFHead = std::make_shared<FileHead>();
 
     if( isCurFileFull() == false ) {
         // 当前文件未写满， 继续使用
@@ -236,13 +237,15 @@ void StoreLinux::nextFileSelect() {
 
         std::cout << "  write offset:" << m_curWriteOffset << std::endl;
     }
-#endif
-
 //done:
     return;
 }
+#endif
 
-CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, std::vector<std::string> & fList ) {
+void StoreLinux::nextFileSelect(FileDesc & fDesc) {
+}
+
+CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
 
     std::filesystem:: path logDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
@@ -258,10 +261,9 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, s
 }
 
 /* 遍历文件，查找可写位置 */
-CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
+CL_TYPE_t StoreLinux::fileTraverse(  std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
 
-    std::ifstream ifs( fPath, std::ostream::in );
-    // ifs.read( reinterpret_cast<char*>(pBuf.get()), bufSize );
+    std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
     ifs.read(reinterpret_cast<char*>(pBuf.get()), 8);
     ifs.close();
 

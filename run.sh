@@ -19,7 +19,7 @@ rm * -rf
 cmake ../
 cmake --build ./
 
-./cylog
+// ./cylog
 
 cd ../
 

@@ -28,20 +28,19 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     /** 遍历日志目录下的文件 */
     std::vector<std::string> fList;
     m_Store->dirTraverse( m_pFDesc, fList );
-    std::cout << "TESTCASE_dirtraverse | ALARM | size: " << fList.size()<<std::endl;
-    std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
-    for( auto & p: fList ) {
-        std::cout << "TESTCASE_dirtraverse | ALARM | " << static_cast<std::string>(p)<<std::endl;
-        m_Store->fileTraverse( p, pBuf, 4 );
-    }
-
+    
     /**
-     * 遍历日志，找到可写文件的相对路径和可写offset 
-     * 
+     * 遍历日志，找到可写文件的相对路径和可写offset  
      * - 对每个日志文件，遍历其中的全部数据,判定日志文件是否已满
     */
-    std::unique_ptr<ItemDesc> item = ItemDesc::itemDeSerialize(std::move(pBuf), 8);
-    
+    std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
+    for( auto & fName: fList ) {        
+        m_Store->fileTraverse( fName, pBuf, 4 );
+        std::cout << "TESTCASE_filetraverse | ALARM | " << static_cast<std::string>(fName)<<std::endl;
+
+    }
+
+    std::unique_ptr<ItemDesc> item = ItemDesc::itemDeSerialize(std::move(pBuf), 8);    
     if( item->isValid() ) std::cout << "Item valid" << std::endl;
     else std::cout << "Item invalid" << std::endl;
     std::cout << "Item len:" << item->itemSizeGet() << std::endl;

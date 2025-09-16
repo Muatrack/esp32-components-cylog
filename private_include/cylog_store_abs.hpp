@@ -6,6 +6,8 @@
 #include <semaphore.h>
 #include <private_include/errno.hpp>
 
+using namespace CLFile;
+
 /**
  * 日志文件写入方案
  * 
@@ -31,10 +33,10 @@ public:
     virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
 
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( std::unique_ptr<CLFile::FileDesc> & pFDesc ) { return CL_OK; };
+    virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) { return CL_OK; };
 
     /* 遍历目录，查找可写文件、可写偏移量 */
-    virtual CL_TYPE_t dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, std::vector<std::string> & fList )=0;
+    virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList )=0;
     /* 遍历文件，查找可写位置 */
     virtual CL_TYPE_t fileTraverse( std::string & pFDesc,  std::unique_ptr<uint8_t[]> & buf, uint16_t bufSize )=0;
 
@@ -49,12 +51,12 @@ public:
     CL_TYPE_t fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize );
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, CLFile::FileDesc &fDesc){
+    virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, FileDesc &fDesc){
         return CL_OK;
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen);
+    virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen);
 
     /** 
      * 文件目录初始化. 新建对象后首先执行此函数 
@@ -66,12 +68,12 @@ public:
     /**
      * 选择最后写入的文件
      */
-    virtual void latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & pfHeadList ) = 0;
+    virtual void latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & pfHeadList ) = 0;
 
     /** 
      * 选择下一个文件，并初始化文件头部。
      */
-    virtual void nextFileSelect() = 0;
+    virtual void nextFileSelect(FileDesc & fDesc) = 0;
 
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     // virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
