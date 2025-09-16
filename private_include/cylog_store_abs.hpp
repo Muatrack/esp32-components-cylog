@@ -54,9 +54,7 @@ public:
     };
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> &fDesc, const std::unique_ptr<uint8_t[]> & pOData, uint16_t iLen) {
-        return CL_OK;
-    };
+    virtual CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen);
 
     /** 
      * 文件目录初始化. 新建对象后首先执行此函数 

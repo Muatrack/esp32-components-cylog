@@ -28,7 +28,7 @@ public:
      * - 文件不存在，新建目录，新建全数日志文件
     */
     CL_TYPE_t init() override;
-    CL_TYPE_t itemWrite( std::unique_ptr<CLFile::FileDesc> &fDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) override;
+    
     /*** 遍历目录，找到可写文件，可写位置*/
     CL_TYPE_t dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, std::vector<std::string> & fList ) override;
     /* 遍历文件，查找可写位置 */

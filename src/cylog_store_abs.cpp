@@ -10,6 +10,8 @@
 sem_t           StoreAbs::m_signal;
 std::string     StoreAbs::m_LogRootDir;
 
+using namespace std;
+
 namespace fs=std::filesystem;
 
 void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
@@ -76,4 +78,72 @@ excp:
     return CL_EXCP_UNKNOW;
 }
 
+CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
 
+    CL_TYPE_t _err = CL_OK;
+    // bool _bReWriten = false;
+    // uint8_t _buf[2] = {0};
+
+    cout << "Gonna write data to " << rootDirGet() << pFDesc->relativePathGet() << endl;
+
+    // 判断参数有效性
+    if( (pIn==nullptr) || (iLen<1) ) {
+        goto excp;
+    }
+
+    for(int i=0;i<4;i++) {
+        std::cout << "Writing buf:" << static_cast<uint8_t>(pIn[0]) << static_cast<uint8_t>(pIn[1]) << static_cast<uint8_t>(pIn[2]) << static_cast<uint8_t>(pIn[3]) << std::endl;
+    }
+
+    // 获取读写资源 
+    if( lockTake() == false ) {
+        cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
+        _err = CL_LOG_BUSY;
+        goto lock_excp;
+    }
+#if 0
+re_write:
+    // 判断当前文件是否能够写下 iLen 长的数据
+    if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
+        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
+        if( _bReWriten ) {
+            _err = CL_FILE_FULL;
+            goto excp;
+        }
+        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        // 当前文件已写满，选择下一个文件
+        nextFileSelect();
+        _bReWriten = true;
+        goto re_write;
+    }
+    {
+        // 写数据到文件
+        std::fstream _ff;
+        if( _ff.open( m_curWriteFilePath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
+            std::cout << "     StoreLinux::itemWrite file closed [ Excep ]"  << std::endl;
+            goto excp;
+        }
+        std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
+                            " offset:" << std::setw(4) << m_curWriteOffset << 
+                            " len:" << iLen << std::endl;
+
+        CyLogUtils::Serializer::Serialize<decltype(iLen)>( iLen, sizeof(iLen), _buf );
+        _ff.seekp( m_curWriteOffset );
+        // _ff.write( (char*)&iLen, sizeof(iLen));
+        _ff.write( (char*)&_buf, sizeof(iLen));
+        _ff.write( (char*)in, iLen );
+        memset( _buf, 0, sizeof(iLen) );
+        _ff.write( (char*)&_buf, sizeof(iLen));  // 此处用于将覆盖写过程中，刚刚写入的数据其后紧跟的字节置零，否则文件写位置的检索将异常。
+        _ff.close();
+        m_curWriteOffset += (sizeof(iLen) + iLen);
+    }
+#endif
+
+excp:
+    lockGive();    
+    return _err;
+
+lock_excp:
+    return _err;
+}

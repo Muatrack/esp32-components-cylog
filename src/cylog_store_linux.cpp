@@ -173,71 +173,6 @@ excp:
 }
 #endif
 
-CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
-    CL_TYPE_t _err = CL_OK;
-    // bool _bReWriten = false;
-    // uint8_t _buf[2] = {0};
-
-    cout << "Gonna write data to " << pFDesc->wFilePathGet() << "/" << pFDesc->filePrefixGet() << "/..." << endl;
-
-    // 判断参数有效性
-    if( (pIn==nullptr) || (iLen<1) ) {
-        goto excp;
-    }
-
-    // 获取读写资源 
-    if( lockTake() == false ) {
-        cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
-        _err = CL_LOG_BUSY;
-        goto lock_excp;
-    }
-#if 0
-re_write:
-    // 判断当前文件是否能够写下 iLen 长的数据
-    if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
-        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
-        // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
-        if( _bReWriten ) {
-            _err = CL_FILE_FULL;
-            goto excp;
-        }
-        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
-        // 当前文件已写满，选择下一个文件
-        nextFileSelect();
-        _bReWriten = true;
-        goto re_write;
-    }
-    {
-        // 写数据到文件
-        std::fstream _ff;
-        if( _ff.open( m_curWriteFilePath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
-            std::cout << "     StoreLinux::itemWrite file closed [ Excep ]"  << std::endl;
-            goto excp;
-        }
-        std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
-                            " offset:" << std::setw(4) << m_curWriteOffset << 
-                            " len:" << iLen << std::endl;
-
-        CyLogUtils::Serializer::Serialize<decltype(iLen)>( iLen, sizeof(iLen), _buf );
-        _ff.seekp( m_curWriteOffset );
-        // _ff.write( (char*)&iLen, sizeof(iLen));
-        _ff.write( (char*)&_buf, sizeof(iLen));
-        _ff.write( (char*)in, iLen );
-        memset( _buf, 0, sizeof(iLen) );
-        _ff.write( (char*)&_buf, sizeof(iLen));  // 此处用于将覆盖写过程中，刚刚写入的数据其后紧跟的字节置零，否则文件写位置的检索将异常。
-        _ff.close();
-        m_curWriteOffset += (sizeof(iLen) + iLen);
-    }
-#endif
-
-excp:
-    lockGive();    
-    return _err;
-
-lock_excp:
-    return _err;
-};
-
 void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<CLFile::FileDesc>> & spFHeadList ) {
     // uint64_t _reWriteTs = 0;       // 最后重写入时间
     // uint16_t _listIndexSelected = 0; // 遍历过程中选中的数据索引
@@ -324,10 +259,15 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<CLFile::FileDesc> & pFDesc, s
 
 /* 遍历文件，查找可写位置 */
 CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath, std::unique_ptr<uint8_t[]> & pBuf, uint16_t bufSize ) {
+
+    char aaa[16] = {0};
+
     std::ifstream ifs( fPath, std::ostream::in );
-    ifs.read( reinterpret_cast<char*>(pBuf.get()), bufSize );
+    // ifs.read( reinterpret_cast<char*>(pBuf.get()), bufSize );
+    ifs.read( aaa, 8 );
     ifs.close();
 
+    printf("%s().%d, 0x%02X%02X%02X%02X\n", __func__, __LINE__, aaa[0], aaa[1], aaa[2], aaa[3]);
     // std::cout << "Gonna read file:" << fPath << "  " << buf[0] << buf[1] << buf[2] << buf[3] << std::endl;
 
     return CL_EXCP_UNKNOW;
