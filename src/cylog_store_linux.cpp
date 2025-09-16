@@ -268,7 +268,12 @@ void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         fPath = static_cast<std::string>(fList[i]);
         fUsage[i].m_Path = fPath;
         fileTraverse(fPath, fUsage[i]);
-        std::cout<<"File:"<<fUsage[i].m_Path<<" size:"<< fUsage[i].m_Size<<" wOffset:"<< fUsage[i].m_WOfSet<<std::endl;
+    }
+
+    /* 筛选下一个可写文件 */
+    for( size_t i=0;i < fUsage.size(); i++ ) {
+        auto fu = fUsage[i];     
+        std::cout<<"File id:"<< static_cast<int>(fu.m_FId) <<" size:"<< fu.m_Size<<" wOffset:"<< fu.m_WOfSet<<std::endl;
     }
 
     std::cout << std::endl;    
@@ -296,6 +301,16 @@ CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
     uint32_t rOfSet   = 0;
     std::unique_ptr<uint8_t[]> pData;
 
+    /* 识别文件名称中的数字 ID */
+    {
+        size_t pos = fPath.rfind('_');
+        if( pos != std::string::npos ) {
+            auto ss = fPath.substr(pos+1);
+            fUsage.m_FId = atoi(ss.c_str());
+        }
+    }
+
+    /* 打开文件 */
     std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
     if( ifs.is_open()==false ) { goto excp; }
     

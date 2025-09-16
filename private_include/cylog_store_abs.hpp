@@ -11,6 +11,7 @@ using namespace CLFile;
 /** 记录文件的名称，大小，写入偏移量 */
 class FileUsage {
 public:
+    uint8_t     m_FId;      /* 文件名称追加的数字编号 */
     std::string m_Path;     /* 文件名称 */
     uint32_t    m_Size;     /* 文件大小 */
     uint32_t    m_WOfSet;   /* 可写偏移量*/
