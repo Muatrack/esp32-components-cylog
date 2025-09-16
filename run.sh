@@ -1,3 +1,8 @@
+if [ -d "/tmp/logroot" ];
+then
+	rm /tmp/logroot -rf;
+fi
+
 if [ ! -d "build" ];
 then
 	mkdir build
@@ -12,9 +17,12 @@ rm * -rf
 
 cmake ../
 cmake --build ./
-# ./cylog
+
+./cylog
 
 cd ../
 
-
+echo "-------------- read alarm log file--------------"
+cat /tmp/logroot/alarm/alm_00
+echo ""
 

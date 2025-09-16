@@ -52,7 +52,7 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
     }
 
     /** 建立日志文件 */
-    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
+    store->fileCreate(alarmLogAbsPath, prefix, fileCount, fileSize);
 
     return new CYLogExcpImpl(logDir, store, std::move(pExcpFD));
 }

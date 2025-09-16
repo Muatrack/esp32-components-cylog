@@ -81,26 +81,32 @@ excp:
 CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
 
     CL_TYPE_t _err = CL_OK;
-    // bool _bReWriten = false;
-    // uint8_t _buf[2] = {0};
 
-    cout << "Gonna write data to " << rootDirGet() << pFDesc->relativePathGet() << endl;
+    std::ofstream ofe;
+    std::string fPath = rootDirGet() + pFDesc->wFilePathGet();
 
     // 判断参数有效性
-    if( (pIn==nullptr) || (iLen<1) ) {
-        goto excp;
-    }
-
-    for(int i=0;i<4;i++) {
-        std::cout << "Writing buf:" << static_cast<uint8_t>(pIn[0]) << static_cast<uint8_t>(pIn[1]) << static_cast<uint8_t>(pIn[2]) << static_cast<uint8_t>(pIn[3]) << std::endl;
-    }
-
+    if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }
     // 获取读写资源 
     if( lockTake() == false ) {
         cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
         _err = CL_LOG_BUSY;
         goto lock_excp;
     }
+
+    ofe = std::ofstream( fPath, std::ios::binary );
+    if( ofe.is_open()==false ) {
+        std::cout << "Fail to open file: " << fPath << std::endl;
+        goto excp;
+    }
+    std::cout << "Succ to open file: " << fPath << std::endl;
+
+    // 写数据到文件
+    ofe.write( reinterpret_cast<const char*>(pIn.get()), 8);    
+    ofe.close();
+
+    std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl;
+
 #if 0
 re_write:
     // 判断当前文件是否能够写下 iLen 长的数据

@@ -56,14 +56,14 @@ public:
     /** 读取单个文件的大小 */
     uint32_t    fileSizeGet() { return m_FSize; };
     /** 读取当前可写文件的相对路径 */
-    std::string wFilePathGet() { return m_WPath; };
+    std::string wFilePathGet() { return  m_WPath; };
     /** 读取当前可写文件的写入偏移量 */
     uint32_t    wFileOffsetGet() { return m_WOffset; };
 
     /* 设置分类日志，当前可写的文件相对路径 */
-    void writableFilePathSet(std::string & path) { m_WPath = path; }
+    void wFilePathSet(std::string & path) { m_WPath = path; }
     /* 设置分类日志，当前可写文件中的写时偏移量*/
-    void writableFileOffsetSet(uint32_t offset) { m_WOffset = offset; }
+    void wFileOffsetSet(uint32_t offset) { m_WOffset = offset; }
 
 private:
 

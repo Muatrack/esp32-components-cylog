@@ -56,6 +56,11 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     if( item->isValid() ) std::cout << "Item valid" << std::endl;
     else std::cout << "Item invalid" << std::endl;
     std::cout << "Item len:" << item->itemSizeGet() << std::endl;
+
+    m_pFDesc->wFileOffsetSet(0);
+
+    std::string fP = m_pFDesc->relativePathGet() + "/alm_00";
+    m_pFDesc->wFilePathSet( fP );
 }
 
 /*************************************************** Factory ******************************************************/
@@ -75,7 +80,7 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
     else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;
     /** 建立日志文件 */
-    store->fileCreate(alarmLogAbsPath, "alm", fileCount, fileSize);
+    store->fileCreate(alarmLogAbsPath, prefix, fileCount, fileSize);
 
     if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
     else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;

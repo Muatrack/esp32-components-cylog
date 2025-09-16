@@ -54,14 +54,21 @@ void alarm_log_test() {
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
     #if 1
         /*  */
-        std::unique_ptr<uint8_t[]> alarmItemArray(_dataBuf); // = std::make_unique<uint8_t[]>(sizeof(_dataBuf));
+        std::unique_ptr<uint8_t[]> alarmItemArray = std::make_unique<uint8_t[]>(16);
         // std::copy( _dataBuf, _dataBuf + sizeof(_dataBuf), alarmItemArray.get());
-
         std::unique_ptr<uint8_t[]> excpItemArray = std::make_unique<uint8_t[]>(sizeof(_dataBuf));
-        std::copy( _dataBuf, _dataBuf + sizeof(_dataBuf),  excpItemArray.get());
+        
+        for( int i=0; i<8; i ++ ) { alarmItemArray[i] = 65 + i; }
+
+        std::cout << "Confirm bytes ...." << std::endl;
+        for( int i=0; i<8; i ++) {
+            std::cout << "0x" << std::setw(2) << static_cast<int>(alarmItemArray[i]);
+        }
+        std::cout << std::endl;
         /* Done */
 
-        for( int i=0; i < 60; i ++ ) {
+        //for( int i=0; i < 16; i ++ ) 
+        {
             pAlarmLog->write(alarmItemArray, sizeof(_dataBuf));
             usleep(500000);
             pExcpLog->write( excpItemArray,  sizeof(_dataBuf));
