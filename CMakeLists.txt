@@ -12,6 +12,7 @@ set(
         src/cylog_file.cpp
 )
 
+set(USE_ASSERTION true)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -41,6 +42,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
 else()
     message(ERROR "No system matched")
 endif()
+
+include(./cmk_include/pre.cmake)
 
 target_include_directories(cylog
                 PRIVATE      ./

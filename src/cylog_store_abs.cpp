@@ -7,6 +7,9 @@
 #include <filesystem>
 #include "private_include/cylog_store_abs.hpp"
 #include <unistd.h>
+#ifdef USE_ASSERTION
+    #include <assert.h>
+#endif
 
 sem_t           StoreAbs::m_signal;
 std::string     StoreAbs::m_LogRootDir;
@@ -85,7 +88,35 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
     uint32_t wOff = 0;
 
     std::ofstream ofe;
-    std::string fPath = rootDirGet() + pFDesc->wFilePathGet();
+    std::string fPath = pFDesc->wFilePathGet();
+    
+    {
+        // 判断文件是否已满，判断文件是否能够写下当前数据
+        if( isFileFull(pFDesc->wFileOffsetGet(), pFDesc) ) {
+            nextFileSelect(pFDesc);
+
+
+            // 经过nextFileSelect()后，不应当存在被选择文件已满的情况
+            if( isFileFull(pFDesc->wFileOffsetGet(), pFDesc) ) { 
+                #ifdef USE_ASSERTION
+                    assert(false); 
+                #else
+                    std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+                    return CL_EXCP_UNKNOW;
+                #endif
+            }
+        }
+
+        // 判断当前可写文件是否能够存储待写的日志, 此种情况发生后属于致命异常
+        if( (pFDesc->wFileOffsetGet()+iLen)>= pFDesc->fileSizeGet() ) { 
+            #ifdef USE_ASSERTION
+                assert(false);
+            #else
+                std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+                return CL_EXCP_UNKNOW;
+            #endif
+        }
+    }
 
     // 判断参数有效性
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }

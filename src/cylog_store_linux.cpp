@@ -11,6 +11,10 @@
 #include "private_include/cylog_store_linux.hpp"
 #include "private_include/cylog_file.hpp"
 
+#ifdef USE_ASSERTION
+    #include <assert.h>
+#endif
+
 typedef struct {
     std::string name;   /* 文件名称 */
     uint32_t    size;   /* 文件大小 */
@@ -206,54 +210,12 @@ void StoreLinux::latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & spFH
     std::cout << "************* " << __func__ << " done **************" << std::endl;
 }
 
-#if 0
-void StoreLinux::nextFileSelect(FileDesc & fDesc) {
-    /** 
-     * 依据当前已使用的文件名称，拼接下一个选中的文件
-     */
-    
-    uint16_t _curFileIdx = 0xff;
-    std::stringstream ss;
-    std::shared_ptr<FileHead> spFHead = std::make_shared<FileHead>();
-
-    if( isCurFileFull() == false ) {
-        // 当前文件未写满， 继续使用
-        goto done;
-    }
-
-    {
-        // 获取当前日志分类文件的数量， 依据当前使用的文件名拼接下一个文件名
-        std::cout << "StoreLinux::nextFileSelect cur file path:" << m_curWriteFilePath;
-        std::filesystem::path curPath = m_curWriteFilePath;
-        std::cout << "  root path:" << m_dirPath;
-        _curFileIdx = atoi(curPath.stem().c_str());
-        _curFileIdx = (_curFileIdx + 1) % m_fileMaxCount;
-        std::cout << "  next file idx:" << _curFileIdx << std::endl;
-
-        { // 拼接新路径, 重置 写操作的偏移量
-            ss.str("");
-            ss << std::setw(2) << std::setfill('0') << _curFileIdx ;
-            m_curWriteFilePath = m_dirPath + ss.str();
-            m_curWriteOffset = spFHead->sizeGet();
-        }
-
-        std::cout << __func__ << "()." << __LINE__ << std::endl;
-        // 执行文件头更新
-        headWrite( m_curWriteFilePath );
-
-        std::cout << "  write offset:" << m_curWriteOffset << std::endl;
-    }
-//done:
-    return;
-}
-#endif
-
 /** 
  * 比较全部文件信息，筛选可用于写入的文件
  * @param  vFDecs 收集到的全部文件信息
  * @return 被选中文件的 id, 0xFF 无效ID
  */
-std::unique_ptr<FileUsage> writableFileHit( std::vector<FileUsage> & vFUsage ) {
+static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fDesc , std::vector<FileUsage> & vFUsage ) {
 
     uint16_t fileCount = 0;
     bool     bVal = true;
@@ -291,21 +253,25 @@ route_2:
     // 非全部文件已写满，跳至规则3
     if(bVal==false) { goto route_3; } 
 
-    // 选择 last time 最小的文件
+    // 选择 last time 最小的文件, 并将其offset 设置为0
     for( auto &fu : vFUsage ) {
         static uint32_t _ts = ~1;
         if( _ts > fu.m_FMTime ) { _ts = fu.m_FMTime; pHitFUsage = std::make_unique<FileUsage>(fu); }
     }
-    if(pHitFUsage) { goto done; }
+    if(pHitFUsage) {
+        pHitFUsage->m_WOfSet = 0;
+        goto done; 
+    }
 
 route_3:
     /** 规则3:
-     * 当部分文件被写入后，排除已写满的文件
-     * - 将未写满的文件，按照wOffset 由大到小排序，选择wOffset最大的文件
+     * 当部分文件被写入后，排除已写满的文件, 排除空文件
+     * - 按照wOffset 由大到小排序，选择wOffset最小的文件
     */
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         static uint32_t _wOffset = 0;
-        if( fu.m_IsFull ) { continue; }
+        if( fu.m_IsFull ) { continue; } // 排除已写满的文件
+        if( fu.m_WOfSet==0 ) { continue; } // 排除空文件
         if( _wOffset < fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
     }
     if(pHitFUsage) { goto done;  }
@@ -357,6 +323,7 @@ uint32_t getFileLastModifyTm( std::string & fPath ) {
  * 遍历分类日志目录
  * 目的： 选择下一个可写的文件，文件中的可写偏移量
  * 
+ * @param pFDesc: 分类日志目录的信息
  */
 void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     
@@ -388,10 +355,19 @@ void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
                                                                             << std::setw(9) << (fu.m_IsFull?" full":" not full")
                                                                             << " | Modify tm:" << fu.m_FMTime
                                                                             <<std::endl;
-    }
+    }    
 
-    std::unique_ptr<FileUsage> pHitFu = writableFileHit(fUsage);
-    std::cout<<"Got a writable file ID:"<<static_cast<int>(pHitFu->m_FId)<<std::endl;
+    std::unique_ptr<FileUsage> pHitFu = writableFileHit(pFDesc ,fUsage);
+    #ifdef USE_ASSERTION
+        assert(pHitFu);
+    #else
+        std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+        return;
+    #endif
+    pFDesc->wFileOffsetSet(pHitFu->m_WOfSet);
+    pFDesc->wFilePathSet(pHitFu->m_Path);
+
+    std::cout<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl;
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {

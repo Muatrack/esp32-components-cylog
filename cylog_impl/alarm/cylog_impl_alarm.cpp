@@ -5,7 +5,10 @@ using namespace CLFile;
 
 CL_TYPE_t CYLogAlarmImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
 
+    // 将日志数据序列化
     std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
+
+    // 将序列化后的数据写入文件
     storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4);
     return CL_OK;
 }
@@ -48,11 +51,6 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
     else std::cout << "Item invalid" << std::endl;
     std::cout << "Item len:" << item->itemSizeGet() << std::endl;
 #endif
-
-    m_pFDesc->wFileOffsetSet(0);
-    std::string fP = m_pFDesc->relativePathGet() + "/alm_00";
-    m_pFDesc->wFilePathSet( fP );
-
 }
 
 /*************************************************** Factory ******************************************************/
