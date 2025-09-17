@@ -124,7 +124,6 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
     return CL_OK;
 };
 
-
 #if 0
 /** 
  * 
@@ -223,7 +222,7 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
 
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
 
-
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     /** 规则1: 如全部文件的 wOffset 为0, 则使用文件id为0 */
     bVal = true;
     for( auto &fu : vFUsage ) {
@@ -242,6 +241,7 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     }
 
 route_2:
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     /** 
      * 规则2: 
      * 如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
@@ -264,6 +264,7 @@ route_2:
     }
 
 route_3:
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     /** 规则3:
      * 当部分文件被写入后，排除已写满的文件, 排除空文件
      * - 按照wOffset 由大到小排序，选择wOffset最小的文件
@@ -275,12 +276,30 @@ route_3:
         if( _wOffset < fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
     }
     if(pHitFUsage) { goto done;  }
-
+    goto route_4;
+route_4:
+    /** 
+     * 规则4: 当前文件被写满后，使用预期ID相邻的下一个文件
+     * (在空文件-woffset==0, 中选择id最小的)
+     * 1. 解析当前文件的 ID
+     * 2. 得到下一个可写文件的ID，找到新ID对应的 fUsage
+     * 3. 将可写文件的 wOffset设置为 0
+     */
+    for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
+        static uint32_t _wOffset = ~1;
+        if( fu.m_WOfSet>0 ) { continue; } // 排除非空文件
+        if( _wOffset > fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
+    }
+    if(pHitFUsage) { goto done;  }
+     
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     goto excp;
 
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
 done:
     return pHitFUsage;
 excp:
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     return nullptr;
 }
 
