@@ -66,14 +66,8 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     if( store->dirCreate(alarmLogAbsPath)==CL_OK ) {
         std::cout << "CYLogAlarmImpl log directory " << alarmLogAbsPath << " get ready." << std::endl;
     }
-
-    if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
-    else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;
     /** 建立日志文件 */
     store->fileCreate(alarmLogAbsPath, prefix, fileCount, fileSize);
-
-    if( pFileDesc ) std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " isn't nullptr" << std::endl;
-    else            std::cout << "TESTCASE_NULLPTR " <<__func__<< "(). "<< __LINE__ << " is nullptr" << std::endl;
 
     return new CYLogAlarmImpl(logDir, store, std::move(pFileDesc) );
 }
