@@ -253,36 +253,69 @@ void StoreLinux::nextFileSelect(FileDesc & fDesc) {
  * @param  vFDecs 收集到的全部文件信息
  * @return 被选中文件的 id, 0xFF 无效ID
  */
-uint16_t writableFileHit( std::vector<FileUsage> & vFUsage ) {
-    uint16_t hittedFileId = 0xFF;   // 0xFF表示无效
+std::unique_ptr<FileUsage> writableFileHit( std::vector<FileUsage> & vFUsage ) {
+
     uint16_t fileCount = 0;
     bool     bVal = true;
+    std::unique_ptr<FileUsage> pHitFUsage = nullptr;
 
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
-    
+
+
     /** 规则1: 如全部文件的 wOffset 为0, 则使用文件id为0 */
     bVal = true;
     for( auto &fu : vFUsage ) {
         if( fu.m_WOfSet!=0 ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
     }
-    if(bVal) { hittedFileId=0; goto done;}  // 设置id为0, 并跳转至结束
 
-    /** 规则2: 如果全部文件 均已写满。通过比较各文件的最后写入日期，将最后写入时间最大的文件作为开始，使ID加1后对应的文件作为下一个可写文件 */
-    bVal = true;
+    // 非全部文件为空， 跳至下一规则
+    if(bVal==false) { goto route_2; };
+
+    // 全部文件均未被写入, 选择id为0的对象
     for( auto &fu : vFUsage ) {
-        if( fu.m_IsFull==false ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
-    }
-    if(bVal) { //全部文件已经写满
-        // 找出最后写入时间最大的文件，将其ID+1得到下一个可写文件的ID
-        goto done;
+        if(fu.m_FId==0) {
+            pHitFUsage = std::make_unique<FileUsage>(fu);
+            goto done;
+        }
     }
 
-    /** 规则3:  */
+route_2:
+    /** 
+     * 规则2: 
+     * 如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
+     */
+    bVal = true;
+    // 判断全部文件是否已满
+    for( auto &fu : vFUsage ) { if( fu.m_IsFull==false ) { bVal=false; break; } }
+
+    // 非全部文件已写满，跳至规则3
+    if(bVal==false) { goto route_3; } 
+
+    // 选择 last time 最小的文件
+    for( auto &fu : vFUsage ) {
+        static uint32_t _ts = ~1;
+        if( _ts > fu.m_FMTime ) { _ts = fu.m_FMTime; pHitFUsage = std::make_unique<FileUsage>(fu); }
+    }
+    if(pHitFUsage) { goto done; }
+
+route_3:
+    /** 规则3:
+     * 当部分文件被写入后，排除已写满的文件
+     * - 将未写满的文件，按照wOffset 由大到小排序，选择wOffset最大的文件
+    */
+    for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
+        static uint32_t _wOffset = 0;
+        if( fu.m_IsFull ) { continue; }
+        if( _wOffset < fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
+    }
+    if(pHitFUsage) { goto done;  }
+
+    goto excp;
 
 done:
-    return hittedFileId;
+    return pHitFUsage;
 excp:
-    return 0xFF;
+    return nullptr;
 }
 
 uint32_t getFileLastModifyTm( std::string & fPath ) {
@@ -357,8 +390,8 @@ void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
                                                                             <<std::endl;
     }
 
-    auto wId = writableFileHit(fUsage);
-    std::cout<<"Got a writable file ID:"<<static_cast<int>(wId)<<std::endl;
+    std::unique_ptr<FileUsage> pHitFu = writableFileHit(fUsage);
+    std::cout<<"Got a writable file ID:"<<static_cast<int>(pHitFu->m_FId)<<std::endl;
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {

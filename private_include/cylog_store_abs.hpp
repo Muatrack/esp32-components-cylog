@@ -19,7 +19,7 @@ public:
     uint32_t    m_FMTime;   /* 文件的修改时间 */
 
     FileUsage():m_IsFull(true),m_FId(0xFF), m_Path(""), m_Size(0), m_WOfSet(0),m_FMTime(0) {};
-    FileUsage(FileUsage&) = delete;
+    // FileUsage(FileUsage&) = delete;
 };
 
 /**
