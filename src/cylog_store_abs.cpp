@@ -86,6 +86,7 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
 
     CL_TYPE_t _err = CL_OK;
     uint32_t wOff = 0;
+    uint8_t  tailZeroArray[4] = {0x0};
 
     std::ofstream ofe;
     std::string fPath = pFDesc->wFilePathGet();
@@ -139,6 +140,7 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
+    ofe.write( (char*)tailZeroArray, 4);    //写入额外的4个字节0. 当覆盖写的时候便于将就数据自动失效
     pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
 
     // ofe.flush();
