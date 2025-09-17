@@ -16,8 +16,10 @@ public:
     std::string m_Path;     /* 文件名称 */
     uint32_t    m_Size;     /* 文件大小 */
     uint32_t    m_WOfSet;   /* 可写偏移量*/
+    uint32_t    m_FMTime;   /* 文件的修改时间 */
 
-    FileUsage():m_IsFull(true),m_FId(0xFF), m_Path(""), m_Size(0), m_WOfSet(0) {};
+    FileUsage():m_IsFull(true),m_FId(0xFF), m_Path(""), m_Size(0), m_WOfSet(0),m_FMTime(0) {};
+    FileUsage(FileUsage&) = delete;
 };
 
 /**

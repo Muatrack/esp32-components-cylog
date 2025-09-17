@@ -249,8 +249,81 @@ void StoreLinux::nextFileSelect(FileDesc & fDesc) {
 #endif
 
 /** 
+ * 比较全部文件信息，筛选可用于写入的文件
+ * @param  vFDecs 收集到的全部文件信息
+ * @return 被选中文件的 id, 0xFF 无效ID
+ */
+uint16_t writableFileHit( std::vector<FileUsage> & vFUsage ) {
+    uint16_t hittedFileId = 0xFF;   // 0xFF表示无效
+    uint16_t fileCount = 0;
+    bool     bVal = true;
+
+    if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
+    
+    /** 规则1: 如全部文件的 wOffset 为0, 则使用文件id为0 */
+    bVal = true;
+    for( auto &fu : vFUsage ) {
+        if( fu.m_WOfSet!=0 ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
+    }
+    if(bVal) { hittedFileId=0; goto done;}  // 设置id为0, 并跳转至结束
+
+    /** 规则2: 如果全部文件 均已写满。通过比较各文件的最后写入日期，将最后写入时间最大的文件作为开始，使ID加1后对应的文件作为下一个可写文件 */
+    bVal = true;
+    for( auto &fu : vFUsage ) {
+        if( fu.m_IsFull==false ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
+    }
+    if(bVal) { //全部文件已经写满
+        // 找出最后写入时间最大的文件，将其ID+1得到下一个可写文件的ID
+        goto done;
+    }
+
+    /** 规则3:  */
+
+done:
+    return hittedFileId;
+excp:
+    return 0xFF;
+}
+
+uint32_t getFileLastModifyTm( std::string & fPath ) {
+    
+    namespace fs = std::filesystem;
+    // 获取最后修改时间
+    auto last_write_time = fs::last_write_time(fPath);
+
+    // 转换为 std::chrono::system_clock::time_point
+    auto time_point = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+        last_write_time - fs::file_time_type::clock::now() + std::chrono::system_clock::now()
+    );
+
+    // 转换为时间戳（秒）
+    auto timestamp_s = std::chrono::duration_cast<std::chrono::seconds>(
+        time_point.time_since_epoch()
+    ).count();
+
+    #if 0
+    // 转换为时间戳（毫秒）
+    auto timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        time_point.time_since_epoch()
+    ).count();
+
+    // 输出结果
+    std::cout << "文件: " << fPath << std::endl;
+    std::cout << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl;
+    std::cout << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl;
+
+    // 可选：将时间戳转换为可读时间
+    auto c_time = std::chrono::system_clock::to_time_t(time_point);
+    std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time);
+    #endif
+
+    return static_cast<uint32_t>(timestamp_s);
+}
+
+/** 
  * 遍历分类日志目录
  * 目的： 选择下一个可写的文件，文件中的可写偏移量
+ * 
  */
 void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     
@@ -265,30 +338,27 @@ void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     fUsage = std::vector<FileUsage>(fList.size());
     /* 遍历文件内的记录，找出下一个可写的位置 */
     for( size_t i=0;i < fList.size(); i++ ) {
-        fPath = static_cast<std::string>(fList[i]);
-        fUsage[i].m_Path = fPath;
-        fileTraverse(fPath, fUsage[i]);
-        fUsage[i].m_IsFull = ((fUsage[i].m_Size-fUsage[i].m_WOfSet)<pFDesc->tailHoleGet());
-
-        /** */
-        auto fu = fUsage[i];
+        auto &fu = fUsage[i];
         fPath = static_cast<std::string>(fList[i]);
         fu.m_Path = fPath;
-        fileTraverse(fPath, fu);
-        fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);
-        /** done */
+        fileTraverse(fPath, fu);        // 遍历文件中的记录信息
+        fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);  // 判断文件是否已写满
+        fu.m_FMTime = getFileLastModifyTm( fu.m_Path );         
     }
 
     /* 筛选下一个可写文件 */
     for( size_t i=0;i < fUsage.size(); i++ ) {
-        auto fu = fUsage[i];
+        auto &fu = fUsage[i];
         std::cout<<"File id:"<< static_cast<int>(fu.m_FId)
                                                                             <<" size:"<< fu.m_Size 
                                                                             << " wOffset:"<< std::setw(5) << fu.m_WOfSet
-                                                                            << std::setw(9) << (fu.m_IsFull?" full":" not full")<<std::endl;
+                                                                            << std::setw(9) << (fu.m_IsFull?" full":" not full")
+                                                                            << " | Modify tm:" << fu.m_FMTime
+                                                                            <<std::endl;
     }
 
-    std::cout << std::endl;
+    auto wId = writableFileHit(fUsage);
+    std::cout<<"Got a writable file ID:"<<static_cast<int>(wId)<<std::endl;
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
