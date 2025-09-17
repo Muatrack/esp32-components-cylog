@@ -89,7 +89,7 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
     uint8_t  tailZeroArray[4] = {0x0};
 
     std::ofstream ofe;
-    std::string fPath = pFDesc->wFilePathGet();
+    std::string fPath;
     
     {
         // 判断文件是否已满，判断文件是否能够写下当前数据
@@ -118,6 +118,8 @@ CL_TYPE_t StoreAbs::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const
             #endif
         }
     }
+    
+    fPath = pFDesc->wFilePathGet();
 
     // 判断参数有效性
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }

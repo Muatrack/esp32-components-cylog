@@ -277,7 +277,9 @@ route_3:
     }
     if(pHitFUsage) { goto done;  }
     goto route_4;
+    
 route_4:
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     /** 
      * 规则4: 当前文件被写满后，使用预期ID相邻的下一个文件
      * (在空文件-woffset==0, 中选择id最小的)
