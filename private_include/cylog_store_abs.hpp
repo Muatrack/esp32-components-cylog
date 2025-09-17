@@ -124,6 +124,17 @@ public:
         sem_post(&m_signal);
     }
 
+    /**
+     * 判断文件是否已满
+     * @param wOffset: 文件当前可识别的写偏移量
+     * @param pFDesc:  分类日志文件的描述
+     */
+    virtual bool isFileFull( uint32_t wOffset, std::unique_ptr<FileDesc>& pFDesc ) {
+        uint32_t remainSize = pFDesc->fileSizeGet()-wOffset;
+        // std::cout<<"isFileFull filesize:" << static_cast<int>(pFDesc->fileSizeGet())<<" cur wOffset:" << static_cast<int>(wOffset) << " hole size:" << static_cast<int>(pFDesc->tailHoleGet())<<std::endl;
+        return (remainSize<pFDesc->tailHoleGet());
+    };
+
 public:
     /**
      * 初始化存储资源
