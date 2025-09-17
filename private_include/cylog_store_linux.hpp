@@ -45,7 +45,4 @@ public:
      * 
      */
     void nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) override;
-
-private:
-    uint16_t    m_fileHoleSize;     /* 文件尾部的空洞大小 32字节 */
 };

@@ -268,15 +268,16 @@ void StoreLinux::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         fPath = static_cast<std::string>(fList[i]);
         fUsage[i].m_Path = fPath;
         fileTraverse(fPath, fUsage[i]);
+        fUsage[i].m_IsFull = ((fUsage[i].m_Size-fUsage[i].m_WOfSet)<pFDesc->tailHoleGet());
     }
 
     /* 筛选下一个可写文件 */
     for( size_t i=0;i < fUsage.size(); i++ ) {
-        auto fu = fUsage[i];     
-        std::cout<<"File id:"<< static_cast<int>(fu.m_FId) <<" size:"<< fu.m_Size<<" wOffset:"<< fu.m_WOfSet<<std::endl;
+        auto fu = fUsage[i];
+        std::cout<<"File id:"<< static_cast<int>(fu.m_FId) << std::setw(5)<<" size:"<< fu.m_Size<<" wOffset:"<< std::setw(4) << fu.m_WOfSet<<(fu.m_IsFull?" is full":" is not full")<<std::endl;
     }
 
-    std::cout << std::endl;    
+    std::cout << std::endl;
 }
 
 CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {

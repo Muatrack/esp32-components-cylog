@@ -42,9 +42,10 @@ public:
      * prefix: 文件名称的前缀
      * fSize: 单个文件的大小
      * fCount: 日志文件的总数
+     * tailHole:   尾部预留空间
      */
-    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount):
-                m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount){};
+    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount, uint32_t tailHole=128):
+                m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole) {};
     ~FileDesc() {};
 
     /** 读取文件名称前缀 */
@@ -65,6 +66,9 @@ public:
     /* 设置分类日志，当前可写文件中的写时偏移量*/
     void wFileOffsetSet(uint32_t offset) { m_WOffset = offset; }
 
+    /* 获取空洞大小 */
+    uint32_t tailHoleGet()      { return m_TailHole; }
+
 private:
 
     /*immutable member */
@@ -76,6 +80,7 @@ private:
     /* mutable member */
     std::string m_WPath;        // 当前可写文件文件相对路径
     uint32_t    m_WOffset;      // 当前可写文件的位置偏移量
+    uint32_t    m_TailHole;     // 文件尾部空洞大小
 };
 
 /**
