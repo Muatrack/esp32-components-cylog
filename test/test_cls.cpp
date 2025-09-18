@@ -50,6 +50,8 @@ void alarm_log_test() {
 
     // 写入日志测试
     {
+        std::cout<< "------------------- Begin to write log, after 5s -------------------" << std::endl;
+        sleep(5);
         // 初始化数组
         for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
     #if 1
@@ -62,8 +64,8 @@ void alarm_log_test() {
             alarmItemArray = std::make_unique<uint8_t[]>(dLen);
             for( int j=0; j<dLen; j ++ ) { alarmItemArray[j] = i + 1 + j + 1; }
             pAlarmLog->write( std::move(alarmItemArray), dLen);
-            if((i>0)&&(i%16==0)) {  sleep(3); }
-            else usleep(100000);
+            if((i>0)&&(i%16==0)) {  sleep(2); }
+            // else usleep(100000);
             // pExcpLog->write( std::move(excpItemArray),  sizeof(_dataBuf));
             // usleep(200000);
         }
