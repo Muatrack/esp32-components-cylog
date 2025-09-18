@@ -219,19 +219,17 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     uint16_t fileCount = 0;
     bool     bVal = true;
     std::unique_ptr<FileUsage> pHitFUsage = nullptr;
-
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
-
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    /** 规则1: 如全部文件的 wOffset 为0, 则使用文件id为0 */
+    goto route_1;
+
+route_1:    /** 规则1: 如全部文件的 wOffset 为0, 则使用文件id为0 */    
     bVal = true;
     for( auto &fu : vFUsage ) {
         if( fu.m_WOfSet!=0 ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
     }
-
     // 非全部文件为空， 跳至下一规则
     if(bVal==false) { goto route_2; };
-
     // 全部文件均未被写入, 选择id为0的对象
     for( auto &fu : vFUsage ) {
         if(fu.m_FId==0) {
@@ -240,12 +238,9 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
         }
     }
 
-route_2:
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    /** 
-     * 规则2: 
-     * 如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
-     */
+route_2:    /** 规则2:  如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者 */
+
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;    
     bVal = true;
     // 判断全部文件是否已满
     for( auto &fu : vFUsage ) { if( fu.m_IsFull==false ) { bVal=false; break; } }
@@ -263,12 +258,8 @@ route_2:
         goto done; 
     }
 
-route_3:
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    /** 规则3:
-     * 当部分文件被写入后，排除已写满的文件, 排除空文件
-     * - 按照wOffset 由大到小排序，选择wOffset最小的文件
-    */
+route_3:    /** 规则3:  当部分文件被写入后，排除已写满的文件, 排除空文件. 按照wOffset 由大到小排序，选择wOffset最小的文件  */
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;    
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         static uint32_t _wOffset = 0;
         if( fu.m_IsFull ) { continue; } // 排除已写满的文件
@@ -278,15 +269,16 @@ route_3:
     if(pHitFUsage) { goto done;  }
     goto route_4;
     
-route_4:
+route_4:    /** 
+                * 规则4: 当前文件被写满后，使用预期ID相邻的下一个文件
+                * (在空文件-woffset==0, 中选择id最小的)
+                * 1. 解析当前文件的 ID
+                * 2. 得到下一个可写文件的ID，找到新ID对应的 fUsage
+                * 3. 将可写文件的 wOffset设置为 0
+            */
+
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    /** 
-     * 规则4: 当前文件被写满后，使用预期ID相邻的下一个文件
-     * (在空文件-woffset==0, 中选择id最小的)
-     * 1. 解析当前文件的 ID
-     * 2. 得到下一个可写文件的ID，找到新ID对应的 fUsage
-     * 3. 将可写文件的 wOffset设置为 0
-     */
+
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         static uint32_t _wOffset = ~1;
         if( fu.m_WOfSet>0 ) { continue; } // 排除非空文件
