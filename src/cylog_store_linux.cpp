@@ -220,6 +220,7 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     bool     bVal = true;
     uint32_t _wOffset = 0;
     uint16_t _fId = 0;
+    uint32_t _ts = 0;
     std::unique_ptr<FileUsage> pHitFUsage = nullptr;
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;
@@ -256,8 +257,8 @@ route_2:    /** 规则2: (全部写满， 重新覆盖)
     if(bVal==false) { goto route_3; } 
 
     // 选择 last time 最小的文件, 并将其offset 设置为0
-    for( auto &fu : vFUsage ) {
-        static uint32_t _ts = ~1;
+    _ts = ~1;
+    for( auto &fu : vFUsage ) {        
         if( _ts > fu.m_FMTime ) { _ts = fu.m_FMTime; pHitFUsage = std::make_unique<FileUsage>(fu); }
     }
     if(pHitFUsage) {
