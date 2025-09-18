@@ -10,9 +10,10 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <dirent.h>
 
 #include "private_include/cylog_store_espidf.hpp"
 #include "private_include/cylog_file.hpp"
@@ -50,9 +51,6 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
         fPath = absPath+"/"+prefix+"_"+((i<10)?"0":"") + std::to_string(i);
         // 如果文件存在，则跳过
         if( access(fPath.c_str(), F_OK)==0 ) { continue; }
-
-        std::ofstream _f(fPath);
-        _f.close();
 
         if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) {   close(fd);  }
         // 初始文件的大小
@@ -181,7 +179,6 @@ lock_excp:
     return _err;
 }
 
-
 CL_TYPE_t StoreEspidf::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 
     std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
@@ -255,13 +252,25 @@ CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vec
 
     std::filesystem:: path logDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
-    std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl;
+    DIR *pDir = nullptr;
+    struct dirent *pDItem = nullptr;
 
+    std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl;
+#if 0
     std::filesystem::directory_iterator _dir_iter( logDir );
     for( auto & _dir : _dir_iter ) {
         fList.push_back(static_cast<std::string>( _dir.path() ));
     }
+#else
+
+    if( pDir=opendir(logDir.c_str()), pDir==nullptr ) { goto excp; }
+    while( pDItem=readdir(pDir), pDItem ) {
+        fList.push_back( logDir.string()+"/"+std::string(pDItem->d_name));
+    }
+#endif
 
     std::cout << "************** " << __func__ << " done **************" << std::endl;
     return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
 }
