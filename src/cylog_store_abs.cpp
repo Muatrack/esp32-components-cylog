@@ -59,7 +59,7 @@ CL_TYPE_t StoreAbs::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::s
     std::string fPath = "";
     std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
     /* 新建存储日志的绝对路径 */
-    if( dirCreate(absPath)!=CL_OK ) { goto excp; }
+    // if( dirCreate(absPath)!=CL_OK ) { goto excp; }
 
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<fCount; i++) {
