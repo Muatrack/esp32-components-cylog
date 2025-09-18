@@ -218,6 +218,8 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
 
     uint16_t fileCount = 0;
     bool     bVal = true;
+    uint32_t _wOffset = 0;
+    uint16_t _fId = 0;
     std::unique_ptr<FileUsage> pHitFUsage = nullptr;
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;
@@ -267,9 +269,9 @@ route_3:    /** 规则3: (找出正在写入的文件)
                 当部分文件被写入后，排除已写满的文件, 排除空文件. 
                 按照wOffset 由大到小排序，选择wOffset最小的文件
             */
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;    
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    _wOffset = 0;
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
-        static uint32_t _wOffset = 0;
         if( fu.m_IsFull ) { continue; } // 排除已写满的文件
         if( fu.m_WOfSet==0 ) { continue; } // 排除空文件
         if( _wOffset < fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
@@ -278,25 +280,24 @@ route_3:    /** 规则3: (找出正在写入的文件)
     goto route_4;
     
 route_4:   /**
-            * 规则4: ()
-            * 当前文件被写满后，使用预期ID相邻的下一个文件
+            * 规则4: (一些文件一些满， 其余文件均为空)
             * (在空文件-woffset==0, 中选择id最小的)
-            * 1. 解析当前文件的 ID
-            * 2. 得到下一个可写文件的ID，找到新ID对应的 fUsage
-            * 3. 将可写文件的 wOffset设置为 0
+            * 1. 排除非空文件
+            * 3. 选出ID最小的文件
             */
 
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     std::cout<<"[TESTCASE_ROUTE-4] | Usage count:"<<vFUsage.size()<<std::endl;
+    _fId = ~1;
     for( auto &fu : vFUsage ) {
-        static uint32_t _wOffset = ~1;
         if( fu.m_WOfSet>0 ) { // 排除非空文件
-            std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" : offset" << fu.m_WOfSet<<std::endl;
+            std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
             continue; 
         }
-        if( _wOffset > fu.m_WOfSet ) {  // 选择 wOffset 最大的文件
-            _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); 
-            std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" : offset" << fu.m_WOfSet<<std::endl;
+        std::cout<<"[TESTCASE_ROUTE-4] | Offset "<< _wOffset<<" ? " << fu.m_WOfSet<<std::endl;
+        if( _fId>fu.m_FId ) {  // 选贼ID最小的文件
+            _fId=fu.m_FId; pHitFUsage = std::make_unique<FileUsage>(fu); 
+            std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
         }
     }
     if(pHitFUsage) { goto done;  }
