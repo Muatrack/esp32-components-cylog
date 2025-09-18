@@ -73,33 +73,9 @@ public:
     virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen);
 
     /** 
-     * 文件目录初始化. 新建对象后首先执行此函数 
-     * - 文件存在，遍历目录下所有文件
-     * - 文件不存在，新建目录，新建全数日志文件
-    */
-    // virtual CL_TYPE_t init() = 0;
-
-    /**
-     * 选择最后写入的文件
-     */
-    // virtual void latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & pfHeadList );
-
-    /** 
      * 选择下一个文件，并初始化文件头部。
      */
     virtual void nextFileSelect(std::unique_ptr<FileDesc> & pFDesc);
-
-    /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
-    // virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;
-
-    /**
-     * 判断当前文件是否已满 
-     * - 判断逻辑使用当前的写偏移量 + 空洞大小 与文件大小比较
-    */
-    bool isCurFileFull() {
-        // return ( (m_curWriteOffset + CYLOG_FILE_HOLE_SIZE) >= m_fileMaxLength);
-        return true;
-    }
 
     /**
      * 向存储发起读写请求前，获取操作锁
