@@ -84,8 +84,6 @@ void alarm_log(){
     delete pAlarmFactory;
 }
 
-
-extern "C" 
 void test_alarm_log() {
     alarm_log();
 }
