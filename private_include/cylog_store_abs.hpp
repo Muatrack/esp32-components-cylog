@@ -112,7 +112,14 @@ public:
      * - false: 加锁失败
      */
     bool lockTake(uint32_t wait_tms=10) {
-        timespec wt = { .tv_sec = wait_tms/1000, .tv_nsec = (wait_tms%1000)*1000000};
+        timespec wt = { 
+            .tv_sec = wait_tms/1000,
+            .tv_nsec = 
+        #ifdef USE_SYSTEM_FREERTOS
+        (long uint32_t)
+        #endif
+            (wait_tms%1000)*1000000
+        };
         return sem_timedwait(&m_signal, &wt)==0;
     }
 

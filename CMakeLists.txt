@@ -27,17 +27,18 @@ if(CMAKE_BUILD_TYPE)
 endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    add_compile_definitions(USE_SYSTEM_LINUX)
     add_executable(cylog ${SRCS}
                          main.cpp
                          test/test_cls.cpp
                          test/test_adv_prointer.cpp
                         )
-    target_sources(cylog PRIVATE main.cpp)    
+    target_sources(cylog PRIVATE main.cpp)
     add_compile_definitions(USE_SYSTEM_LINUX)
     message("CYLOG_SYSTEM is Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
-    add_library(cylog STATIC ${SRCS})
-    add_compile_definitions(USE_SYSTEM_GENERIC)
+    add_compile_definitions(USE_SYSTEM_FREERTOS)
+    add_library(cylog STATIC ${SRCS})    
     message("CYLOG_SYSTEM is generic")
 else()
     message(ERROR "No system matched")
