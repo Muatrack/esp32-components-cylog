@@ -6,8 +6,7 @@ SET(CMAKE_BUILD_TYPE "Debug")
 set(
     SRCS
         cylog_impl/excp/cylog_impl_excp.cpp
-        cylog_impl/alarm/cylog_impl_alarm.cpp
-        src/cylog_store_linux.cpp
+        cylog_impl/alarm/cylog_impl_alarm.cpp        
         src/cylog_store_abs.cpp
         src/cylog_file.cpp
         src/cylog_c_api.cpp
@@ -33,13 +32,16 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
                          main.cpp
                          test/test_cls.cpp
                          test/test_adv_prointer.cpp
+                         src/cylog_store_linux.cpp
                         )
     target_sources(cylog PRIVATE main.cpp)
     add_compile_definitions(USE_SYSTEM_LINUX)
     message("CYLOG_SYSTEM is Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
     add_compile_definitions(USE_SYSTEM_FREERTOS)
-    add_library(cylog STATIC ${SRCS})    
+    add_library(cylog STATIC ${SRCS}
+                            src/cylog_store_espidf.cpp
+    )
     message("CYLOG_SYSTEM is generic")
 else()
     message(ERROR "No system matched")
