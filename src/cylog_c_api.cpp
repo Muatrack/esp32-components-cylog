@@ -3,19 +3,18 @@
 /** 
  *  类相关的各种测试
  */
-
 #include <iostream>
 #include <memory>
 #include <unistd.h>
 #include "private_include/cylog_factory.hpp"
-#include "private_include/cylog_store_linux.hpp"
 #include "cylog_impl/alarm/cylog_impl_alarm.hpp"
 #include "cylog_impl/excp/cylog_impl_excp.hpp"
-#include "include/cylog_c_api.hpp"
-
+#include <stdint.h>
 
 #ifdef USE_SYSTEM_LINUX
-#include <stdint.h>
+    #include "private_include/cylog_store_linux.hpp"
+#else
+    #include "private_include/cylog_store_espidf.hpp"
 #endif
 
 #ifdef  CYLOG_MAX_RW_CUROPTS    /* 定义同时执行读写操作的数量 */
@@ -23,13 +22,7 @@
 #else
     #define STORE_CURR_OPTS_COUNT 1 /*缺省值*/
 #endif
-
-#ifdef CYLOG_ROOT_DIR
-    #define STORE_LOG_ROOT_DIR  CYLOG_ROOT_DIR
-#else
-    #define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
-#endif
-
+#define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
 
 extern void test_adv_prointer();
 
@@ -48,7 +41,11 @@ void alarm_log(){
     std::string rootPath = STORE_LOG_ROOT_DIR;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
-    std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
+    #ifdef USE_SYSTEM_LINUX
+        std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
+    #else
+        std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreEspidf>();
+    #endif
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     // CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
     CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", "alm", 1024, 4 );
