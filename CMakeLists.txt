@@ -10,6 +10,7 @@ set(
         src/cylog_store_linux.cpp
         src/cylog_store_abs.cpp
         src/cylog_file.cpp
+        src/cylog_c_api.cpp
 )
 
 set(USE_ASSERTION true)

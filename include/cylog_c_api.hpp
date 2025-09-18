@@ -14,3 +14,7 @@ void cylog_test();
  *  -  0: 继续便利
 */
 typedef int (log_read_cb_t)(uint8_t data[], uint16_t dataLen );
+
+
+/** 测试用，函数入口 */
+extern "C" void test_alarm_log();
