@@ -44,15 +44,15 @@ public:
     virtual CL_TYPE_t dirCreate( const std::string & absPath );
 
     /* 新建指定目录，及所有新文件 */
-    virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
+    // virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
 
     /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) { return CL_OK; };
+    virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc );
 
     /* 遍历目录，查找可写文件、可写偏移量 */
-    virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList )=0;
+    virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList );
     /* 遍历文件，查找可写位置 */
-    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & )=0;
+    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & );
 
     /** 
      * 建立全部日志文件
@@ -77,17 +77,17 @@ public:
      * - 文件存在，遍历目录下所有文件
      * - 文件不存在，新建目录，新建全数日志文件
     */
-    virtual CL_TYPE_t init() = 0;
+    // virtual CL_TYPE_t init() = 0;
 
     /**
      * 选择最后写入的文件
      */
-    virtual void latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & pfHeadList ) = 0;
+    // virtual void latestFileSelect( std::shared_ptr<std::vector<FileDesc>> & pfHeadList );
 
     /** 
      * 选择下一个文件，并初始化文件头部。
      */
-    virtual void nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) = 0;
+    virtual void nextFileSelect(std::unique_ptr<FileDesc> & pFDesc);
 
     /* 配置当前类别的日志，其文件数量，但文件大小，目录的路径，文件前缀 等 */
     // virtual void configSet(uint8_t fMaxCount, uint32_t fMaxLen, const std::string &fDir, const std::string &fPrefix) = 0;

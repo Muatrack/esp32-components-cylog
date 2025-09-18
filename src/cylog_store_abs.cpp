@@ -18,6 +18,146 @@ using namespace std;
 
 namespace fs=std::filesystem;
 
+/** 
+ * 比较全部文件信息，筛选可用于写入的文件
+ * @param  vFDecs 收集到的全部文件信息
+ * @return 被选中文件的 id, 0xFF 无效ID
+ */
+static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fDesc , std::vector<FileUsage> & vFUsage ) {
+
+    uint16_t fileCount = 0;
+    bool     bVal = true;
+    uint32_t _wOffset = 0;
+    uint16_t _fId = 0;
+    uint32_t _ts = 0;
+    std::unique_ptr<FileUsage> pHitFUsage = nullptr;
+    if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    goto route_1;
+
+route_1:    /** 
+                规则1: (全新文件)
+                如全部文件的 wOffset 为0, 则使用文件id为0
+            */
+    bVal = true;
+    for( auto &fu : vFUsage ) {
+        if( fu.m_WOfSet!=0 ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
+    }
+    // 非全部文件为空， 跳至下一规则
+    if(bVal==false) { goto route_2; };
+    // 全部文件均未被写入, 选择id为0的对象
+    for( auto &fu : vFUsage ) {
+        if(fu.m_FId==0) {
+            pHitFUsage = std::make_unique<FileUsage>(fu);
+            goto done;
+        }
+    }
+
+route_2:    /** 规则2: (全部写满， 重新覆盖)
+                如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
+            */
+
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    bVal = true;
+    // 判断全部文件是否已满
+    for( auto &fu : vFUsage ) { if( fu.m_IsFull==false ) { bVal=false; break; } }
+
+    // 非全部文件已写满，跳至规则3
+    if(bVal==false) { goto route_3; } 
+
+    // 选择 last time 最小的文件, 并将其offset 设置为0
+    _ts = ~1;
+    for( auto &fu : vFUsage ) {        
+        if( _ts > fu.m_FMTime ) { _ts = fu.m_FMTime; pHitFUsage = std::make_unique<FileUsage>(fu); }
+    }
+    if(pHitFUsage) {
+        pHitFUsage->m_WOfSet = 0;
+        goto done; 
+    }
+
+route_3:    /** 规则3: (找出正在写入的文件)
+                当部分文件被写入后，排除已写满的文件, 排除空文件. 
+                按照wOffset 由大到小排序，选择wOffset最小的文件
+            */
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    _wOffset = 0;
+    for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
+        if( fu.m_IsFull ) { continue; } // 排除已写满的文件
+        if( fu.m_WOfSet==0 ) { continue; } // 排除空文件
+        if( _wOffset < fu.m_WOfSet ) { _wOffset=fu.m_WOfSet; pHitFUsage = std::make_unique<FileUsage>(fu); }
+    }
+    if(pHitFUsage) { goto done;  }
+    goto route_4;
+    
+route_4:   /**
+            * 规则4: (一些文件一些满， 其余文件均为空)
+            * (在空文件-woffset==0, 中选择id最小的)
+            * 1. 排除非空文件
+            * 3. 选出ID最小的文件
+            */
+
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    std::cout<<"[TESTCASE_ROUTE-4] | Usage count:"<<vFUsage.size()<<std::endl;
+    _fId = ~1;
+    for( auto &fu : vFUsage ) {
+        if( fu.m_WOfSet>0 ) { // 排除非空文件
+            std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
+            continue; 
+        }
+        std::cout<<"[TESTCASE_ROUTE-4] | Offset "<< _wOffset<<" ? " << fu.m_WOfSet<<std::endl;
+        if( _fId>fu.m_FId ) {  // 选贼ID最小的文件
+            _fId=fu.m_FId; pHitFUsage = std::make_unique<FileUsage>(fu); 
+            std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
+        }
+    }
+    if(pHitFUsage) { goto done;  }
+     
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    goto excp;
+
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+done:
+    return pHitFUsage;
+excp:
+    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    return nullptr;
+}
+
+static uint32_t getFileLastModifyTm( std::string & fPath ) {
+    
+    namespace fs = std::filesystem;
+    // 获取最后修改时间
+    auto last_write_time = fs::last_write_time(fPath);
+
+    // 转换为 std::chrono::system_clock::time_point
+    auto time_point = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+        last_write_time - fs::file_time_type::clock::now() + std::chrono::system_clock::now()
+    );
+
+    // 转换为时间戳（秒）
+    auto timestamp_s = std::chrono::duration_cast<std::chrono::seconds>(
+        time_point.time_since_epoch()
+    ).count();
+
+    #if 0
+    // 转换为时间戳（毫秒）
+    auto timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        time_point.time_since_epoch()
+    ).count();
+
+    // 输出结果
+    std::cout << "文件: " << fPath << std::endl;
+    std::cout << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl;
+    std::cout << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl;
+
+    // 可选：将时间戳转换为可读时间
+    auto c_time = std::chrono::system_clock::to_time_t(time_point);
+    std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time);
+    #endif
+
+    return static_cast<uint32_t>(timestamp_s);
+}
+
 void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     
     /* 保存日志绝对路径 */
@@ -195,3 +335,149 @@ excp:
 lock_excp:
     return _err;
 }
+
+/* 遍历文件，查找可写位置 */
+CL_TYPE_t StoreAbs::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
+
+    uint32_t remainSize = 0;
+    uint32_t rOfSet   = 0;
+    std::unique_ptr<uint8_t[]> pData;
+
+    /* 识别文件名称中的数字 ID */
+    {
+        size_t pos = fPath.rfind('_');
+        if( pos != std::string::npos ) {
+            auto ss = fPath.substr(pos+1);
+            fUsage.m_FId = atoi(ss.c_str());
+        }
+    }
+
+    /* 打开文件 */
+    std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
+    if( ifs.is_open()==false ) { goto excp; }
+    
+    /* 读取文件大小 */
+    ifs.seekg(0, std::ios::end);
+    fUsage.m_Size = ifs.tellg();
+
+    {
+        /* 设置读取偏移量 */
+        rOfSet = 0;
+        remainSize = fUsage.m_Size;
+
+        while( remainSize>0 ) {
+            ifs.seekg(rOfSet, std::ios::beg);
+            // std::cout<<  fPath << " Next offset:" << rOfSet << std::endl;
+            pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
+            ifs.read(reinterpret_cast<char*>(pData.get()), 4);
+            
+            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
+
+            rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
+            remainSize -= rOfSet+4;
+        }
+
+        fUsage.m_WOfSet = rOfSet;
+    }
+    
+    ifs.close();
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
+}
+
+CL_TYPE_t StoreAbs::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
+
+    std::filesystem:: path logDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem::path fPath;
+    std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl;
+
+    std::filesystem::directory_iterator _dir_iter( logDir );
+    for( auto & _dir : _dir_iter ) {
+        fList.push_back(static_cast<std::string>( _dir.path() ));
+    }
+
+    std::cout << "************** " << __func__ << " done **************" << std::endl;
+    return CL_OK;
+}
+
+/** 
+ * 遍历分类日志目录
+ * 目的： 选择下一个可写的文件，文件中的可写偏移量
+ * 
+ * @param pFDesc: 分类日志目录的信息
+ */
+void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
+    
+    std::string fPath;
+    auto fList  = std::vector<std::string>();
+    std::vector<FileUsage> fUsage;
+
+    /* 遍历目录下的文件名称及大小 */
+    dirTraverse( pFDesc, fList );
+    std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl;    
+
+    fUsage = std::vector<FileUsage>(fList.size());
+    /* 遍历文件内的记录，找出下一个可写的位置 */
+    for( size_t i=0;i < fList.size(); i++ ) {
+        auto &fu = fUsage[i];
+        fPath = static_cast<std::string>(fList[i]);
+        fu.m_Path = fPath;
+        fileTraverse(fPath, fu);        // 遍历文件中的记录信息
+        fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);  // 判断文件是否已写满
+        fu.m_FMTime = getFileLastModifyTm( fu.m_Path );         
+    }
+
+    /* 筛选下一个可写文件 */
+    for( size_t i=0;i < fUsage.size(); i++ ) {
+        auto &fu = fUsage[i];
+        std::cout<<"File id:"<< static_cast<int>(fu.m_FId)
+                                                                            <<" size:"<< fu.m_Size 
+                                                                            << " wOffset:"<< std::setw(5) << fu.m_WOfSet
+                                                                            << std::setw(9) << (fu.m_IsFull?" full":" not full")
+                                                                            << " | Modify tm:" << fu.m_FMTime
+                                                                            <<std::endl;
+    }    
+
+    std::unique_ptr<FileUsage> pHitFu = writableFileHit(pFDesc ,fUsage);
+    #ifdef USE_ASSERTION
+        assert(pHitFu);
+    #else
+        std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+        return;
+    #endif
+    pFDesc->wFileOffsetSet(pHitFu->m_WOfSet);
+    pFDesc->wFilePathSet(pHitFu->m_Path);
+
+    std::cout<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl;
+}
+
+#ifdef USE_ASSERTION
+    #include <assert.h>
+#endif
+
+typedef struct {
+    std::string name;   /* 文件名称 */
+    uint32_t    size;   /* 文件大小 */
+    uint32_t    wOfSet; /* 可写偏移量 */
+} file_usage_t;
+
+CL_TYPE_t StoreAbs::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
+
+    std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem::path fPath;
+    std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl;
+
+    {
+        std::filesystem::directory_iterator _dir_iter( absDir );
+        for( auto & _dir : _dir_iter ) {
+            fPath = _dir.path();
+            std::cout << "  file:" << fPath << std::endl;
+        }
+    }
+
+    std::cout << "************** " << __func__ << " done **************" << std::endl;
+    return CL_OK;
+};
+
