@@ -22,7 +22,12 @@
 #else
     #define STORE_CURR_OPTS_COUNT 1 /*缺省值*/
 #endif
-#define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
+
+#ifdef CYLOG_ROOT_DIR
+    #define STORE_LOG_ROOT_DIR  CYLOG_ROOT_DIR
+#else
+    #define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
+#endif
 
 extern void test_adv_prointer();
 
