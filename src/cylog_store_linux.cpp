@@ -258,7 +258,10 @@ route_2:    /** 规则2:  如果全部文件均已写满, 比较各文件的最�
         goto done; 
     }
 
-route_3:    /** 规则3:  当部分文件被写入后，排除已写满的文件, 排除空文件. 按照wOffset 由大到小排序，选择wOffset最小的文件  */
+route_3:    /** 规则3:
+                当部分文件被写入后，排除已写满的文件, 排除空文件. 
+                按照wOffset 由大到小排序，选择wOffset最小的文件
+            */
     std::cout << __FILE__<<":"<<__LINE__<<std::endl;    
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         static uint32_t _wOffset = 0;
