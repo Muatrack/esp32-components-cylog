@@ -7,9 +7,9 @@
 #include <unistd.h>
 #include "private_include/cylog_factory.hpp"
 #include "private_include/cylog_store_linux.hpp"
+#include "private_include/cylog_store_espidf.hpp"
 #include "cylog_impl/alarm/cylog_impl_alarm.hpp"
 #include "cylog_impl/excp/cylog_impl_excp.hpp"
-
 
 #ifdef USE_SYSTEM_LINUX
 #include <stdint.h>
@@ -40,7 +40,7 @@ void alarm_log_test() {
     std::string rootPath = STORE_LOG_ROOT_DIR;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
-    std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
+    std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreEspidf>();
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
     CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", "alm", 1024, 4 );

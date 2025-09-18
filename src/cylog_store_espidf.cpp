@@ -8,6 +8,12 @@
 #include <iomanip>
 #include <vector>
 #include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include "private_include/cylog_store_espidf.hpp"
 #include "private_include/cylog_file.hpp"
 
@@ -16,14 +22,13 @@
 #endif
 
 CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
-    bool bRet = false;
     CL_TYPE_t err = CL_OK;
-    // std::stringstream ss;
     std::string absPath = rootDirGet() + "/" + logDir;
     /* 检查路径是否已存在 */
-    if( std::filesystem::exists(absPath) ) { goto done; }
-    /* 不存在，新建 */
-    if( bRet=std::filesystem::create_directories(absPath), bRet ) { goto done; } 
+    if( access(absPath.c_str(), F_OK)==0 ) { goto done; }
+
+    /* 目录不存在，则新建 */
+    if( mkdir(absPath.c_str(), 0755)==0 ) { goto done; }
     else { err = CL_EXCP_UNKNOW; goto excp; }
 
 excp:
@@ -35,21 +40,24 @@ done:
 CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) {
     std::string fPath = "";
     std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
-    /* 新建存储日志的绝对路径 */
-    // if( dirCreate(absPath)!=CL_OK ) { goto excp; }
-    if( std::filesystem::exists(absPath)==false ) { goto excp; }
+    int fd = 0;
+
+    /* 分类日志的目录是否存在， 应当在新建前被创建 */
+    if( access(absPath.c_str(), F_OK)!= 0 ) { goto excp; }
 
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<fCount; i++) {
         fPath = absPath+"/"+prefix+"_"+((i<10)?"0":"") + std::to_string(i);
         // 如果文件存在，则跳过
-        if( std::filesystem::exists(fPath) ) continue;
+        if( access(fPath.c_str(), F_OK)==0 ) { continue; }
 
         std::ofstream _f(fPath);
         _f.close();
+
+        if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) {   close(fd);  }
         // 初始文件的大小
-        std::filesystem::resize_file( fPath, fSize );
-        std::cout<<"Create log file:"<<fPath<<std::endl;
+        truncate( fPath.c_str(), fSize);
+        std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
     }
 
     return CL_OK;

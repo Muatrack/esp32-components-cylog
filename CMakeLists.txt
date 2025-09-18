@@ -33,6 +33,7 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
                          test/test_cls.cpp
                          test/test_adv_prointer.cpp
                          src/cylog_store_linux.cpp
+                         src/cylog_store_espidf.cpp
                         )
     target_sources(cylog PRIVATE main.cpp)
     add_compile_definitions(USE_SYSTEM_LINUX)
