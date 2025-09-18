@@ -41,19 +41,7 @@ public:
     }
 
     /* 新建指定目录, 如存在则不重复新建 */
-    virtual CL_TYPE_t dirCreate( const std::string & absPath );
-
-    /* 新建指定目录，及所有新文件 */
-    // virtual CL_TYPE_t dirCreate_bak(){ return CL_EXCP_UNKNOW; } ;
-
-    /* 读取指定目录，所有文件名称 */
-    virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc );
-
-    /* 遍历目录，查找可写文件、可写偏移量 */
-    virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList );
-    /* 遍历文件，查找可写位置 */
-    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & );
-
+    virtual CL_TYPE_t dirCreate( const std::string & absPath ) = 0;
     /** 
      * 建立全部日志文件
      * 
@@ -62,15 +50,23 @@ public:
      * @param  fCount:   新建文件的数量 
      * @param  fSize:    单文件的大小-预占方式
      */
-    CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize );
+    virtual CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) = 0;
+    /* 读取指定文件内容数据，指定偏移量、长度的数据*/
+    virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) = 0;
+
+
+    /* 读取指定目录，所有文件名称 */
+    virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) = 0;
+
+    /* 遍历目录，查找可写文件、可写偏移量 */
+    virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList );
+    /* 遍历文件，查找可写位置 */
+    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & );
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, FileDesc &fDesc){
         return CL_OK;
     };
-
-    /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen);
 
     /** 
      * 选择下一个文件，并初始化文件头部。
