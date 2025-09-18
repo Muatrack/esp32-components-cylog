@@ -62,7 +62,7 @@ public:
      * @param  fCount:   新建文件的数量 
      * @param  fSize:    单文件的大小-预占方式
      */
-    CL_TYPE_t fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize );
+    CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize );
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, FileDesc &fDesc){

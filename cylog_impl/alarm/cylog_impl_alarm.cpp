@@ -29,28 +29,6 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {
 
     m_Store->nextFileSelect( m_pFDesc );
-
-#if 0
-    /** 遍历日志目录下的文件 */
-    std::vector<std::string> fList;
-    m_Store->dirTraverse( m_pFDesc, fList );
-    
-    /**
-     * 遍历日志，找到可写文件的相对路径和可写offset  
-     * - 对每个日志文件，遍历其中的全部数据,判定日志文件是否已满
-    */
-    std::unique_ptr<uint8_t[]> pBuf = std::make_unique<uint8_t[]>(32);
-    for( auto & fName: fList ) {        
-        m_Store->fileTraverse( fName, pBuf, 4 );
-        std::cout << "TESTCASE_filetraverse | ALARM | " << static_cast<std::string>(fName)<<std::endl;
-
-    }
-
-    std::unique_ptr<ItemDesc> item = ItemDesc::itemDeSerialize(std::move(pBuf), 8);    
-    if( item->isValid() ) std::cout << "Item valid" << std::endl;
-    else std::cout << "Item invalid" << std::endl;
-    std::cout << "Item len:" << item->itemSizeGet() << std::endl;
-#endif
 }
 
 /*************************************************** Factory ******************************************************/
@@ -59,15 +37,15 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     std::cout << "CyLogAlarmFactory::create" << std::endl;
     
     /** 建立文件对象 */
-    std::unique_ptr<CLFile::FileDesc> pFileDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    std::unique_ptr<CLFile::FileDesc> pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
 
     /** 建立日志绝对目录 */
-    std::string alarmLogAbsPath = store->rootDirGet() + "/" + logDir;
-    if( store->dirCreate(alarmLogAbsPath)==CL_OK ) {
-        std::cout << "CYLogAlarmImpl log directory " << alarmLogAbsPath << " get ready." << std::endl;
+    if( store->dirCreate(logDir)==CL_OK ) {
+        std::cout << "CYLogAlarmImpl log directory " << store->rootDirGet()+"/"+pFDesc->relativePathGet() << " get ready." << std::endl;
     }
-    /** 建立日志文件 */
-    store->fileCreate(alarmLogAbsPath, prefix, fileCount, fileSize);
 
-    return new CYLogAlarmImpl(logDir, store, std::move(pFileDesc) );
+    /** 建立日志文件 */
+    store->fileCreate(pFDesc, prefix, fileCount, fileSize);
+
+    return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }

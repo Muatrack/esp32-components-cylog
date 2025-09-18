@@ -38,15 +38,13 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
 done:;
 }
 
-CL_TYPE_t StoreAbs::dirCreate( const std::string & absPath ) {
+CL_TYPE_t StoreAbs::dirCreate( const std::string & logDir ) {
     bool bRet = false;
     CL_TYPE_t err = CL_OK;
-
-    std::stringstream ss;
-
+    // std::stringstream ss;
+    std::string absPath = rootDirGet() + "/" + logDir;
     /* 检查路径是否已存在 */
     if( std::filesystem::exists(absPath) ) { goto done; }
-
     /* 不存在，新建 */
     if( bRet=std::filesystem::create_directories(absPath), bRet ) { goto done; } 
     else { err = CL_EXCP_UNKNOW; goto excp; }
@@ -57,9 +55,9 @@ done:
     return CL_OK;
 }
 
-CL_TYPE_t StoreAbs::fileCreate( const std::string & absPath, const std::string prefix, uint8_t fCount, uint32_t fSize ) {
+CL_TYPE_t StoreAbs::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) {
     std::string fPath = "";
-
+    std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
     /* 新建存储日志的绝对路径 */
     if( dirCreate(absPath)!=CL_OK ) { goto excp; }
 
