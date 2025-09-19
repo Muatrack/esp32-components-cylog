@@ -81,6 +81,8 @@ public:
      * - false: 加锁失败
      */
     bool lockTake(uint32_t wait_tms=10) {
+        if((wait_tms<1)||(wait_tms>500)) { wait_tms = 10; }
+
         timespec wt = { 
             .tv_sec = wait_tms/1000,
             .tv_nsec = 
