@@ -33,6 +33,36 @@ extern void test_adv_prointer();
 
 using namespace std;
 
+static std::shared_ptr<StoreAbs> m_pStore = nullptr;
+
+typedef struct {
+    CYLogImplAbs *pLogImpl; // 日志对象
+}cylog_session_t;
+
+static cylog_session_t m_logSession[ CYLOG_T_DEF ] = { nullptr };
+
+/* 
+    判断 cylog_type_t 是否有效 
+    * 如无效，则跳至 gt
+*/
+#define CYLOG_TYPE_CHECK(t,gt) if( (t<CYLOG_T_ALARM)||(t>=CYLOG_T_DEF) ) {goto gt;}
+
+/* 检查分类日志的对象是否有效*/
+#define CYLOG_TOBJ_CHECK(t,gt) if( !m_logSession[t].pLogImpl ) {goto gt;}
+
+/**
+ * 获得分类日志对象
+ * @param t: 日志类别 cylog_type_t 
+ * @return: (CYLogImplAbs*) 类型
+*/
+#define CYLOG_TOBJ_TAKE(t) ({   \
+    CYLogImplAbs *pSp = nullptr; \
+    CYLOG_TYPE_CHECK(t,_excp);  \
+    pSp=m_logSession[t].pLogImpl; \
+_excp:  \
+    pSp;    \
+})
+
 void alarm_log(){
 
     uint8_t _dataBuf[64] = { 0x0 };
@@ -47,14 +77,14 @@ void alarm_log(){
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     #ifdef USE_SYSTEM_LINUX
-        std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreLinux>();
+        m_pStore = std::make_shared<StoreLinux>();
     #else
-        std::shared_ptr<StoreAbs> pStore = std::make_shared<StoreEspidf>();
+        m_pStore = std::make_shared<StoreEspidf>();
     #endif
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     // CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
-    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", "alm", 1024, 4 );
-    // CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  pStore, "excp", "ex", 1024, 4 );
+    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( m_pStore, "alarm", "alm", 1024, 4 );
+    // CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  m_pStore, "excp", "ex", 1024, 4 );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
 
@@ -84,6 +114,93 @@ void alarm_log(){
 
     delete pAlarmLog;
     delete pAlarmFactory;
+}
+
+/*******************************************************************************/
+
+extern "C"
+bool cylog_init(char *rootDir) {
+        
+    std::string rootPath = CYLOG_ROOT_DIR;
+    std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
+
+    if( !rootDir ) { goto excp; }   /* 参数无效 */
+    if( m_pStore ) { goto done; } /* 已初始化 */
+
+    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
+#ifdef USE_SYSTEM_LINUX
+    m_pStore = std::make_shared<StoreLinux>();
+#else
+    m_pStore = std::make_shared<StoreEspidf>();
+#endif
+
+done:
+    return (m_pStore!=nullptr);
+excp:
+    return false;
+}
+
+extern "C"
+bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount) {
+
+    CYLogFactoryAbs *pFactory = nullptr;
+    std::string logPrefix;
+
+    /* 检查日志类型是否有效, 如无效则调至 label:excp */
+    CYLOG_TYPE_CHECK( logType, excp );
+
+    /* 检查当前分类的日志，如已初始化则直接跳过 */
+    if(m_logSession[logType].pLogImpl) { goto done; }
+
+    switch (logType) {
+        case CYLOG_T_ALARM:
+            logPrefix = "alm";
+            pFactory     = new CyLogAlarmFactory();
+            break;
+        case CYLOG_T_EXCP:
+            logPrefix = "exp";
+            pFactory     = new CyLogExcpFactory();
+            break;
+        case CYLOG_T_PMETE:
+            logPrefix = "pmete";
+            break;
+        default:  goto excp;
+    }
+
+    if( !pFactory ) { goto excp; }
+    /* 对于有效的日志类型，当其日志对象为空， 为其新建日志对象 */
+    m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, "alm", fSize, fCount );
+
+done:
+    if( pFactory ) { delete pFactory; }
+    return true;
+excp:
+    if( pFactory ) { delete pFactory; }
+    return false;
+}
+
+extern "C"
+bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTs ) {
+
+    std::unique_ptr<uint8_t[]> pDPtr = nullptr;
+    CYLogImplAbs *pLogObj = nullptr;
+
+    if( (!pData)||(dLen<1)) { goto excp; }
+    /* 检查日志类型是否有效, 如无效则跳至 label:excp */
+    CYLOG_TYPE_CHECK( logType, excp );
+
+    /* 检查分类日志对象是否有效，如无效则跳至 label:excp */
+    CYLOG_TOBJ_CHECK( logType, excp );
+
+    pDPtr = std::make_unique<uint8_t[]>(dLen);
+    std::memcpy( pDPtr.get(), pData, dLen );
+
+    if(pLogObj=CYLOG_TOBJ_TAKE(logType),!pLogObj) {goto excp;}
+    pLogObj->write( std::move(pDPtr), dLen );
+
+    return true;
+excp:
+    return false;
 }
 
 void test_alarm_log() {

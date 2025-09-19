@@ -5,18 +5,48 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "cylog_types.h"
 
 /**
- * 遍历日志后，以回调的方式将日志内容返回。 定义读取日志的回调函数类型
- * @param data: uint8_t[] 数据的字节序列
- * @param dataLen: 数据的长度
- * @return 
- *  - -1: 终止遍历
+ * 初始化日志组件
+ * @param rootDir: 日志根目录
  * 
- *  -  0: 继续便利
-*/
-typedef int (log_read_cb_t)(uint8_t data[], uint16_t dataLen );
+ * @return :
+ * 
+ *  - 成功: true
+ * 
+ *  - 失败: false
+ */
+bool cylog_init(char *rootDir);
 
+/**
+ * 新建分类日志
+ * @param  logType: 日志分类
+ * @param  logPath: 存储分类日志的目录名称
+ * @param  fSize:   单个日志文件的大小
+ * @param  fCount:  分类日志，文件的数量
+ * @return :
+ * 
+ *  - 成功: true
+ * 
+ *  - 失败: false
+ */
+bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount);
+
+/**
+ * 写日志数据
+ * @param  logType: 日志分类
+ * @param  pData: 待写数据
+ * @param  dLen:  待写数据长度
+ * @param  timeoutTs: 写时等待超时(s)
+ * 
+ * @return :
+ * 
+ *  - 成功: true
+ * 
+ *  - 失败: false
+ */
+bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTs );
 
 /** 测试用，函数入口 */
 void test_alarm_log();
