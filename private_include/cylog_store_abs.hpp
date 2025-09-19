@@ -52,7 +52,7 @@ public:
      */
     virtual CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) = 0;
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
-    virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) = 0;
+    virtual CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen, uint32_t timeoutMs=10 ) = 0;
     /* 读取指定目录，所有文件名称 */
     virtual CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) = 0;
     /* 遍历目录，查找可写文件、可写偏移量 */

@@ -58,7 +58,7 @@ excp:
     return CL_EXCP_UNKNOW;
 }
 
-CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen) {
+CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen, uint32_t timeoutMs) {
 
     CL_TYPE_t _err = CL_OK;
     uint32_t wOff = 0;
@@ -100,7 +100,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
     // 判断参数有效性
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }
     // 获取读写资源 
-    if( lockTake() == false ) {
+    if( lockTake(timeoutMs) == false ) {
         cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
         _err = CL_LOG_BUSY;
         goto lock_excp;
