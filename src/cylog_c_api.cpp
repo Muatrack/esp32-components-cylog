@@ -24,9 +24,9 @@
 #endif
 
 #ifdef CYLOG_ROOT_DIR
-    #define STORE_LOG_ROOT_DIR  CYLOG_ROOT_DIR
+    #define CYLOG_ROOT_DIR  CYLOG_ROOT_DIR
 #else
-    #define STORE_LOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
+    #define CYLOG_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
 #endif
 
 extern void test_adv_prointer();
@@ -43,7 +43,7 @@ void alarm_log(){
     #endif
     //  do test
 
-    std::string rootPath = STORE_LOG_ROOT_DIR;
+    std::string rootPath = CYLOG_ROOT_DIR;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     #ifdef USE_SYSTEM_LINUX

@@ -1,6 +1,7 @@
 ## 日志组件基于文件系统、文件方式实现读写和管理。
 
 * CYLOG_MAX_RW_CUROPTS // 定义读写存储可以同时操作的数量, 缺省值2
+* CYLOG_ROOT_DIR   // 定义用于存储日志的根目录
 
 ### 单元测试
 单元测试使用googleTest + pytest 测试框架实施。
