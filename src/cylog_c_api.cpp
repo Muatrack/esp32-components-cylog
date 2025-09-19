@@ -66,12 +66,6 @@ _excp:  \
 void alarm_log(){
 
     uint8_t _dataBuf[64] = { 0x0 };
-    /** do test */
-    #if 0
-    test_adv_prointer();
-    return;
-    #endif
-    //  do test
 
     std::string rootPath = STORE_ROOT_DIR;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
@@ -100,7 +94,7 @@ void alarm_log(){
         std::cout << std::endl << "---------------------- Gonna write log to file ----------------------" << std::endl;
 
         uint8_t dLen = 12;
-        for( int i=0; i < 500; i ++ ) {
+        for( int i=0; i < 200; i ++ ) {
             alarmItemArray = std::make_unique<uint8_t[]>(dLen);
             for( int j=0; j<dLen; j ++ ) { alarmItemArray[j] = i + 1 + j + 1; }
             pAlarmLog->write( std::move(alarmItemArray), dLen);
@@ -203,6 +197,7 @@ excp:
     return false;
 }
 
+extern  "C"
 void test_alarm_log() {
     alarm_log();
 }
@@ -220,11 +215,14 @@ void test_dir_del( std::string path ) {
     #endif
 
 opt:
+    m_pStore->dirDelete(path);
+#if 0
     if( m_pStore->dirDelete(path) ==CL_OK ) {
-        std::cout << "Succ to del path: " << path << std::endl;
+        std::cout << "Succ to del : " << path << std::endl;
     } else {
-        std::cout << "Fail to del path: " << path << std::endl;
+        std::cout << "Fail to del : " << path << std::endl;
     }
+#endif
 }
 
 extern "C"

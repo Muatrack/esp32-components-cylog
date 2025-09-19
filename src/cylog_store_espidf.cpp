@@ -22,6 +22,8 @@
     #include <assert.h>
 #endif
 
+namespace fs=std::filesystem;
+
 CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     CL_TYPE_t err = CL_OK;
     std::string absPath = rootDirGet() + "/" + logDir;
@@ -277,5 +279,33 @@ excp:
 
 CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
 
+    std::string destFile = rootDirGet() + "/" + absPath;
+
+    // 如目录不存在，则跳过
+    if( fs::exists(destFile)==false ) {
+        std::cout << "No such file dir: "<<destFile<<std::endl;
+        goto done; 
+    }
+
+    if( fs::is_directory(destFile) ) {
+        std::cout << "[ StoreEspidf ] " << destFile << " is a directory" <<std::endl;
+        // 删除目录
+        if( rmdir(destFile.c_str())!=0 ) {
+            std::cout << "[ StoreEspidf ] " << destFile << " fail to del directory, err:"<< errno <<std::endl;
+            goto excp;
+        }
+        std::cout << "[ StoreEspidf ] " << destFile << " succ to del directory" <<std::endl;
+    } else {
+        std::cout << "[ StoreEspidf ] " << destFile << " is a file" <<std::endl;
+        // 删除文件
+        if( remove(destFile.c_str())!=0 ) {
+            std::cout << "[ StoreEspidf ] " << destFile << " fail to del file, err:"<< errno <<std::endl;
+            goto excp;
+        }
+        std::cout << "[ StoreEspidf ] " << destFile << " succ to del file" <<std::endl;
+    }
+done:
+    return CL_OK;
+excp:
     return CL_EXCP_UNKNOW;
 }
