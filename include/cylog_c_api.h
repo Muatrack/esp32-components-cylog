@@ -48,9 +48,6 @@ bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t 
  */
 bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTs );
 
-/** 测试用，函数入口 */
-void test_alarm_log();
-
 #ifdef __cplusplus
 }
 #endif

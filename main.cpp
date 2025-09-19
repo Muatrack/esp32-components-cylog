@@ -1,8 +1,8 @@
 #include <iostream>
 
-extern void test_cls1();
+extern void test_alarm_log();
 
 int main(void) {
     std::cout << "Hi, CYLOG" << std::endl;
-    test_cls1();
+    test_alarm_log();
 }
