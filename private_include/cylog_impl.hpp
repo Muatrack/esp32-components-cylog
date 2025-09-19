@@ -9,7 +9,7 @@
 #include "common.hpp"
 #include "cylog_file.hpp"
 #include "cylog_store_abs.hpp"
-#include "cylog_c_api.hpp"
+#include "cylog_c_api.h"
 
 ////////////////////////////////////////////////////
 
@@ -21,22 +21,10 @@ class CYLogImplAbs {
 public:
 
     CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):m_Store(store), m_pFDesc(std::move(pFDesc)){};
-
-    /** 日志目录初始化 */
-    // virtual void logInit() = 0;
-    
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
-    
     /** 写日志到文件 */
     virtual CL_TYPE_t write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) = 0;
-    
-    /** 读取日志文件 */
-    // virtual CL_TYPE_t read( const std::string &path, void* out ) = 0;
-
-    /** 删除日志文件 */
-    // virtual CL_TYPE_t remove( const std::string &path) { return CL_OK; };
-
     virtual ~CYLogImplAbs(){};
 
     std::shared_ptr<StoreAbs> storeGet() { return m_Store; }
