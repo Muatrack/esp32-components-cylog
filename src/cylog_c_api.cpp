@@ -83,7 +83,7 @@ void alarm_log(){
     #endif
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     // CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
-    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( m_pStore, "alarm", 1024, 4, "alm" );
+    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( m_pStore, "alarm", 1024, 4 );
     // CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  m_pStore, "excp", "ex", 1024, 4 );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
@@ -169,7 +169,7 @@ bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t 
 
     if( !pFactory ) { goto excp; }
     /* 对于有效的日志类型，当其日志对象为空， 为其新建日志对象 */
-    m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount, "alm" );
+    m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount );
 
 done:
     if( pFactory ) { delete pFactory; }
