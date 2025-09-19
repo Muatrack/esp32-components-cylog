@@ -30,7 +30,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_compile_definitions(USE_SYSTEM_LINUX)
     add_executable(cylog ${SRCS}
                          main.cpp
-                         test/test_adv_prointer.cpp
                          src/cylog_store_linux.cpp
                          src/cylog_store_espidf.cpp
                         )

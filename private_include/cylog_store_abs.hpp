@@ -40,6 +40,8 @@ public:
         std::cout << "~StoreAbs()" << std::endl;
     }
 
+    /* 删除指定日志目录 */
+    virtual CL_TYPE_t dirDelete( const std::string & absPath ) = 0;
     /* 新建指定目录, 如存在则不重复新建 */
     virtual CL_TYPE_t dirCreate( const std::string & absPath ) = 0;
     /** 
@@ -114,6 +116,13 @@ public:
         // std::cout<<"isFileFull filesize:" << static_cast<int>(pFDesc->fileSizeGet())<<" cur wOffset:" << static_cast<int>(wOffset) << " hole size:" << static_cast<int>(pFDesc->tailHoleGet())<<std::endl;
         return (remainSize<pFDesc->tailHoleGet());
     };
+
+    /** 
+     * 过滤路径字串中多余的‘/’
+     */
+    std::string cleanPath(std::string oriStr) {
+        return oriStr;
+    }
 
 public:
     /**

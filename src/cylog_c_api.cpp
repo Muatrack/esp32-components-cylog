@@ -206,3 +206,21 @@ excp:
 void test_alarm_log() {
     alarm_log();
 }
+
+void test_dir_del( std::string path ) {
+
+    std::string rootPath = STORE_ROOT_DIR;
+
+    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
+    #ifdef USE_SYSTEM_LINUX
+        m_pStore = std::make_shared<StoreLinux>();
+    #else
+        m_pStore = std::make_shared<StoreEspidf>();
+    #endif
+
+    if( m_pStore->dirDelete(path) ==CL_OK ) {
+        std::cout << "Succ to del path: " << path << std::endl;
+    } else {
+        std::cout << "Fail to del path: " << path << std::endl;
+    }
+}

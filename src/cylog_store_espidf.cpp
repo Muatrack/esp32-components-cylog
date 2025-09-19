@@ -274,3 +274,8 @@ CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vec
 excp:
     return CL_EXCP_UNKNOW;
 }
+
+CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
+
+    return CL_EXCP_UNKNOW;
+}

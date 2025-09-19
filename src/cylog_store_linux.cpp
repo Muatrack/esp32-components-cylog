@@ -15,6 +15,8 @@
     #include <assert.h>
 #endif
 
+namespace fs=std::filesystem;
+
 CL_TYPE_t StoreLinux::dirCreate( const std::string & logDir ) {
     bool bRet = false;
     CL_TYPE_t err = CL_OK;
@@ -256,4 +258,27 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vect
 
     std::cout << "************** " << __func__ << " done **************" << std::endl;
     return CL_OK;
+}
+
+CL_TYPE_t StoreLinux::dirDelete( const std::string & absPath ) {
+    
+    std::string destFile = rootDirGet() + "/" + absPath;
+
+    // 如目录不存在，则跳过
+    if( fs::exists(destFile)==false ) { 
+        std::cout << "No such dir: "<<destFile<<std::endl;
+        goto done; 
+    }
+
+    // 删除成功
+    if( fs::remove_all(destFile)==false ) { 
+        std::cout << "Fail to del dir: "<<destFile<<std::endl;
+        goto excp; 
+    }
+
+    std::cout << "Succ to del dir: "<<destFile<<std::endl;
+done:
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
 }
