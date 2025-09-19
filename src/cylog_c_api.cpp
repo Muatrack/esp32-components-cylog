@@ -211,6 +211,7 @@ void test_dir_del( std::string path ) {
 
     std::string rootPath = STORE_ROOT_DIR;
 
+    if( m_pStore ) { goto opt; }
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     #ifdef USE_SYSTEM_LINUX
         m_pStore = std::make_shared<StoreLinux>();
@@ -218,9 +219,15 @@ void test_dir_del( std::string path ) {
         m_pStore = std::make_shared<StoreEspidf>();
     #endif
 
+opt:
     if( m_pStore->dirDelete(path) ==CL_OK ) {
         std::cout << "Succ to del path: " << path << std::endl;
     } else {
         std::cout << "Fail to del path: " << path << std::endl;
     }
+}
+
+extern "C"
+void test_dir_del_c_api( char *path ) {
+    test_dir_del( std::string(path) );
 }
