@@ -52,8 +52,8 @@ void alarm_log_test() {
     #endif
     CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
     CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
-    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", "alm", 1024, 4 );
-    CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  pStore, "excp", "ex", 1024, 4 );
+    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( pStore, "alarm", 1024, 4, "alm" );
+    CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  pStore, "excp", 1024, 4, "ex" );
 
     std::cout<< __func__<< "()." << __LINE__ << std::endl;
 

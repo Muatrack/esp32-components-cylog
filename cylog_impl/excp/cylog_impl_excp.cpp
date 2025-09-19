@@ -39,7 +39,7 @@ CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAb
 
 /******************************************************* Factory *********************************************************/
 
-CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, std::string prefix, uint32_t  fileSize, uint8_t fileCount) {
+CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
     std::cout << "CyLogExcpFactory::create" << std::endl;
 
     /** 建立文件对象 */
