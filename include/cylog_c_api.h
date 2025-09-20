@@ -32,7 +32,8 @@ bool cylog_init(char *rootDir);
  * 
  *  - 失败: false
  */
-bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix);
+// bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix);
+bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount);
 
 /**
  * 写日志数据

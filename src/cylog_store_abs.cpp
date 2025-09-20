@@ -203,7 +203,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         fu.m_Path = fPath;
         fileTraverse(fPath, fu);        // 遍历文件中的记录信息
         fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);  // 判断文件是否已写满
-        fu.m_FMTime = getFileLastModifyTm( fu.m_Path );         
+        fu.m_FMTime = getFileLastModifyTm( fu.m_Path );
     }
 
     /* 筛选下一个可写文件 */
@@ -215,7 +215,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
                                                                             << std::setw(9) << (fu.m_IsFull?" full":" not full")
                                                                             << " | Modify tm:" << fu.m_FMTime
                                                                             <<std::endl;
-    }    
+    }
 
     std::unique_ptr<FileUsage> pHitFu = writableFileHit(pFDesc ,fUsage);
     #ifdef USE_ASSERTION

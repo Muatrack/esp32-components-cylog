@@ -2,7 +2,11 @@
 #include "cylog_impl_excp.hpp"
 
 CL_TYPE_t CYLogExcpImpl::write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) {
-    storeGet()->itemWrite( m_pFDesc, pIn, iLen );
+    // 将日志数据序列化
+    std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
+
+    // 将序列化后的数据写入文件
+    storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4);
     return CL_OK;
 }
 
@@ -27,14 +31,7 @@ excp:
 CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {    
     std::cout << "CYLogExcpImpl instance created." << std::endl;
-
-    std::vector<std::string> fList;
-    m_Store->dirTraverse( m_pFDesc, fList );
-
-    std::cout << "TESTCASE_dirtraverse | EXCP | size: " << fList.size()<<std::endl;
-    for( auto & p: fList ) {
-        std::cout << "TESTCASE_dirtraverse | EXCP | " << static_cast<std::string>(p)<<std::endl;
-    }
+    m_Store->nextFileSelect( m_pFDesc );
 }
 
 /******************************************************* Factory *********************************************************/
@@ -56,6 +53,6 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
     return new CYLogExcpImpl(logDir, store, std::move(pFDesc));
 }
 
-CYLogImplAbs * CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, logDir, fileSize, fileCount, "ex");
+CYLogImplAbs * CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
+    return create(store, "excp", fileSize, fileCount, "ex");
 }

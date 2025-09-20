@@ -135,7 +135,8 @@ excp:
 }
 
 extern "C"
-bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix) {
+// bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix) {
+bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount) {
 
     CYLogFactoryAbs *pFactory = nullptr;
     std::string logPrefix;
@@ -161,11 +162,15 @@ bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t 
     if( !pFactory ) { goto excp; }
 
     /* 对于有效的日志类型，当其日志对象为空， 为其新建日志对象 */
-    if( pPrefix==nullptr||strlen(pPrefix)<1 ) {
-        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount);
-    } else {
-        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount, pPrefix);
-    }
+    #if 0
+        if( pPrefix==nullptr||strlen(pPrefix)<1 ) {
+            m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
+        } else {
+            m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount, pPrefix);
+        }
+    #else
+        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
+    #endif
 
 done:
     if( pFactory ) { delete pFactory; }

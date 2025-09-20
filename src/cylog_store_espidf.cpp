@@ -29,11 +29,11 @@ CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     std::string absPath = rootDirGet() + "/" + logDir;
     /* 目录如已存在，跳过新建 */
     if( doesExists(absPath) ) {
-        std::cout<<"directory : " << absPath << " does     exists" <<std::endl;
+        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " does exists" <<std::endl;
         goto done;
     }
 
-    std::cout<<"directory : " << absPath << "does not exists" <<std::endl;
+    std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " doesn't exists" <<std::endl;
 
     /* 目录不存在，则新建 */
     if( mkdir(absPath.c_str(), 0755)==0 ) { goto done; }
@@ -131,7 +131,7 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
 
     wOff = pFDesc->wFileOffsetGet();
     ofe.seekp( wOff, std::ios::beg);
-    std::cout << "Succ to open file: " << fPath << " offset:" << wOff << std::endl;
+    std::cout <<"[ "<< fPath << " ] writable offset:" << wOff << std::endl;
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
