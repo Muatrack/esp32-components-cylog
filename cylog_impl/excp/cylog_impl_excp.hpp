@@ -40,4 +40,5 @@ private:
 class CyLogExcpFactory : public CYLogFactoryAbs {
 public:
     CYLogImplAbs* create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix="ex") override;
+    CYLogImplAbs *create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount) override;
 };

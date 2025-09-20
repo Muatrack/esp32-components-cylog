@@ -55,3 +55,7 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
 
     return new CYLogExcpImpl(logDir, store, std::move(pFDesc));
 }
+
+CYLogImplAbs * CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount) {
+    return create(store, logDir, fileSize, fileCount, "ex");
+}

@@ -49,3 +49,7 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
 
     return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }
+
+CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount) {
+    return create(store, logDir, fileSize, fileCount, "alm");
+}

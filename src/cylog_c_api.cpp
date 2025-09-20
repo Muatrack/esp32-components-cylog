@@ -135,7 +135,7 @@ excp:
 }
 
 extern "C"
-bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount) {
+bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix) {
 
     CYLogFactoryAbs *pFactory = nullptr;
     std::string logPrefix;
@@ -148,22 +148,24 @@ bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t 
 
     switch (logType) {
         case CYLOG_T_ALARM:
-            logPrefix = "alm";
             pFactory     = new CyLogAlarmFactory();
             break;
         case CYLOG_T_EXCP:
-            logPrefix = "exp";
             pFactory     = new CyLogExcpFactory();
             break;
         case CYLOG_T_PMETE:
-            logPrefix = "pmete";
             break;
         default:  goto excp;
     }
 
     if( !pFactory ) { goto excp; }
+
     /* 对于有效的日志类型，当其日志对象为空， 为其新建日志对象 */
-    m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount, "alm" );
+    if( pPrefix==nullptr||strlen(pPrefix)<1 ) {
+        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount);
+    } else {
+        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, logPath, fSize, fCount, pPrefix);
+    }
 
 done:
     if( pFactory ) { delete pFactory; }

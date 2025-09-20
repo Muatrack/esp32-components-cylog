@@ -25,13 +25,14 @@ bool cylog_init(char *rootDir);
  * @param  logPath: 存储分类日志的目录名称
  * @param  fSize:   单个日志文件的大小
  * @param  fCount:  分类日志，文件的数量
+ * @param  pPrefix: str|NULL 日志文件名称前缀
  * @return :
  * 
  *  - 成功: true
  * 
  *  - 失败: false
  */
-bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount);
+bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix);
 
 /**
  * 写日志数据
