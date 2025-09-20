@@ -169,7 +169,6 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     sem_init(&StoreAbs::m_signal, 0, concurCount);
 
     /** 检查目录 */
-    // if(access(logDir.c_str(), 6)==0) 
     if(fs::exists(logRootDir)) {
         std::cout << "The path "<< logRootDir << " does exist" << std::endl;
         goto done;
