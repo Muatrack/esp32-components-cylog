@@ -29,7 +29,7 @@ CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     std::string absPath = rootDirGet() + "/" + logDir;
     /* 目录如已存在，跳过新建 */
     if( doesExists(absPath) ) {
-        std::cout<<"directory : " << absPath << "does     exists" <<std::endl;
+        std::cout<<"directory : " << absPath << " does     exists" <<std::endl;
         goto done;
     }
 
@@ -51,18 +51,18 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
     int fd = 0;
 
     /* 分类日志的目录是否存在， 应当在新建前被创建 */
-    if( doesExists(absPath)==false ) {
-        std::cout<<"directory : " << absPath << "does not exists" <<std::endl;
-        goto excp;
-    }
+    if( doesExists(absPath)==false ) {  goto excp;  }
 
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<fCount; i++) {
         fPath = absPath+"/"+prefix+"_"+((i<10)?"0":"") + std::to_string(i);
+        
         // 如果文件存在，则跳过
-        if( doesExists(absPath) ) { continue; }
+        if( doesExists(fPath) ) { continue;  }
 
-        if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) {   close(fd);  }
+        if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) { close(fd); }
+        std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl;
+        
         // 初始文件的大小
         truncate( fPath.c_str(), fSize);
         std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
