@@ -16,10 +16,9 @@ excp:
 }
 
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
-                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) {
-
-    m_Store->nextFileSelect( m_pFDesc );
-}
+                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) {};
+    // m_Store->nextFileSelect( m_pFDesc );
+// }
 
 /*************************************************** Factory ******************************************************/
 

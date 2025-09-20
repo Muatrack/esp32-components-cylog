@@ -20,7 +20,9 @@ class CYLogImplAbs {
 
 public:
 
-    CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):m_Store(store), m_pFDesc(std::move(pFDesc)){};
+    CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):m_Store(store), m_pFDesc(std::move(pFDesc)){
+        m_Store->nextFileSelect( m_pFDesc );
+    };
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
     /** 写日志到文件 */
