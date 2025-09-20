@@ -26,7 +26,7 @@ public:
      * @param  fCount:   新建文件的数量 
      * @param  fSize:    单文件的大小-预占方式
      */
-    CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) override;
+    CL_TYPE_t fileCreate( std::unique_ptr<FileDesc> & pFDesc ) override;
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     CL_TYPE_t itemWrite( std::unique_ptr<FileDesc> & pFDesc, const std::unique_ptr<uint8_t[]> & pIn, uint16_t iLen, uint32_t timeoutMs) override;
     CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) override;

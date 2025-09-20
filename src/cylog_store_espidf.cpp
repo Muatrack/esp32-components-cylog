@@ -45,7 +45,7 @@ done:
     return CL_OK;
 }
 
-CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std::string prefix, uint8_t fCount, uint32_t fSize ) {
+CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc ) {
     std::string fPath = "";
     std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
     int fd = 0;

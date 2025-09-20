@@ -9,7 +9,7 @@ CYLogImplAbs::CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CL
     }
 
     /** 建立日志文件 */
-    m_Store->fileCreate(m_pFDesc, "", 0, 0);
+    m_Store->fileCreate(m_pFDesc);
 
     /** 选择下一个写日志的文件 */
     m_Store->nextFileSelect( m_pFDesc );
