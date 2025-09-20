@@ -1,6 +1,20 @@
 
 #include <private_include/cylog_impl.hpp>
 
+CYLogImplAbs::CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):m_Store(store), m_pFDesc(std::move(pFDesc)){
+        
+    /** 建立日志绝对目录 */
+    if( m_Store->dirCreate(m_pFDesc->relativePathGet())==CL_OK ) {
+        std::cout << "CYLogAlarmImpl log directory " << m_Store->rootDirGet()+"/"+m_pFDesc->relativePathGet() << " get ready." << std::endl;
+    }
+
+    /** 建立日志文件 */
+    m_Store->fileCreate(m_pFDesc, "", 0, 0);
+
+    /** 选择下一个写日志的文件 */
+    m_Store->nextFileSelect( m_pFDesc );
+};
+
 CL_TYPE_t CYLogImplAbs::write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) {
     // 将日志数据序列化
     std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);

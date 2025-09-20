@@ -15,9 +15,6 @@ excp:
 
 CYLogExcpImpl::CYLogExcpImpl(const std::string & logDir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {}
-    // std::cout << "CYLogExcpImpl instance created." << std::endl;
-    // m_Store->nextFileSelect( m_pFDesc );
-// }
 
 /******************************************************* Factory *********************************************************/
 
@@ -26,15 +23,6 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
 
     /** 建立文件对象 */
     std::unique_ptr<CLFile::FileDesc> pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
-
-    /** 建立日志绝对目录 */
-    if( store->dirCreate(logDir)==CL_OK ) {
-        std::cout << "CYLogAlarmImpl log directory " << store->rootDirGet()+"/"+pFDesc->relativePathGet() << " get ready." << std::endl;
-    }
-
-    /** 建立日志文件 */
-    store->fileCreate(pFDesc, prefix, fileCount, fileSize);
-
     return new CYLogExcpImpl(logDir, store, std::move(pFDesc));
 }
 

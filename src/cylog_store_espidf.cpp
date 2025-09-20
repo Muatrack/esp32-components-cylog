@@ -54,8 +54,8 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
     if( doesExists(absPath)==false ) {  goto excp;  }
 
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
-    for(int i=0; i<fCount; i++) {
-        fPath = absPath+"/"+prefix+"_"+((i<10)?"0":"") + std::to_string(i);
+    for(int i=0; i<pFDesc->fileCountGet(); i++) {
+        fPath = absPath+"/"+ pFDesc->relativePathGet() +"_"+((i<10)?"0":"") + std::to_string(i);
         
         // 如果文件存在，则跳过
         if( doesExists(fPath) ) { continue;  }
@@ -64,7 +64,7 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
         else { std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl; }
 
         // 初始文件的大小
-        truncate( fPath.c_str(), fSize);
+        truncate( fPath.c_str(), pFDesc->fileSizeGet());
         std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
     }
 
