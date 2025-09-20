@@ -212,7 +212,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
                                                                             <<" size:"<< fu.m_Size 
                                                                             << " wOffset:"<< std::setw(5) << fu.m_WOfSet
-                                                                            << std::setw(9) << (fu.m_IsFull?" full":" not full")
+                                                                            << std::setfill(' ')<<std::setw(9) << (fu.m_IsFull?" full":" not full")
                                                                             << " | Modify tm:" << fu.m_FMTime
                                                                             <<std::endl;
     }
