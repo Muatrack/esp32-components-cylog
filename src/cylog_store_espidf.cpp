@@ -68,6 +68,7 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
         std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
     }
 
+
     return CL_OK;
 
 excp:
@@ -287,7 +288,7 @@ excp:
 
 CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
 
-    std::string destFile = rootDirGet() + "/" + absPath;
+    std::string destFile = absPath; //rootDirGet() + "/" + absPath;
 
     // 如目录不存在，则跳过
     if( fs::exists(destFile)==false ) {
@@ -298,7 +299,7 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
     if( fs::is_directory(destFile) ) {
         std::cout << "[ StoreEspidf ] " << destFile << " is a directory" <<std::endl;
 
-        // Traverse dir, ensure dir is empty
+        // Traverse dir, ensure it is empty
         {
             DIR * pDir = nullptr;
             dirent * pItem = nullptr;
@@ -306,28 +307,24 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
             if( pDir=opendir(destFile.c_str()), pDir) { // 遍历目录元素
                 while( pItem=readdir(pDir), pItem ) {
                     std::string _path = destFile+"/"+pItem->d_name;
-                    switch( pItem->d_type ) {
-                        case DT_REG: // 文件
-                            std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
-                            remove(_path.c_str());
-                            break;
-                        case DT_DIR: // 目录
-                            std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
-                            dirDelete(destFile);
-                            break;
-                        default:
-                            std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
-                    }                    
+                    dirDelete(_path);
+                    // switch( pItem->d_type ) {
+                    //     case DT_REG: // 文件
+                    //         std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    //         break;
+                    //     case DT_DIR: // 目录
+                    //         std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    //         break;
+                    //     default:
+                    //         std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    // }
                 }
 
                 closedir(pDir);
             }
-            std::vector<std::string> itemList; 
-            // dirTraverse( destFile, itemList);
-        }        
+        }
 
-        // 删除目录
-        // if( fs::remove_all(destFile)==false ) {  // Can not be used
+        // 删除空目录
         if( rmdir(destFile.c_str())!=0 ) {
             std::cout << "[ StoreEspidf ] " << destFile << " fail to del directory, err:"<< errno <<std::endl;
             goto excp;

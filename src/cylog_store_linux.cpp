@@ -262,7 +262,7 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vect
 
 CL_TYPE_t StoreLinux::dirDelete( const std::string & absPath ) {
     
-    std::string destFile = rootDirGet() + "/" + absPath;
+    std::string destFile = absPath;//rootDirGet() + "/" + absPath;
 
     // 如目录不存在，则跳过
     if( fs::exists(destFile)==false ) { 

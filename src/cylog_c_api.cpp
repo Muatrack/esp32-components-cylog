@@ -215,14 +215,7 @@ void test_dir_del( std::string path ) {
     #endif
 
 opt:
-    m_pStore->dirDelete(path);
-#if 0
-    if( m_pStore->dirDelete(path) ==CL_OK ) {
-        std::cout << "Succ to del : " << path << std::endl;
-    } else {
-        std::cout << "Fail to del : " << path << std::endl;
-    }
-#endif
+    m_pStore->dirDelete(rootPath+"/"+path);
 }
 
 extern "C"
