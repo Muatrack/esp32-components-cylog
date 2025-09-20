@@ -48,5 +48,5 @@ public:
          * @param logDir 存储日志的相对路径
          * @param store  存储对象
      */
-    CYLogImplAbs* create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix="alm") override;
+    CYLogImplAbs* create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) override;
 };

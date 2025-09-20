@@ -61,8 +61,8 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
         if( doesExists(fPath) ) { continue;  }
 
         if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) { close(fd); }
-        std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl;
-        
+        else { std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl; }
+
         // 初始文件的大小
         truncate( fPath.c_str(), fSize);
         std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
@@ -297,7 +297,37 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
 
     if( fs::is_directory(destFile) ) {
         std::cout << "[ StoreEspidf ] " << destFile << " is a directory" <<std::endl;
+
+        // Traverse dir, ensure dir is empty
+        {
+            DIR * pDir = nullptr;
+            dirent * pItem = nullptr;
+
+            if( pDir=opendir(destFile.c_str()), pDir) { // 遍历目录元素
+                while( pItem=readdir(pDir), pItem ) {
+                    std::string _path = destFile+"/"+pItem->d_name;
+                    switch( pItem->d_type ) {
+                        case DT_REG: // 文件
+                            std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                            remove(_path.c_str());
+                            break;
+                        case DT_DIR: // 目录
+                            std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                            dirDelete(destFile);
+                            break;
+                        default:
+                            std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    }                    
+                }
+
+                closedir(pDir);
+            }
+            std::vector<std::string> itemList; 
+            // dirTraverse( destFile, itemList);
+        }        
+
         // 删除目录
+        // if( fs::remove_all(destFile)==false ) {  // Can not be used
         if( rmdir(destFile.c_str())!=0 ) {
             std::cout << "[ StoreEspidf ] " << destFile << " fail to del directory, err:"<< errno <<std::endl;
             goto excp;
