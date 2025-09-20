@@ -34,7 +34,7 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     uint32_t _ts = 0;
     std::unique_ptr<FileUsage> pHitFUsage = nullptr;
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     goto route_1;
 
 route_1:    /** 
@@ -59,7 +59,7 @@ route_2:    /** 规则2: (全部写满， 重新覆盖)
                 如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
             */
 
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     bVal = true;
     // 判断全部文件是否已满
     for( auto &fu : vFUsage ) { if( fu.m_IsFull==false ) { bVal=false; break; } }
@@ -81,7 +81,7 @@ route_3:    /** 规则3: (找出正在写入的文件)
                 当部分文件被写入后，排除已写满的文件, 排除空文件. 
                 按照wOffset 由大到小排序，选择wOffset最小的文件
             */
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     _wOffset = 0;
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         if( fu.m_IsFull ) { continue; } // 排除已写满的文件
@@ -98,18 +98,18 @@ route_4:   /**
             * 3. 选出ID最小的文件
             */
 
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    std::cout<<"[TESTCASE_ROUTE-4] | Usage count:"<<vFUsage.size()<<std::endl;
+    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    // std::cout<<"[TESTCASE_ROUTE-4] | Usage count:"<<vFUsage.size()<<std::endl;
     _fId = ~1;
     for( auto &fu : vFUsage ) {
         if( fu.m_WOfSet>0 ) { // 排除非空文件
-            std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
+            // std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
             continue; 
         }
-        std::cout<<"[TESTCASE_ROUTE-4] | Offset "<< _wOffset<<" ? " << fu.m_WOfSet<<std::endl;
+        // std::cout<<"[TESTCASE_ROUTE-4] | Offset "<< _wOffset<<" ? " << fu.m_WOfSet<<std::endl;
         if( _fId>fu.m_FId ) {  // 选贼ID最小的文件
             _fId=fu.m_FId; pHitFUsage = std::make_unique<FileUsage>(fu); 
-            std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
+            // std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
         }
     }
     if(pHitFUsage) { goto done;  }
@@ -209,7 +209,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     /* 筛选下一个可写文件 */
     for( size_t i=0;i < fUsage.size(); i++ ) {
         auto &fu = fUsage[i];
-        std::cout<<"File id:"<< static_cast<int>(fu.m_FId)
+        std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
                                                                             <<" size:"<< fu.m_Size 
                                                                             << " wOffset:"<< std::setw(5) << fu.m_WOfSet
                                                                             << std::setw(9) << (fu.m_IsFull?" full":" not full")
@@ -241,7 +241,7 @@ typedef struct {
 } file_usage_t;
 
 bool StoreAbs::doesExists( std::string & path ) {
-    struct stat st = {0};
+    struct stat st;
 
     if( path=="" ) { goto excp; }    
     if( stat(path.c_str(), &st)==0 ) {
