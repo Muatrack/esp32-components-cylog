@@ -61,6 +61,8 @@ public:
     virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) = 0;
     /* 遍历文件，查找可写位置 */
     virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & ) = 0;
+    /* 判断文件/目录是否存在 */
+    virtual bool doesExists( std::string & path );
 
     /* 读取指定文件内容数据，指定偏移量、长度的数据*/
     virtual CL_TYPE_t itemRead( uint16_t readSize, std::shared_ptr<uint8_t[]> &pOData, FileDesc &fDesc){

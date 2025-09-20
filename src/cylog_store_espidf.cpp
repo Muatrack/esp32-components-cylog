@@ -27,8 +27,13 @@ namespace fs=std::filesystem;
 CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     CL_TYPE_t err = CL_OK;
     std::string absPath = rootDirGet() + "/" + logDir;
-    /* 检查路径是否已存在 */
-    if( access(absPath.c_str(), F_OK)==0 ) { goto done; }
+    /* 目录如已存在，跳过新建 */
+    if( doesExists(absPath) ) {
+        std::cout<<"directory : " << absPath << "does     exists" <<std::endl;
+        goto done;
+    }
+
+    std::cout<<"directory : " << absPath << "does not exists" <<std::endl;
 
     /* 目录不存在，则新建 */
     if( mkdir(absPath.c_str(), 0755)==0 ) { goto done; }
@@ -46,13 +51,16 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc, const std
     int fd = 0;
 
     /* 分类日志的目录是否存在， 应当在新建前被创建 */
-    if( access(absPath.c_str(), F_OK)!= 0 ) { goto excp; }
+    if( doesExists(absPath)==false ) {
+        std::cout<<"directory : " << absPath << "does not exists" <<std::endl;
+        goto excp;
+    }
 
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<fCount; i++) {
         fPath = absPath+"/"+prefix+"_"+((i<10)?"0":"") + std::to_string(i);
         // 如果文件存在，则跳过
-        if( access(fPath.c_str(), F_OK)==0 ) { continue; }
+        if( doesExists(absPath) ) { continue; }
 
         if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) {   close(fd);  }
         // 初始文件的大小

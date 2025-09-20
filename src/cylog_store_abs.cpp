@@ -7,6 +7,7 @@
 #include <filesystem>
 #include "private_include/cylog_store_abs.hpp"
 #include <unistd.h>
+#include <sys/stat.h>
 
 #ifdef USE_ASSERTION
     #include <assert.h>
@@ -240,4 +241,16 @@ typedef struct {
     uint32_t    wOfSet; /* 可写偏移量 */
 } file_usage_t;
 
+bool StoreAbs::doesExists( std::string & path ) {
+    struct stat st = {0};
 
+    if( path=="" ) { goto excp; }    
+    if( stat(path.c_str(), &st)==0 ) {
+        return true;
+    } else {
+        return false;
+    }
+
+excp:
+    return false;
+}
