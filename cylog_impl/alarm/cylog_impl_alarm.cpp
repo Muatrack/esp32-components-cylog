@@ -3,16 +3,6 @@
 
 using namespace CLFile;
 
-CL_TYPE_t CYLogAlarmImpl::write(std::unique_ptr<uint8_t[]> pIn, uint16_t iLen){
-
-    // 将日志数据序列化
-    std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
-
-    // 将序列化后的数据写入文件
-    storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4);
-    return CL_OK;
-}
-
 CL_TYPE_t CYLogAlarmImpl::traverse(log_read_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 

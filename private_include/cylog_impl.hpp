@@ -24,7 +24,7 @@ public:
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
     /** 写日志到文件 */
-    virtual CL_TYPE_t write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen) = 0;
+    virtual CL_TYPE_t write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen);
     virtual ~CYLogImplAbs(){};
 
     std::shared_ptr<StoreAbs> storeGet() { return m_Store; }

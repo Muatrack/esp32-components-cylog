@@ -6,7 +6,8 @@ SET(CMAKE_BUILD_TYPE "Debug")
 set(
     SRCS
         cylog_impl/excp/cylog_impl_excp.cpp
-        cylog_impl/alarm/cylog_impl_alarm.cpp        
+        cylog_impl/alarm/cylog_impl_alarm.cpp
+        src/cylog_impl.cpp
         src/cylog_store_abs.cpp
         src/cylog_file.cpp
         src/cylog_c_api.cpp
