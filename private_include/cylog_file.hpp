@@ -76,6 +76,8 @@ public:
     /* 获取空洞大小 */
     uint32_t tailHoleGet()      { return m_TailHole; }
 
+    cylog_traversal_cb_t        traverCbGet() { return m_TraversalCb; }
+    cylog_traversal_filter_t    traverFilterGet() { return m_TraversalFilter; }
 private:
 
     /*immutable member */

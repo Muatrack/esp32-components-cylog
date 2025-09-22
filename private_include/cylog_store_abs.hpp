@@ -60,7 +60,7 @@ public:
     /* 遍历目录，查找可写文件、可写偏移量 */
     virtual CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) = 0;
     /* 遍历文件，查找可写位置 */
-    virtual CL_TYPE_t fileTraverse( std::string &,  FileUsage & ) = 0;
+    virtual CL_TYPE_t fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) = 0;
     /* 判断文件/目录是否存在 */
     virtual bool doesExists( std::string & path );
 

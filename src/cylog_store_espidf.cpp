@@ -209,7 +209,7 @@ CL_TYPE_t StoreEspidf::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 };
 
 /* 遍历文件，查找可写位置 */
-CL_TYPE_t StoreEspidf::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
+CL_TYPE_t StoreEspidf::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
 
     uint32_t remainSize = 0;
     uint32_t rOfSet   = 0;

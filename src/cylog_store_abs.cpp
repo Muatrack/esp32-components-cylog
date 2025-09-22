@@ -201,7 +201,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         auto &fu = fUsage[i];
         fPath = static_cast<std::string>(fList[i]);
         fu.m_Path = fPath;
-        fileTraverse(fPath, fu);        // 遍历文件中的记录信息
+        fileTraverse(pFDesc, fPath, fu);        // 遍历文件中的记录信息
         fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);  // 判断文件是否已写满
         fu.m_FMTime = getFileLastModifyTm( fu.m_Path );
     }

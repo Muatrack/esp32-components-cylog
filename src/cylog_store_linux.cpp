@@ -195,7 +195,7 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 };
 
 /* 遍历文件，查找可写位置 */
-CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
+CL_TYPE_t StoreLinux::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
 
     uint32_t remainSize = 0;
     uint32_t rOfSet   = 0;
@@ -231,6 +231,12 @@ CL_TYPE_t StoreLinux::fileTraverse( std::string & fPath,  FileUsage & fUsage ) {
             
             auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
+            
+            if( pFDesc->traverCbGet() && pFDesc->traverFilterGet() ) {  /* 回调及过滤函数均已定义， 则执行 */
+                if( pFDesc->traverFilterGet()(nullptr, 0) ) {
+                    pFDesc->traverCbGet()(nullptr, 10);
+                }
+            }
 
             rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
             remainSize -= rOfSet+4;

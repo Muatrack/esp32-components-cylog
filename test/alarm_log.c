@@ -7,12 +7,14 @@
 
 #if 1
 int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
+    static uint16_t counter = 0;
+    printf("[ alarm ], counter:%d\n", ++counter);
     return 0;
 }
 
 // cylog_traversal_filter_t filter
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
-    return 0;
+    return 1;
 }
 #endif
 
