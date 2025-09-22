@@ -20,7 +20,12 @@ extern "C" {
  * 
  *  -  0: 继续便利
 */
-typedef int (log_read_cb_t)(uint8_t data[], uint16_t dataLen );
+typedef int (*cylog_traversal_cb_t)(uint8_t data[], uint16_t dataLen );
+
+/** 
+ * 告警日志过滤，回调函数类型
+ */
+typedef int (*cylog_alarm_filter_t)(uint8_t data[], uint16_t dataLen);
 
 
 /**

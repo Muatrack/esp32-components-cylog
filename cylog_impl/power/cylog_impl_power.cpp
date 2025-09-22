@@ -1,7 +1,7 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_power.hpp"
 
-CL_TYPE_t CYLogPowerImpl::traverse(log_read_cb_t cb) {
+CL_TYPE_t CYLogPowerImpl::traverse(cylog_traversal_cb_t cb) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {
@@ -18,7 +18,7 @@ CYLogPowerImpl::CYLogPowerImpl(const std::string & logDir, std::shared_ptr<Store
 
 /******************************************************* Factory *********************************************************/
 
-CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
+CYLogImplAbs* CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
     std::cout << "CyLogExcpFactory::create" << std::endl;
 
     /** 建立文件对象 */
@@ -26,6 +26,6 @@ CYLogImplAbs* CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, std::st
     return new CYLogPowerImpl(logDir, store, std::move(pFDesc));
 }
 
-CYLogImplAbs * CyLogExcpFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "excp", fileSize, fileCount, "ex");
+CYLogImplAbs * CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
+    return create(store, "power", fileSize, fileCount, "pw");
 }

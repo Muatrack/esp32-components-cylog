@@ -9,7 +9,7 @@ void alarm_log_test() {
 
     cylog_init("/sdb/logroot");
 
-    cylog_create( CYLOG_T_ALARM, 40960, 1 );
+    cylog_create( CYLOG_T_ALARM, 40960, 1, NULL);
 
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
 

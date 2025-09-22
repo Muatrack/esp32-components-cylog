@@ -1,7 +1,7 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl_excp.hpp"
 
-CL_TYPE_t CYLogExcpImpl::traverse(log_read_cb_t cb) {
+CL_TYPE_t CYLogExcpImpl::traverse(cylog_traversal_cb_t cb) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {

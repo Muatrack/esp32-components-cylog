@@ -3,7 +3,7 @@
 
 using namespace CLFile;
 
-CL_TYPE_t CYLogPMeterDayImpl::traverse(log_read_cb_t cb=nullptr) {
+CL_TYPE_t CYLogPMeterDayImpl::traverse(cylog_traversal_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {
@@ -28,5 +28,5 @@ CYLogImplAbs* CyLogPMeterDayFactory::create(std::shared_ptr<StoreAbs> &store, st
 }
 
 CYLogImplAbs * CyLogPMeterDayFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "alarm", fileSize, fileCount, "alm");
+    return create(store, "pday", fileSize, fileCount, "pd");
 }

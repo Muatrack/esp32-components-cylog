@@ -3,7 +3,7 @@
 
 using namespace CLFile;
 
-CL_TYPE_t CYLogAlarmImpl::traverse(log_read_cb_t cb=nullptr) {
+CL_TYPE_t CYLogAlarmImpl::traverse(cylog_traversal_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {
@@ -16,7 +16,9 @@ excp:
 }
 
 CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):
-                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) {};
+                                                                                            CYLogImplAbs( store, std::move(pFDesc) ) 
+{};
+
 /*************************************************** Factory ******************************************************/
 
 CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {

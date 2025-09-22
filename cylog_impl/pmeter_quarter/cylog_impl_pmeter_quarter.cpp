@@ -3,7 +3,7 @@
 
 using namespace CLFile;
 
-CL_TYPE_t CYLogPMeterQuarterImpl::traverse(log_read_cb_t cb=nullptr) {
+CL_TYPE_t CYLogPMeterQuarterImpl::traverse(cylog_traversal_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 
     while( 0 ) {
@@ -28,5 +28,5 @@ CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store
 }
 
 CYLogImplAbs * CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "alarm", fileSize, fileCount, "alm");
+    return create(store, "pqtar", fileSize, fileCount, "pqtar");
 }

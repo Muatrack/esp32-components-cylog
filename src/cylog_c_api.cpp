@@ -136,7 +136,7 @@ excp:
 
 extern "C"
 // bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix) {
-bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount) {
+bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_traversal_cb_t cb) {
 
     CYLogFactoryAbs *pFactory = nullptr;
     std::string logPrefix;

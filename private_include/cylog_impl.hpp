@@ -33,7 +33,7 @@ public:
     //     store->fileCreate(pFDesc, "", 0, 0);
     // };
     /* 遍历日志 */
-    virtual CL_TYPE_t traverse( log_read_cb_t cb) { return CL_OK; };
+    virtual CL_TYPE_t traverse( cylog_traversal_cb_t cb) { return CL_OK; };
     /** 写日志到文件 */
     virtual CL_TYPE_t write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen, uint32_t timeoutTms=10);
     virtual ~CYLogImplAbs(){};
