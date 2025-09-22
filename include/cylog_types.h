@@ -37,25 +37,50 @@ typedef enum {
 } cylog_type_t;
 
 #pragma pack(push, 1)
+
+typedef struct{
+    uint16_t circuit_ID;    // 回路ID，经过CRC16(目标SN)得到
+}cylog_def_t;
+
 /** 告警日志数据结构 */
 typedef  struct {
+    cylog_def_t base;       /* 日志共用数据结构 */
+    uint16_t    type;       /* 告警类型 */
+    uint32_t    createTm;   /* 发生产生时间戳 */
+    uint32_t    clearTm;    /* 消警时间戳 */    
+    uint32_t    seq;        /* 告警序列号 */
+    uint16_t    val;        /* 触发告警的异常值 */
 } cylog_alarm_t;
 
 /** 电量日志数据结构 */
 typedef  struct {
+    cylog_def_t base;       /* 日志共用数据结构 */
+    uint32_t    createTm;   /* 发生产生时间戳 */
+    uint64_t    val;        /* 计量值 */
 } cylog_pmeter_t;
 
 /** 开关机日志数据结构 */
 typedef  struct {
+    cylog_def_t base;       /* 日志共用数据结构 */
+    uint32_t    createTm;   /* 发生产生时间戳 */
+    uint8_t     val;        /* 负载开/关的状态值 */
 } cylog_power_t;
 
 /** 分合闸日志数据结构 */
 typedef  struct {
+    cylog_def_t base;       /* 日志共用数据结构 */
+    uint32_t    createTm;   /* 发生产生时间戳 */
+    uint8_t     action;     /* 分/合闸动作 */
+    uint8_t     src;        /* 分合闸指令来源 */
 } cylog_switch_t;
 
 /** 系统异常日志数据结构 */
 typedef  struct {
-} cylog_switch_t;
+    cylog_def_t base;       /* 日志共用数据结构 */
+    uint32_t    createTm;   /* 发生产生时间戳 */
+    uint16_t    type;       /* 异常分类 */
+    uint16_t    val;        /* 异常值 */
+} cylog_sysexcp_t;
 
 #pragma pack(pop)
 
