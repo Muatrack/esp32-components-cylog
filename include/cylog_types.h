@@ -26,13 +26,27 @@ typedef int (log_read_cb_t)(uint8_t data[], uint16_t dataLen );
 /**
  * 定义日志类型
  */
-typedef enum {    
+typedef enum {
     CYLOG_T_ALARM   = 0x00, /* 告警 */
     CYLOG_T_EXCP,           /* 异常 */
     CYLOG_T_PMETE,          /* 电量 */
 
     CYLOG_T_DEF             /* 缺省值， 默认值*/
 } cylog_type_t;
+
+
+/** 告警日志数据结构 */
+typedef  struct {
+} cylog_alarm_t;
+
+/** 电量日志数据结构 */
+typedef  struct {
+} cylog_pmeter_t;
+
+/** 开关机日志数据结构 */
+typedef  struct {
+} cylog_poweronoff_t;
+
 
 #ifdef __cplusplus
 }

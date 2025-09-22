@@ -40,9 +40,12 @@ public:
 
     std::shared_ptr<StoreAbs> storeGet() { return m_Store; }
 
-protected:    
+protected:
     std::shared_ptr<StoreAbs> m_Store;
     std::unique_ptr<CLFile::FileDesc> m_pFDesc;
+
+protected:
+    uint16_t m_circuitId;   // 回路ID，通过CRC16(SN) 获得
 };
 
 
