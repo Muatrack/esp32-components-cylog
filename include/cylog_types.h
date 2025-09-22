@@ -31,7 +31,8 @@ typedef enum {
     CYLOG_T_EXCP,           /* 异常 */
     CYLOG_T_PMETE_QTR,      /* 整刻钟电量记录 */
     CYLOG_T_PMETE_DAY,      /* 每日电量 */
-
+    CYLOG_T_POWER,          /* 负载开关机日志 power on/off */
+    CYLOG_T_SWITCH,         /* 采集器分合闸机日志 switch on/off */
     CYLOG_T_DEF             /* 缺省值， 默认值*/
 } cylog_type_t;
 
