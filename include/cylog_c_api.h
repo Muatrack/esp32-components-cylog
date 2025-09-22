@@ -40,7 +40,7 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount);
  * @param  logType: 日志分类
  * @param  pData: 待写数据
  * @param  dLen:  待写数据长度
- * @param  timeoutTs: 写时等待超时(s)
+ * @param  timeoutTms: 写时等待超时(ms)
  * 
  * @return :
  * 
@@ -48,7 +48,7 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount);
  * 
  *  - 失败: false
  */
-bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTs );
+bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTms );
 
 #ifdef __cplusplus
 }

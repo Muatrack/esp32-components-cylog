@@ -181,7 +181,7 @@ excp:
 }
 
 extern "C"
-bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTs ) {
+bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTms ) {
 
     std::unique_ptr<uint8_t[]> pDPtr = nullptr;
     CYLogImplAbs *pLogObj = nullptr;
@@ -197,7 +197,7 @@ bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t 
     std::memcpy( pDPtr.get(), pData, dLen );
 
     if(pLogObj=CYLOG_TOBJ_TAKE(logType),!pLogObj) {goto excp;}
-    pLogObj->write( std::move(pDPtr), dLen );
+    pLogObj->write( std::move(pDPtr), dLen, timeoutTms);
 
     return true;
 excp:

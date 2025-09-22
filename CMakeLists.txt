@@ -30,11 +30,12 @@ endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_compile_definitions(USE_SYSTEM_LINUX)
     add_executable(cylog ${SRCS}
-                         main.cpp
+                         main.c
+                         test/alarm_log.c
                          src/cylog_store_linux.cpp
                          src/cylog_store_espidf.cpp
                         )
-    target_sources(cylog PRIVATE main.cpp)
+    target_sources(cylog PRIVATE main.c)
     add_compile_definitions(USE_SYSTEM_LINUX)
     message("CYLOG_SYSTEM is Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
