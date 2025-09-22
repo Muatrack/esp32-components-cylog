@@ -21,7 +21,7 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
 
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
+CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
     std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
     
     /** 建立文件对象 */
@@ -29,6 +29,10 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }
 
+CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
+    return create(store, "alarm", fileSize, fileCount, "alm", cb, filter);
+}
+
 CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "alarm", fileSize, fileCount, "alm");
+    return create(store, "alarm", fileSize, fileCount, "alm", nullptr, nullptr);
 }

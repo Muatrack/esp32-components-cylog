@@ -19,7 +19,7 @@ CYLogPMeterQuarterImpl::CYLogPMeterQuarterImpl(const std::string & dir, std::sha
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {};
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
+CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
     std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
     
     /** 建立文件对象 */
@@ -28,5 +28,5 @@ CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store
 }
 
 CYLogImplAbs * CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "pqtar", fileSize, fileCount, "pqtar");
+    return create(store, "pqtar", fileSize, fileCount, "pqtar", nullptr, nullptr);
 }

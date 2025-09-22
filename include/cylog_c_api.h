@@ -26,6 +26,8 @@ bool cylog_init(char *rootDir);
  * @param  fSize:   单个日志文件的大小
  * @param  fCount:  分类日志，文件的数量
  * @param  pPrefix: str|NULL 日志文件名称前缀
+ * @param  cb: 通过回调函数，将为消警的数据返回
+ * @param  filter: (NULL|Non-NULL) 告警日志过滤器 | e.g 判别日志是否未消警
  * @return :
  * 
  *  - 成功: true
@@ -33,7 +35,7 @@ bool cylog_init(char *rootDir);
  *  - 失败: false
  */
 // bool cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount, char *pPrefix);
-bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_traversal_cb_t _cb);
+bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter);
 
 /**
  * 写日志数据

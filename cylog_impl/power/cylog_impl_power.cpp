@@ -18,7 +18,7 @@ CYLogPowerImpl::CYLogPowerImpl(const std::string & logDir, std::shared_ptr<Store
 
 /******************************************************* Factory *********************************************************/
 
-CYLogImplAbs* CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix) {
+CYLogImplAbs* CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
     std::cout << "CyLogExcpFactory::create" << std::endl;
 
     /** 建立文件对象 */
@@ -27,5 +27,5 @@ CYLogImplAbs* CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, std::s
 }
 
 CYLogImplAbs * CyLogPowerFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
-    return create(store, "power", fileSize, fileCount, "pw");
+    return create(store, "power", fileSize, fileCount, "pw", nullptr, nullptr);
 }
