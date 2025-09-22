@@ -7,18 +7,24 @@
 
 #if 1
 int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
-    static uint16_t counter = 0;
-    printf("[ alarm ], counter:%d\n", ++counter);
+    if(data==NULL) { goto done; }
+
+    cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
+    printf("got an expected alarm log with create time:%u\n", pAlarm->createTm );
+done:
     return 0;
 }
 
 // cylog_traversal_filter_t filter
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
-    if(data==NULL) { goto done; }
+    if(data==NULL) { goto ignore; }
+
     cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
-    printf("got an alarm log create time:%u\n", pAlarm->createTm );
-done:
+    if( pAlarm->createTm != 1758558674 ) { goto ignore; }
+
     return 1;
+ignore:
+    return 0;
 }
 #endif
 
