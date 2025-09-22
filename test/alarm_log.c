@@ -14,6 +14,10 @@ int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
 
 // cylog_traversal_filter_t filter
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
+    if(data==NULL) { goto done; }
+    cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
+    printf("got an alarm log create time:%u\n", pAlarm->createTm );
+done:
     return 1;
 }
 #endif

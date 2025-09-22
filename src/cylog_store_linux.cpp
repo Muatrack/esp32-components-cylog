@@ -232,9 +232,11 @@ CL_TYPE_t StoreLinux::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::stri
             auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
             
+            pData = std::make_unique<uint8_t[]>(item->itemSizeGet());
+            ifs.read(reinterpret_cast<char*>(pData.get()), item->itemSizeGet());
             if( pFDesc->traverCbGet() && pFDesc->traverFilterGet() ) {  /* 回调及过滤函数均已定义， 则执行 */
-                if( pFDesc->traverFilterGet()(nullptr, 0) ) {
-                    pFDesc->traverCbGet()(nullptr, 10);
+                if( pFDesc->traverFilterGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet()) ) {
+                    pFDesc->traverCbGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet());
                 }
             }
 
