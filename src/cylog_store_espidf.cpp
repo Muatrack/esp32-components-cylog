@@ -246,6 +246,16 @@ CL_TYPE_t StoreEspidf::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::str
             auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
 
+            /* 日志过滤 */
+            pData = std::make_unique<uint8_t[]>(item->itemSizeGet());
+            ifs.read(reinterpret_cast<char*>(pData.get()), item->itemSizeGet());
+            if( pFDesc->traverCbGet() && pFDesc->traverFilterGet() ) {  /* 回调及过滤函数均已定义， 则执行 */
+                if( pFDesc->traverFilterGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet()) ) {
+                    pFDesc->traverCbGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet());
+                }
+            }
+            // 日志过滤
+
             rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
             remainSize -= rOfSet+4;
         }
