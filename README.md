@@ -35,6 +35,38 @@
         /** 写入日志失败 */ 
     }
 ```
+
+### 日志数据回调
+
+系统启动后会遍历全部的日志文件，当应用曾需要接收遍历到的日志数据，可通过定义回调函数的方式实现 (当前仅支持 告警日志的数据回调)
+
+需要定义的函数有两个，类型及描述如下:
+```c
+    
+    // 定义接收日志的回调函数类型
+    int (*cylog_traversal_cb_t)(uint8_t data[], uint16_t dataLen );
+
+    // 定义对接收到日志的过滤逻辑函数类型
+    int (*cylog_traversal_filter_t)(uint8_t data[], uint16_t dataLen);
+
+
+
+    /**告警日志实现: 应用曾实现回调及过滤函数*/
+
+    // 实现接收日志的回调函数
+    int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
+        // 接收到所需日志后的处理逻辑
+        return 0;
+    }
+
+    // 实现对接收到日志的过滤逻辑
+    int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
+        // 接收到日志后的过滤逻辑
+        return 0;
+    }
+
+```
+
 ### 单元测试
 单元测试使用googleTest + pytest 测试框架实施。
 

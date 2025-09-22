@@ -19,7 +19,7 @@ CYLogPMeterDayImpl::CYLogPMeterDayImpl(const std::string & dir, std::shared_ptr<
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {};
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogPMeterDayFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
+CYLogImplAbs* CyLogPMeterDayFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
     std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
     
     /** 建立文件对象 */

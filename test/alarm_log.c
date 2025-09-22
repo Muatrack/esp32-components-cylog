@@ -5,6 +5,17 @@
 #include <time.h>
 #include <cylog_c_api.h>
 
+#if 1
+int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
+    return 0;
+}
+
+// cylog_traversal_filter_t filter
+int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
+    return 0;
+}
+#endif
+
 void alarm_log_test() {
 
     cylog_init("/sdb/logroot");

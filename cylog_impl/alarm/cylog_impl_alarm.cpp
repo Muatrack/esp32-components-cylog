@@ -3,6 +3,9 @@
 
 using namespace CLFile;
 
+extern "C" __attribute__((weak)) int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen );
+extern "C" __attribute__((weak)) int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen);
+
 CL_TYPE_t CYLogAlarmImpl::traverse(cylog_traversal_cb_t cb=nullptr) {
     if( cb==nullptr ) { goto excp; }
 
@@ -21,15 +24,24 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
 
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
+CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
     std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
-    
+    std::unique_ptr<CLFile::FileDesc> pFDesc = nullptr;
+
     /** 建立文件对象 */
-    std::unique_ptr<CLFile::FileDesc> pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    if(cylog_alarm_traversal_cb && cylog_alarm_traversal_filter) {
+        std::cout << "[ CyLogAlarmFactory ] traversal_cb and filter are not nullptr"<<std::endl;
+        // pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount, cylog_alarm_traversal_cb, cylog_alarm_traversal_filter);
+        pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    } else {
+        std::cout << "[ CyLogAlarmFactory ] traversal_cb and filter are nullptr"<<std::endl;
+        pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+    }
+
     return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }
 
-CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
+CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
     return create(store, "alarm", fileSize, fileCount, "alm", cb, filter);
 }
 

@@ -19,7 +19,7 @@ CYLogPMeterQuarterImpl::CYLogPMeterQuarterImpl(const std::string & dir, std::sha
                                                                                             CYLogImplAbs( store, std::move(pFDesc) ) {};
 /*************************************************** Factory ******************************************************/
 
-CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_alarm_filter_t filter) {
+CYLogImplAbs* CyLogPMeterQuarterFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
     std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
     
     /** 建立文件对象 */
