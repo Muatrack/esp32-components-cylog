@@ -15,19 +15,19 @@
  * 日志类别-告警日志
  * - 
  */
-class CYLogPMeter15Impl : public CYLogImplAbs {
+class CYLogPMeterQuarterImpl : public CYLogImplAbs {
 public:
     
     CL_TYPE_t traverse(log_read_cb_t cb) override;
 
-    CYLogPMeter15Impl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
-    ~CYLogPMeter15Impl(){
-        std::cout << "~CYLogPMeter15Impl()" << std::endl;
+    CYLogPMeterQuarterImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
+    ~CYLogPMeterQuarterImpl(){
+        std::cout << "~CYLogPMeterQuarterImpl()" << std::endl;
     };
 private:
 };
 
-class CyLogPMeter15Factory : public CYLogFactoryAbs {
+class CyLogPMeterQuarterFactory : public CYLogFactoryAbs {
 public:
     /** 
          * @param logDir 存储日志的相对路径

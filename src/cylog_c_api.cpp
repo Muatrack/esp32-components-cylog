@@ -154,8 +154,8 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount) {
         case CYLOG_T_EXCP:
             pFactory     = new CyLogExcpFactory();
             break;
-        case CYLOG_T_PMETE:
-            break;
+        case CYLOG_T_PMETE_QTR: break;
+        case CYLOG_T_PMETE_DAY: break;
         default:  goto excp;
     }
 
