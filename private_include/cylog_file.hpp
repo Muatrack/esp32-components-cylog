@@ -49,9 +49,9 @@ public:
                 m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole),
                 m_TraversalCb(nullptr), m_TraversalFilter(nullptr) {};
 
-    // FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount, uint32_t tailHole=128, cylog_traversal_cb_t cb=nullptr, cylog_traversal_filter_t filter=nullptr):
-    //             m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole),
-    //             m_TraversalCb(cb), m_TraversalFilter(filter) {};
+    FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount, uint32_t tailHole, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter):
+                m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole),
+                m_TraversalCb(cb), m_TraversalFilter(filter) {};
 
     ~FileDesc() {};
 

@@ -30,11 +30,8 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
 
     /** 建立文件对象 */
     if(cylog_alarm_traversal_cb && cylog_alarm_traversal_filter) {
-        std::cout << "[ CyLogAlarmFactory ] traversal_cb and filter are not nullptr"<<std::endl;
-        // pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount, cylog_alarm_traversal_cb, cylog_alarm_traversal_filter);
-        pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
+        pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount, 64, cylog_alarm_traversal_cb, cylog_alarm_traversal_filter);
     } else {
-        std::cout << "[ CyLogAlarmFactory ] traversal_cb and filter are nullptr"<<std::endl;
         pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
     }
 
