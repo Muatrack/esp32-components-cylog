@@ -9,6 +9,11 @@
 #include "private_include/cylog_factory.hpp"
 #include "cylog_impl/alarm/cylog_impl_alarm.hpp"
 #include "cylog_impl/excp/cylog_impl_excp.hpp"
+#include "cylog_impl/pmeter_quarter/cylog_impl_pmeter_quarter.hpp"
+#include "cylog_impl/pmeter_day/cylog_impl_pmeter_day.hpp"
+#include "cylog_impl/power/cylog_impl_power.hpp"
+#include "cylog_impl/switch/cylog_impl_switch.hpp"
+
 #include <stdint.h>
 
 #ifdef USE_SYSTEM_LINUX
@@ -154,8 +159,18 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_t
         case CYLOG_T_EXCP:
             pFactory     = new CyLogExcpFactory();
             break;
-        case CYLOG_T_PMETE_QTR: break;
-        case CYLOG_T_PMETE_DAY: break;
+        case CYLOG_T_PMETE_QTR: 
+            pFactory     = new CyLogPMeterQuarterFactory();
+            break;
+        case CYLOG_T_PMETE_DAY: 
+            pFactory     = new CyLogPMeterDayFactory();    
+            break;
+        case CYLOG_T_POWER:
+            pFactory     = new CyLogPowerFactory();
+            break;
+        case CYLOG_T_SWITCH: 
+            pFactory     = new CyLogSwitchFactory();
+            break;
         default:  goto excp;
     }
 

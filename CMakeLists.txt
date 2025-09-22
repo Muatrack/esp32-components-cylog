@@ -7,6 +7,10 @@ set(
     SRCS
         cylog_impl/excp/cylog_impl_excp.cpp
         cylog_impl/alarm/cylog_impl_alarm.cpp
+        cylog_impl/pmeter_day/cylog_impl_pmeter_day.cpp
+        cylog_impl/pmeter_quarter/cylog_impl_pmeter_quarter.cpp
+        cylog_impl/power/cylog_impl_power.cpp
+        cylog_impl/switch/cylog_impl_switch.cpp
         src/cylog_impl.cpp
         src/cylog_store_abs.cpp
         src/cylog_file.cpp
