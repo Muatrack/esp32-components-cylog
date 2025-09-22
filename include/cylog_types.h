@@ -36,7 +36,7 @@ typedef enum {
     CYLOG_T_DEF             /* 缺省值， 默认值*/
 } cylog_type_t;
 
-
+#pragma pack(push, 1)
 /** 告警日志数据结构 */
 typedef  struct {
 } cylog_alarm_t;
@@ -47,8 +47,17 @@ typedef  struct {
 
 /** 开关机日志数据结构 */
 typedef  struct {
-} cylog_poweronoff_t;
+} cylog_power_t;
 
+/** 分合闸日志数据结构 */
+typedef  struct {
+} cylog_switch_t;
+
+/** 系统异常日志数据结构 */
+typedef  struct {
+} cylog_switch_t;
+
+#pragma pack(pop)
 
 #ifdef __cplusplus
 }
