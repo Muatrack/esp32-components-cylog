@@ -1,5 +1,5 @@
 #include "private_include/cylog_factory.hpp"
-#include "cylog_impl_pmeter365.hpp"
+#include "cylog_impl_pmeter_day.hpp"
 
 using namespace CLFile;
 

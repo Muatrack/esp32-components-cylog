@@ -29,7 +29,8 @@ typedef int (log_read_cb_t)(uint8_t data[], uint16_t dataLen );
 typedef enum {
     CYLOG_T_ALARM   = 0x00, /* 告警 */
     CYLOG_T_EXCP,           /* 异常 */
-    CYLOG_T_PMETE,          /* 电量 */
+    CYLOG_T_PMETE_QTR,      /* 整刻钟电量记录 */
+    CYLOG_T_PMETE_DAY,      /* 每日电量 */
 
     CYLOG_T_DEF             /* 缺省值， 默认值*/
 } cylog_type_t;
