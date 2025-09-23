@@ -103,7 +103,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }
     // 获取读写资源 
     if( lockTake(timeoutMs) == false ) {
-        cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl );
+        CYLOG_PRINT(  std::cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl );
         _err = CL_LOG_BUSY;
         goto lock_excp;
     }
