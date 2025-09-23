@@ -83,10 +83,12 @@ bool cylog_init(char *rootDir) {
     std::string rootPath = rootDir;
     CYLOG_PRINT(  std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
 
+#ifdef USE_SYSTEM_FREERTOS
     /* 检查文件系统是否已初始化 */
     if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */
         CYLOG_INIT_CHECK("!!! [ cylog ] flash un-formated", excp); /* 借助已有宏定义，跳出 */
     }
+#endif
 
     if( !rootDir ) { goto excp; }   /* 参数无效 */    
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);

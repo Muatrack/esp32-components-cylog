@@ -367,7 +367,7 @@ excp:
 
 CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
 
-    std::filesystem:: path logDir = rootDirGet() + "/" + pFDesc->relativePathGet() ;
+    std::filesystem::path logDir = rootDirGet() + "/" + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
     DIR *pDir = nullptr;
     struct dirent *pDItem = nullptr;

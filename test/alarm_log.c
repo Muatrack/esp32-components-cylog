@@ -29,7 +29,7 @@ ignore:
 
 void alarm_log_test() {
 
-    cylog_init("/sdb/logroot");
+    cylog_init("/tmp/logroot");
 
     cylog_create( CYLOG_T_ALARM, 40960, 1, NULL, NULL);
 

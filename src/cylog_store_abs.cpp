@@ -197,7 +197,6 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     std::string fPath;
     auto fList  = std::vector<std::string>();
     std::vector<FileUsage> fUsage;
-
     /* 遍历目录下的文件名称及大小 */
     dirTraverse( pFDesc, fList );
     CYLOG_PRINT(  std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl );    
@@ -208,8 +207,8 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
         auto &fu = fUsage[i];
         fPath = static_cast<std::string>(fList[i]);
         fu.m_Path = fPath;
-        // multiFilesTraverse(pFDesc, fPath, fu);        // 遍历文件中的记录信息
-        singleFileTraverse(pFDesc, fPath, fu);
+        multiFilesTraverse(pFDesc, fPath, fu);        // 遍历文件中的记录信息
+        // singleFileTraverse(pFDesc, fPath, fu);
         fu.m_IsFull = isFileFull(fu.m_WOfSet, pFDesc);  // 判断文件是否已写满
         fu.m_FMTime = getFileLastModifyTm( fu.m_Path );
     }
@@ -262,4 +261,70 @@ bool StoreAbs::doesExists( std::string & path ) {
 
 excp:
     return false;
+}
+
+CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
+
+    uint32_t remainSize = 0;
+    uint32_t readSize = 0;
+    uint32_t rOfSet   = 0;
+    std::unique_ptr<uint8_t[]> pData;
+
+    /* 识别文件名称中的数字 ID */
+    {
+        size_t pos = fPath.rfind('_');
+        if( pos != std::string::npos ) {
+            auto ss = fPath.substr(pos+1);
+            fUsage.m_FId = atoi(ss.c_str());
+        }
+    }
+
+    /* 打开文件 */
+    std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
+    if( ifs.is_open()==false ) { goto excp; }
+    
+    /* 读取文件大小 */
+    ifs.seekg(0, std::ios::end);
+    fUsage.m_Size = ifs.tellg();
+
+    {
+        /* 设置读取偏移量 */
+        rOfSet = 0;
+        remainSize = fUsage.m_Size;
+
+        pData = std::make_unique<uint8_t[]>( CYLOG_TRAVERSAL_BLOCK_SIZE );
+        CYLOG_PRINT( std::cout<< "CYLOG_TRAVERSAL_BLOCK_SIZE: " << CYLOG_TRAVERSAL_BLOCK_SIZE <<std::endl );
+
+        while( remainSize>0 ) {
+            ifs.seekg(rOfSet, std::ios::beg);
+
+            readSize = MIN(remainSize, CYLOG_TRAVERSAL_BLOCK_SIZE);
+
+             /* 4: 记录头大小 */
+            ifs.read(reinterpret_cast<char*>(pData.get()), readSize);
+            
+            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
+
+            /* 日志过滤 */
+            pData = std::make_unique<uint8_t[]>(item->itemSizeGet());
+            ifs.read(reinterpret_cast<char*>(pData.get()), item->itemSizeGet());
+            if( pFDesc->traverCbGet() && pFDesc->traverFilterGet() ) {  /* 回调及过滤函数均已定义， 则执行 */
+                if( pFDesc->traverFilterGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet()) ) {
+                    pFDesc->traverCbGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet());
+                }
+            }
+            // 日志过滤
+
+            rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
+            remainSize -= rOfSet+4;
+        }
+
+        fUsage.m_WOfSet = rOfSet;
+    }
+    
+    ifs.close();
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
 }

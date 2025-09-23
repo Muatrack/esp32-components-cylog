@@ -7,7 +7,7 @@ extern void cylog_dir_del( char *path );
 int main(void) {
     printf("------------------- Hi, CYLOG ----------------------\n");
 
-    cylog_dir_del( "/sdb/logroot" );
+    // cylog_dir_del( "/tmp/logroot" );
 
     /* 初始化日志目录结构 */
     

@@ -32,7 +32,6 @@ public:
     CL_TYPE_t dirRead( std::unique_ptr<FileDesc> & pFDesc ) override;
     CL_TYPE_t dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) override;    
     CL_TYPE_t multiFilesTraverse( std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) override; /* 遍历文件，查找可写位置 */
-    CL_TYPE_t singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) override;
     /* 删除指定目录 */
     CL_TYPE_t dirDelete( const std::string & absPath ) override;
 };

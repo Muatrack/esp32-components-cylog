@@ -27,6 +27,9 @@ else()
     add_compile_definitions(CYLOG_TRAVERSAL_BLOCK_SIZE=4096)
 endif()
 
+add_compile_definitions(CYLOG_RW_CONOPTS)
+add_compile_definitions(USING_CYLOG_DEBUG)
+
 # 定义文件数据结构的版本
 add_compile_definitions(CYLOG_FILE_VER=1)
 # 定义文件判断是否已满时用到的空洞大小

@@ -62,7 +62,7 @@ public:
     /* 遍历多文件，查找可写位置 */
     virtual CL_TYPE_t multiFilesTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) = 0;
     /* 遍历多文件，查找可写位置 */
-    virtual CL_TYPE_t singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) = 0;
+    virtual CL_TYPE_t singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & );
     /* 判断文件/目录是否存在 */
     virtual bool doesExists( std::string & path );
 
