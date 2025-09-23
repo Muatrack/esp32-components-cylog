@@ -347,16 +347,6 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
                 while( pItem=readdir(pDir), pItem ) {
                     std::string _path = destFile+"/"+pItem->d_name;
                     dirDelete(_path);
-                    // switch( pItem->d_type ) {
-                    //     case DT_REG: // 文件
-                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
-                    //         break;
-                    //     case DT_DIR: // 目录
-                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
-                    //         break;
-                    //     default:
-                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
-                    // }
                 }
 
                 closedir(pDir);
