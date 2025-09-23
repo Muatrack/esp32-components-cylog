@@ -27,6 +27,15 @@ namespace fs=std::filesystem;
 CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     CL_TYPE_t err = CL_OK;
     std::string absPath = rootDirGet() + "/" + logDir;
+
+    /* test */
+    std::string _rd = "/sdb/logroot";
+    if( doesExists(_rd) ) {
+        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " does exists" <<std::endl;
+    } else {
+        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " doesn't exists" <<std::endl;
+    }
+
     /* 目录如已存在，跳过新建 */
     if( doesExists(absPath) ) {
         std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " does exists" <<std::endl;
@@ -36,9 +45,21 @@ CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " doesn't exists" <<std::endl;
 
     /* 目录不存在，则新建 */
-    if( mkdir(absPath.c_str(), 0755)==0 ) { goto done; }
-    else { err = CL_EXCP_UNKNOW; goto excp; }
-
+#if 1
+    if( fs::create_directory(absPath) ) {
+        std::cout<<"[ StoreEspidf::dirCreate() ] | succ to create " << absPath <<std::endl;
+        goto done;
+    } else {
+        std::cout<<"[ StoreEspidf::dirCreate() ] | fail to create " << absPath <<std::endl;
+        goto excp;
+    }
+#else
+    if( mkdir(absPath.c_str(), 0777)==0 ) { goto done; }
+    else { 
+        std::cout<<"[ StoreEspidf::dirCreate() fail to create " << absPath << " , errno:"<< errno <<std::endl;
+        err = CL_EXCP_UNKNOW; goto excp; 
+    }
+#endif
 excp:
     return err;
 done:
@@ -46,17 +67,25 @@ done:
 }
 
 CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc ) {
+    std::cout<<__FILE__<<":"<<__LINE__<<std::endl;
     std::string fPath = "";
     std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
     int fd = 0;
 
-    /* 分类日志的目录是否存在， 应当在新建前被创建 */
-    if( doesExists(absPath)==false ) {  goto excp;  }
+    std::cout<<__FILE__<<": gonna create dir: "<<__LINE__<<" "<<absPath<<std::endl;
 
+    /* 分类日志的目录是否存在， 应当在新建前被创建 */
+    if( doesExists(absPath)==false ) {
+        std::cout<<__FILE__<<":"<<__LINE__<<" path doesn't exist"<<std::endl;
+        goto excp;
+    }
+
+    std::cout<<__FILE__<<":"<<__LINE__<<" path does exist"<<std::endl;
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<pFDesc->fileCountGet(); i++) {
-        fPath = absPath+"/"+ pFDesc->relativePathGet() +"_"+((i<10)?"0":"") + std::to_string(i);
-        
+        fPath = absPath+"/"+ pFDesc->filePrefixGet() + "_"+((i<10)?"0":"") + std::to_string(i);
+        std::cout<<__FILE__<<": gonna create file: "<<__LINE__<<" "<<fPath<<std::endl;
+
         // 如果文件存在，则跳过
         if( doesExists(fPath) ) { continue;  }
 
@@ -68,7 +97,7 @@ CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc ) {
         std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
     }
 
-
+    std::cout<<__FILE__<<":"<<__LINE__<<"-------------------------- done -------------------------"<<std::endl;
     return CL_OK;
 
 excp:
@@ -271,7 +300,7 @@ excp:
 
 CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vector<std::string> & fList ) {
 
-    std::filesystem:: path logDir = rootDirGet() + pFDesc->relativePathGet() ;
+    std::filesystem:: path logDir = rootDirGet() + "/" + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
     DIR *pDir = nullptr;
     struct dirent *pDItem = nullptr;

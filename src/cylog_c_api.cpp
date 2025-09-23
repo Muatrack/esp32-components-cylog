@@ -72,7 +72,7 @@ void alarm_log(){
 
     uint8_t _dataBuf[64] = { 0x0 };
 
-    std::string rootPath = STORE_ROOT_DIR;
+    std::string rootPath = "/sdb/preserved"; //STORE_ROOT_DIR;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     #ifdef USE_SYSTEM_LINUX
@@ -120,13 +120,13 @@ void alarm_log(){
 extern "C"
 bool cylog_init(char *rootDir) {
         
-    std::string rootPath = STORE_ROOT_DIR;
+    std::string rootPath = rootDir;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
 
-    if( !rootDir ) { goto excp; }   /* 参数无效 */
+    if( !rootDir ) { goto excp; }   /* 参数无效 */    
+    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
     if( m_pStore ) { goto done; } /* 已初始化 */
 
-    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
 #ifdef USE_SYSTEM_LINUX
     m_pStore = std::make_shared<StoreLinux>();
 #else
@@ -169,7 +169,7 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_t
         m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount, nullptr, nullptr);
     } else {
         m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
-    }    
+    }
 
 done:
     if( pFactory ) { delete pFactory; }
@@ -210,7 +210,7 @@ void test_alarm_log() {
 
 void test_dir_del( std::string path ) {
 
-    std::string rootPath = STORE_ROOT_DIR;
+    std::string rootPath = path;
 
     if( m_pStore ) { goto opt; }
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);

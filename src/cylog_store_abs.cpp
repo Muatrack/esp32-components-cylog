@@ -169,13 +169,28 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     sem_init(&StoreAbs::m_signal, 0, concurCount);
 
     /** 检查目录 */
-    if(fs::exists(logRootDir)) {
-        std::cout << "The path "<< logRootDir << " does exist" << std::endl;
-        goto done;
+    std::string mp = "/sdb/init";
+    if(fs::exists(mp)) {
+        std::cout << "The path "<< mp << " does exist" << std::endl;
+    } else {
+        std::cout << "The path "<< mp << " does not exist" << std::endl;
     }
 
-    std::cout << "The path "<< logRootDir << " doesn't exist. Gonna create it" << std::endl;
+    if(fs::exists(StoreAbs::m_LogRootDir)) {
+        std::cout << "The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl;
+        goto done;
+    } else {
+        std::cout << "The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl;
+    }
+#if 1
     fs::create_directory(logRootDir);
+#else
+    if(mkdir(StoreAbs::m_LogRootDir.c_str(), 0777)!=0) {
+        std::cout << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl;
+    } else {
+        std::cout << "Succ to create dir: "<< StoreAbs::m_LogRootDir << std::endl;
+    }
+#endif
 done:;
 }
 
