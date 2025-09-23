@@ -52,6 +52,12 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_t
  */
 bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTms );
 
+/**
+ * 删除指定的日志目录
+ * @param path: 目录的绝对路径
+*/
+void cylog_dir_del( char *path );
+
 #ifdef __cplusplus
 }
 #endif

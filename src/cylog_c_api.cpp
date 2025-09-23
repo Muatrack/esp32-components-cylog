@@ -221,10 +221,11 @@ void test_dir_del( std::string path ) {
     #endif
 
 opt:
-    m_pStore->dirDelete(rootPath+"/"+path);
+    // m_pStore->dirDelete(rootPath+"/"+path);
+    m_pStore->dirDelete(path);
 }
 
 extern "C"
-void test_dir_del_c_api( char *path ) {
+void cylog_dir_del( char *path ) {
     test_dir_del( std::string(path) );
 }
