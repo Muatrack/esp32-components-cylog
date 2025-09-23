@@ -146,7 +146,7 @@ static uint32_t getFileLastModifyTm( std::string & fPath ) {
 
     // 可选：将时间戳转换为可读时间
     auto c_time = std::chrono::system_clock::to_time_t(time_point);
-    CYLOG_PRINT(  std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time);
+    CYLOG_PRINT(  std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time)<<std::endl );
     #endif
 
     return static_cast<uint32_t>(timestamp_s);
