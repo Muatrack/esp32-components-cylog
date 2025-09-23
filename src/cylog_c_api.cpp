@@ -40,9 +40,9 @@ using namespace std;
 
 static std::shared_ptr<StoreAbs> m_pStore = nullptr;
 
-#define CYLOG_INIT_CHECK(gt){   \
+#define CYLOG_INIT_CHECK(msg,gt){   \
     if( m_pStore==nullptr ) {   \
-        CYLOG_PRINT(  std::cout<<"cylog un-init"<<std::endl );  \
+        CYLOG_PRINT(  std::cout<<msg<<std::endl );  \
         goto gt;    \
     }   \
 }
@@ -85,7 +85,7 @@ bool cylog_init(char *rootDir) {
 
     /* 检查文件系统是否已初始化 */
     if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */
-        CYLOG_INIT_CHECK(excp); /* 借助已有宏定义，跳出 */
+        CYLOG_INIT_CHECK("!!! [ cylog ] flash un-formated", excp); /* 借助已有宏定义，跳出 */
     }
 
     if( !rootDir ) { goto excp; }   /* 参数无效 */    
@@ -111,7 +111,7 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_t
     CYLogFactoryAbs *pFactory = nullptr;
     std::string logPrefix;
 
-    CYLOG_INIT_CHECK(excp);
+    CYLOG_INIT_CHECK("!!! [ cylog ] un-init", excp);
 
     /* 检查日志类型是否有效, 如无效则调至 label:excp */
     CYLOG_TYPE_CHECK( logType, excp );
@@ -152,7 +152,7 @@ bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t 
     std::unique_ptr<uint8_t[]> pDPtr = nullptr;
     CYLogImplAbs *pLogObj = nullptr;
 
-    CYLOG_INIT_CHECK(excp);
+    CYLOG_INIT_CHECK("!!! [ cylog ] un-init", excp);
 
     if( (!pData)||(dLen<1)) { goto excp; }
     /* 检查日志类型是否有效, 如无效则跳至 label:excp */
@@ -177,7 +177,7 @@ void cylog_dir_del( char *path ) {
 
     std::string rootPath = std::string(path);
 
-    CYLOG_INIT_CHECK(excp);
+    CYLOG_INIT_CHECK("!!! [ cylog ] un-init", excp);
 
     if( m_pStore ) { goto opt; }
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
