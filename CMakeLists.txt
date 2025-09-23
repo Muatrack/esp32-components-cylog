@@ -21,6 +21,12 @@ set(USE_ASSERTION true)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(CYLOG_READ_SIZE)
+    add_compile_definitions(CYLOG_TRAVERSAL_BLOCK_SIZE=CYLOG_READ_SIZE)
+else()
+    add_compile_definitions(CYLOG_TRAVERSAL_BLOCK_SIZE=4096)
+endif()
+
 # 定义文件数据结构的版本
 add_compile_definitions(CYLOG_FILE_VER=1)
 # 定义文件判断是否已满时用到的空洞大小

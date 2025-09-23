@@ -22,3 +22,4 @@ enum  class CYlogType:char {
     #define CYLOG_PRINT(log)
 #endif
 
+#define MIN(x,y) x>y?y:x

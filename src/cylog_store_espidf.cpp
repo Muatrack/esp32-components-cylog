@@ -241,6 +241,7 @@ CL_TYPE_t StoreEspidf::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 CL_TYPE_t StoreEspidf::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
 
     uint32_t remainSize = 0;
+    uint32_t readSize = 0;
     uint32_t rOfSet   = 0;
     std::unique_ptr<uint8_t[]> pData;
 
@@ -266,11 +267,15 @@ CL_TYPE_t StoreEspidf::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, st
         rOfSet = 0;
         remainSize = fUsage.m_Size;
 
+        pData = std::make_unique<uint8_t[]>( CYLOG_TRAVERSAL_BLOCK_SIZE );
+
         while( remainSize>0 ) {
             ifs.seekg(rOfSet, std::ios::beg);
-            // CYLOG_PRINT(  std::cout<<  fPath << " Next offset:" << rOfSet << std::endl );
-            pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
-            ifs.read(reinterpret_cast<char*>(pData.get()), 4);
+
+            readSize = MIN(remainSize, CYLOG_TRAVERSAL_BLOCK_SIZE);
+
+             /* 4: 记录头大小 */
+            ifs.read(reinterpret_cast<char*>(pData.get()), readSize);
             
             auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
