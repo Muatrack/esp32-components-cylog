@@ -34,7 +34,6 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     uint32_t _ts = 0;
     std::unique_ptr<FileUsage> pHitFUsage = nullptr;
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
-    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     goto route_1;
 
 route_1:    /** 
@@ -59,7 +58,6 @@ route_2:    /** 规则2: (全部写满， 重新覆盖)
                 如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
             */
 
-    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     bVal = true;
     // 判断全部文件是否已满
     for( auto &fu : vFUsage ) { if( fu.m_IsFull==false ) { bVal=false; break; } }
@@ -81,7 +79,6 @@ route_3:    /** 规则3: (找出正在写入的文件)
                 当部分文件被写入后，排除已写满的文件, 排除空文件. 
                 按照wOffset 由大到小排序，选择wOffset最小的文件
             */
-    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
     _wOffset = 0;
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         if( fu.m_IsFull ) { continue; } // 排除已写满的文件
@@ -98,30 +95,25 @@ route_4:   /**
             * 3. 选出ID最小的文件
             */
 
-    // std::cout << __FILE__<<":"<<__LINE__<<std::endl;
-    // std::cout<<"[TESTCASE_ROUTE-4] | Usage count:"<<vFUsage.size()<<std::endl;
     _fId = ~1;
     for( auto &fu : vFUsage ) {
         if( fu.m_WOfSet>0 ) { // 排除非空文件
-            // std::cout<<"[TESTCASE_ROUTE-4] | passed file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
             continue; 
         }
-        // std::cout<<"[TESTCASE_ROUTE-4] | Offset "<< _wOffset<<" ? " << fu.m_WOfSet<<std::endl;
         if( _fId>fu.m_FId ) {  // 选贼ID最小的文件
             _fId=fu.m_FId; pHitFUsage = std::make_unique<FileUsage>(fu); 
-            // std::cout<<"[TESTCASE_ROUTE-4] | find new file "<< fu.m_Path<<" offset:" << fu.m_WOfSet<<std::endl;
         }
     }
     if(pHitFUsage) { goto done;  }
      
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
     goto excp;
 
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
 done:
     return pHitFUsage;
 excp:
-    std::cout << __FILE__<<":"<<__LINE__<<std::endl;
+    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
     return nullptr;
 }
 
@@ -148,13 +140,13 @@ static uint32_t getFileLastModifyTm( std::string & fPath ) {
     ).count();
 
     // 输出结果
-    std::cout << "文件: " << fPath << std::endl;
-    std::cout << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl;
-    std::cout << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl;
+    CYLOG_PRINT(  std::cout << "文件: " << fPath << std::endl );
+    CYLOG_PRINT(  std::cout << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl );
+    CYLOG_PRINT(  std::cout << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl );
 
     // 可选：将时间戳转换为可读时间
     auto c_time = std::chrono::system_clock::to_time_t(time_point);
-    std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time);
+    CYLOG_PRINT(  std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time);
     #endif
 
     return static_cast<uint32_t>(timestamp_s);
@@ -171,24 +163,24 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     /** 检查目录 */
     std::string mp = "/sdb/init";
     if(fs::exists(mp)) {
-        std::cout << "The path "<< mp << " does exist" << std::endl;
+        CYLOG_PRINT(  std::cout << "The path "<< mp << " does exist" << std::endl );
     } else {
-        std::cout << "The path "<< mp << " does not exist" << std::endl;
+        CYLOG_PRINT(  std::cout << "The path "<< mp << " does not exist" << std::endl );
     }
 
     if(fs::exists(StoreAbs::m_LogRootDir)) {
-        std::cout << "The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl;
+        CYLOG_PRINT(  std::cout << "The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl );
         goto done;
     } else {
-        std::cout << "The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl;
+        CYLOG_PRINT(  std::cout << "The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl );
     }
 #if 1
     fs::create_directory(logRootDir);
 #else
     if(mkdir(StoreAbs::m_LogRootDir.c_str(), 0777)!=0) {
-        std::cout << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl;
+        CYLOG_PRINT(  std::cout << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl );
     } else {
-        std::cout << "Succ to create dir: "<< StoreAbs::m_LogRootDir << std::endl;
+        CYLOG_PRINT(  std::cout << "Succ to create dir: "<< StoreAbs::m_LogRootDir << std::endl );
     }
 #endif
 done:;
@@ -208,7 +200,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
 
     /* 遍历目录下的文件名称及大小 */
     dirTraverse( pFDesc, fList );
-    std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl;    
+    CYLOG_PRINT(  std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl );    
 
     fUsage = std::vector<FileUsage>(fList.size());
     /* 遍历文件内的记录，找出下一个可写的位置 */
@@ -224,25 +216,25 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     /* 筛选下一个可写文件 */
     for( size_t i=0;i < fUsage.size(); i++ ) {
         auto &fu = fUsage[i];
-        std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
+        CYLOG_PRINT(  std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
                                                                             <<" size:"<< fu.m_Size 
                                                                             << " wOffset:"<< std::setw(5) << fu.m_WOfSet
                                                                             << std::setfill(' ')<<std::setw(9) << (fu.m_IsFull?" full":" not full")
                                                                             << " | Modify tm:" << fu.m_FMTime
-                                                                            <<std::endl;
+                                                                            <<std::endl );
     }
 
     std::unique_ptr<FileUsage> pHitFu = writableFileHit(pFDesc ,fUsage);
     #ifdef USE_ASSERTION
         assert(pHitFu);
     #else
-        std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+        CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
         return;
     #endif
     pFDesc->wFileOffsetSet(pHitFu->m_WOfSet);
     pFDesc->wFilePathSet(pHitFu->m_Path);
 
-    std::cout<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl;
+    CYLOG_PRINT(  std::cout<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl );
 }
 
 #ifdef USE_ASSERTION

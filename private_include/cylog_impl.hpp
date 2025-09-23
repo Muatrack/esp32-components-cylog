@@ -21,17 +21,6 @@ class CYLogImplAbs {
 public:
 
     CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
-    // {
-    //     m_Store->nextFileSelect( m_pFDesc );
-
-    //     /** 建立日志绝对目录 */
-    //     if( store->dirCreate(pFDesc->relativePathGet())==CL_OK ) {
-    //         std::cout << "CYLogAlarmImpl log directory " << store->rootDirGet()+"/"+pFDesc->relativePathGet() << " get ready." << std::endl;
-    //     }
-
-    //     /** 建立日志文件 */
-    //     store->fileCreate(pFDesc, "", 0, 0);
-    // };
     /* 遍历日志 */
     virtual CL_TYPE_t traverse( cylog_traversal_cb_t cb) { return CL_OK; };
     /** 写日志到文件 */

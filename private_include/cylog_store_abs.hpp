@@ -37,7 +37,7 @@ public:
     StoreAbs(){};
 
     virtual ~StoreAbs(){
-        std::cout << "~StoreAbs()" << std::endl;
+        CYLOG_PRINT(  std::cout << "~StoreAbs()" << std::endl );
     }
 
     /* 删除指定日志目录 */
@@ -115,7 +115,6 @@ public:
      */
     virtual bool isFileFull( uint32_t wOffset, std::unique_ptr<FileDesc>& pFDesc ) {
         uint32_t remainSize = pFDesc->fileSizeGet()-wOffset;
-        // std::cout<<"isFileFull filesize:" << static_cast<int>(pFDesc->fileSizeGet())<<" cur wOffset:" << static_cast<int>(wOffset) << " hole size:" << static_cast<int>(pFDesc->tailHoleGet())<<std::endl;
         return (remainSize<pFDesc->tailHoleGet());
     };
 

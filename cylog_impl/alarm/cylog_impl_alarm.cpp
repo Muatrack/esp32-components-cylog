@@ -25,7 +25,7 @@ CYLogAlarmImpl::CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs
 /*************************************************** Factory ******************************************************/
 
 CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
-    std::cout << "CyLogAlarmFactory::create, prefix: "<< prefix << std::endl;
+    CYLOG_PRINT( std::cout<<"CyLogAlarmFactory::create, prefix: "<< prefix << std::endl );
     std::unique_ptr<CLFile::FileDesc> pFDesc = nullptr;
 
     /** 建立文件对象 */

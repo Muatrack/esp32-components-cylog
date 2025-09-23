@@ -22,7 +22,7 @@ public:
 
     CYLogExcpImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogExcpImpl(){
-        std::cout << "~CYLogExcpImpl()" << std::endl;
+        CYLOG_PRINT(  std::cout << "~CYLogExcpImpl()" << std::endl );
     };
 
 private:

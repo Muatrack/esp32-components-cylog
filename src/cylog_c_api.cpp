@@ -42,7 +42,7 @@ static std::shared_ptr<StoreAbs> m_pStore = nullptr;
 
 #define CYLOG_INIT_CHECK(gt){   \
     if( m_pStore==nullptr ) {   \
-        std::cout<<"cylog un-init"<<std::endl;  \
+        CYLOG_PRINT(  std::cout<<"cylog un-init"<<std::endl );  \
         goto gt;    \
     }   \
 }
@@ -81,7 +81,7 @@ extern "C"
 bool cylog_init(char *rootDir) {
 
     std::string rootPath = rootDir;
-    std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
+    CYLOG_PRINT(  std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
 
     /* 检查文件系统是否已初始化 */
     if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */

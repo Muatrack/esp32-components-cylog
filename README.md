@@ -9,6 +9,13 @@
 
 ### 如何使用
 
+#### 调试日志
+
+宏 USING_CYLOG_DEBUG， 用于控制日志组件是否输出日志
+```c
+    #define USING_CYLOG_DEBUG // 开启调试日志输出, 否则不输出
+```
+
 #### 初始化日志组件
 ```c
     // bool cylog_init(char *rootDir);

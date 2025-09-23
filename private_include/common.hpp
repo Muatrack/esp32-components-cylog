@@ -14,3 +14,11 @@ enum  class CYlogType:char {
     CYT_EWAVE,          //波形
     CYT_SYSEXCP         //系统异常
 };
+
+/** 定义日志输出开关宏 */
+#ifdef USING_CYLOG_DEBUG
+    #define CYLOG_PRINT(log) log;
+#else
+    #define CYLOG_PRINT(log)
+#endif
+

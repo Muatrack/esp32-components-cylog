@@ -13,7 +13,7 @@ class StoreLinux : public StoreAbs {
 public:    
     StoreLinux() = default;
     StoreLinux(StoreLinux&s) = delete;
-    ~StoreLinux() { std::cout << "~StoreLinux()" << std::endl; }
+    ~StoreLinux() { CYLOG_PRINT(  std::cout << "~StoreLinux()" << std::endl ); }
 
 
     /* 新建目录 @param absPath, 新建目录的绝对路径 */

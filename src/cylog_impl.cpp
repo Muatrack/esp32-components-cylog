@@ -5,7 +5,7 @@ CYLogImplAbs::CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CL
         
     /** 建立日志绝对目录 */
     if( m_Store->dirCreate(m_pFDesc->relativePathGet())==CL_OK ) {
-        std::cout << "CYLogAlarmImpl log directory " << m_Store->rootDirGet()+"/"+m_pFDesc->relativePathGet() << " get ready." << std::endl;
+        CYLOG_PRINT(  std::cout << "CYLogAlarmImpl log directory " << m_Store->rootDirGet()+"/"+m_pFDesc->relativePathGet() << " get ready." << std::endl );
     }
 
     /** 建立日志文件 */

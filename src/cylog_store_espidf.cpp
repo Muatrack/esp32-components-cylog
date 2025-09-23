@@ -31,32 +31,32 @@ CL_TYPE_t StoreEspidf::dirCreate( const std::string & logDir ) {
     /* test */
     std::string _rd = "/sdb/logroot";
     if( doesExists(_rd) ) {
-        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " does exists" <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " does exists" <<std::endl );
     } else {
-        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " doesn't exists" <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << _rd << " doesn't exists" <<std::endl );
     }
 
     /* 目录如已存在，跳过新建 */
     if( doesExists(absPath) ) {
-        std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " does exists" <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " does exists" <<std::endl );
         goto done;
     }
 
-    std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " doesn't exists" <<std::endl;
+    CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | dir : " << absPath << " doesn't exists" <<std::endl );
 
     /* 目录不存在，则新建 */
 #if 1
     if( fs::create_directory(absPath) ) {
-        std::cout<<"[ StoreEspidf::dirCreate() ] | succ to create " << absPath <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | succ to create " << absPath <<std::endl );
         goto done;
     } else {
-        std::cout<<"[ StoreEspidf::dirCreate() ] | fail to create " << absPath <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() ] | fail to create " << absPath <<std::endl );
         goto excp;
     }
 #else
     if( mkdir(absPath.c_str(), 0777)==0 ) { goto done; }
     else { 
-        std::cout<<"[ StoreEspidf::dirCreate() fail to create " << absPath << " , errno:"<< errno <<std::endl;
+        CYLOG_PRINT(  std::cout<<"[ StoreEspidf::dirCreate() fail to create " << absPath << " , errno:"<< errno <<std::endl );
         err = CL_EXCP_UNKNOW; goto excp; 
     }
 #endif
@@ -67,37 +67,37 @@ done:
 }
 
 CL_TYPE_t StoreEspidf::fileCreate( std::unique_ptr<FileDesc> & pFDesc ) {
-    std::cout<<__FILE__<<":"<<__LINE__<<std::endl;
+    CYLOG_PRINT(  std::cout<<__FILE__<<":"<<__LINE__<<std::endl );
     std::string fPath = "";
     std::string absPath = rootDirGet() + "/" + pFDesc->relativePathGet();
     int fd = 0;
 
-    std::cout<<__FILE__<<": gonna create dir: "<<__LINE__<<" "<<absPath<<std::endl;
+    CYLOG_PRINT(  std::cout<<__FILE__<<": gonna create dir: "<<__LINE__<<" "<<absPath<<std::endl );
 
     /* 分类日志的目录是否存在， 应当在新建前被创建 */
     if( doesExists(absPath)==false ) {
-        std::cout<<__FILE__<<":"<<__LINE__<<" path doesn't exist"<<std::endl;
+        CYLOG_PRINT(  std::cout<<__FILE__<<":"<<__LINE__<<" path doesn't exist"<<std::endl );
         goto excp;
     }
 
-    std::cout<<__FILE__<<":"<<__LINE__<<" path does exist"<<std::endl;
+    CYLOG_PRINT(  std::cout<<__FILE__<<":"<<__LINE__<<" path does exist"<<std::endl );
     /* 拼接日志文件名称，在日志目录下逐一生成文件*/
     for(int i=0; i<pFDesc->fileCountGet(); i++) {
         fPath = absPath+"/"+ pFDesc->filePrefixGet() + "_"+((i<10)?"0":"") + std::to_string(i);
-        std::cout<<__FILE__<<": gonna create file: "<<__LINE__<<" "<<fPath<<std::endl;
+        CYLOG_PRINT(  std::cout<<__FILE__<<": gonna create file: "<<__LINE__<<" "<<fPath<<std::endl );
 
         // 如果文件存在，则跳过
         if( doesExists(fPath) ) { continue;  }
 
         if( fd=open(fPath.c_str(), O_CREAT|O_EXCL|O_RDWR), fd>=0 ) { close(fd); }
-        else { std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl; }
+        else { CYLOG_PRINT(  std::cout<<"StoreEspidf:: Fail to create log file:"<<fPath<<std::endl ); }
 
         // 初始文件的大小
         truncate( fPath.c_str(), pFDesc->fileSizeGet());
-        std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl;
+        CYLOG_PRINT(  std::cout<<"StoreEspidf:: Create log file:"<<fPath<<std::endl );
     }
 
-    std::cout<<__FILE__<<":"<<__LINE__<<"-------------------------- done -------------------------"<<std::endl;
+    CYLOG_PRINT(  std::cout<<__FILE__<<":"<<__LINE__<<"-------------------------- done -------------------------"<<std::endl );
     return CL_OK;
 
 excp:
@@ -124,7 +124,7 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
                 #ifdef USE_ASSERTION
                     assert(false); 
                 #else
-                    std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+                    CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
                     return CL_EXCP_UNKNOW;
                 #endif
             }
@@ -135,7 +135,7 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
             #ifdef USE_ASSERTION
                 assert(false);
             #else
-                std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl;
+                CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
                 return CL_EXCP_UNKNOW;
             #endif
         }
@@ -147,20 +147,20 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }
     // 获取读写资源 
     if( lockTake(timeoutMs) == false ) {
-        cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl;
+        CYLOG_PRINT( std::cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<std::endl );
         _err = CL_LOG_BUSY;
         goto lock_excp;
     }
 
     ofe = std::ofstream( fPath, std::ios::in | std::ios::out | std::ios::binary );
     if( ofe.is_open()==false ) {
-        std::cout << "Fail to open file: " << fPath << std::endl;
+        CYLOG_PRINT(  std::cout << "Fail to open file: " << fPath << std::endl );
         goto excp;
     }
 
     wOff = pFDesc->wFileOffsetGet();
     ofe.seekp( wOff, std::ios::beg);
-    std::cout <<"[ "<< fPath << " ] writable offset:" << wOff << std::endl;
+    CYLOG_PRINT(  std::cout <<"[ "<< fPath << " ] writable offset:" << wOff << std::endl );
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
@@ -170,19 +170,19 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
     // ofe.flush();
     ofe.close();
 
-    // std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl;
+    // CYLOG_PRINT(  std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl );
 
 #if 0
 re_write:
     // 判断当前文件是否能够写下 iLen 长的数据
     if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
-        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        CYLOG_PRINT(  std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl );
         // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
         if( _bReWriten ) {
             _err = CL_FILE_FULL;
             goto excp;
         }
-        std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl;
+        CYLOG_PRINT(  std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl );
         // 当前文件已写满，选择下一个文件
         nextFileSelect();
         _bReWriten = true;
@@ -192,12 +192,12 @@ re_write:
         // 写数据到文件
         std::fstream _ff;
         if( _ff.open( m_curWriteFilePath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
-            std::cout << "     StoreEspidf::itemWrite file closed [ Excep ]"  << std::endl;
+            CYLOG_PRINT(  std::cout << "     StoreEspidf::itemWrite file closed [ Excep ]"  << std::endl );
             goto excp;
         }
-        std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
+        CYLOG_PRINT(  std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
                             " offset:" << std::setw(4) << m_curWriteOffset << 
-                            " len:" << iLen << std::endl;
+                            " len:" << iLen << std::endl );
 
         CyLogUtils::Serializer::Serialize<decltype(iLen)>( iLen, sizeof(iLen), _buf );
         _ff.seekp( m_curWriteOffset );
@@ -223,17 +223,17 @@ CL_TYPE_t StoreEspidf::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 
     std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
-    std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl;
+    CYLOG_PRINT(  std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl );
 
     {
         std::filesystem::directory_iterator _dir_iter( absDir );
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
-            std::cout << "  file:" << fPath << std::endl;
+            CYLOG_PRINT(  std::cout << "  file:" << fPath << std::endl );
         }
     }
 
-    std::cout << "************** " << __func__ << " done **************" << std::endl;
+    CYLOG_PRINT(  std::cout << "************** " << __func__ << " done **************" << std::endl );
     return CL_OK;
 };
 
@@ -268,7 +268,7 @@ CL_TYPE_t StoreEspidf::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::str
 
         while( remainSize>0 ) {
             ifs.seekg(rOfSet, std::ios::beg);
-            // std::cout<<  fPath << " Next offset:" << rOfSet << std::endl;
+            // CYLOG_PRINT(  std::cout<<  fPath << " Next offset:" << rOfSet << std::endl );
             pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), 4);
             
@@ -305,7 +305,7 @@ CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vec
     DIR *pDir = nullptr;
     struct dirent *pDItem = nullptr;
 
-    std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl;
+    CYLOG_PRINT(  std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl );
 #if 0
     std::filesystem::directory_iterator _dir_iter( logDir );
     for( auto & _dir : _dir_iter ) {
@@ -319,7 +319,7 @@ CL_TYPE_t StoreEspidf::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vec
     }
 #endif
 
-    std::cout << "************** " << __func__ << " done **************" << std::endl;
+    CYLOG_PRINT(  std::cout << "************** " << __func__ << " done **************" << std::endl );
     return CL_OK;
 excp:
     return CL_EXCP_UNKNOW;
@@ -331,12 +331,12 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
 
     // 如目录不存在，则跳过
     if( fs::exists(destFile)==false ) {
-        std::cout << "No such file dir: "<<destFile<<std::endl;
+        CYLOG_PRINT(  std::cout << "No such file dir: "<<destFile<<std::endl );
         goto done; 
     }
 
     if( fs::is_directory(destFile) ) {
-        std::cout << "[ StoreEspidf ] " << destFile << " is a directory" <<std::endl;
+        CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " is a directory" <<std::endl );
 
         // Traverse dir, ensure it is empty
         {
@@ -349,13 +349,13 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
                     dirDelete(_path);
                     // switch( pItem->d_type ) {
                     //     case DT_REG: // 文件
-                    //         std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [file] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
                     //         break;
                     //     case DT_DIR: // 目录
-                    //         std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [dir ] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
                     //         break;
                     //     default:
-                    //         std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl;
+                    //         CYLOG_PRINT(  std::cout<<":"<<_path<<" [unkow] is type of "<< static_cast<int>(pItem->d_type)<<std::endl );
                     // }
                 }
 
@@ -365,18 +365,18 @@ CL_TYPE_t StoreEspidf::dirDelete( const std::string & absPath ) {
 
         // 删除空目录
         if( rmdir(destFile.c_str())!=0 ) {
-            std::cout << "[ StoreEspidf ] " << destFile << " fail to del directory, err:"<< errno <<std::endl;
+            CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " fail to del directory, err:"<< errno <<std::endl );
             goto excp;
         }
-        std::cout << "[ StoreEspidf ] " << destFile << " succ to del directory" <<std::endl;
+        CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " succ to del directory" <<std::endl );
     } else {
-        std::cout << "[ StoreEspidf ] " << destFile << " is a file" <<std::endl;
+        CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " is a file" <<std::endl );
         // 删除文件
         if( remove(destFile.c_str())!=0 ) {
-            std::cout << "[ StoreEspidf ] " << destFile << " fail to del file, err:"<< errno <<std::endl;
+            CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " fail to del file, err:"<< errno <<std::endl );
             goto excp;
         }
-        std::cout << "[ StoreEspidf ] " << destFile << " succ to del file" <<std::endl;
+        CYLOG_PRINT(  std::cout << "[ StoreEspidf ] " << destFile << " succ to del file" <<std::endl );
     }
 done:
     return CL_OK;
