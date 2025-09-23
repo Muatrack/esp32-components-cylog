@@ -194,8 +194,68 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
     return CL_OK;
 };
 
+CL_TYPE_t StoreLinux::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
+
+    uint32_t remainSize = 0;
+    uint32_t rOfSet   = 0;
+    std::unique_ptr<uint8_t[]> pData;
+
+    /* 识别文件名称中的数字 ID */
+    {
+        size_t pos = fPath.rfind('_');
+        if( pos != std::string::npos ) {
+            auto ss = fPath.substr(pos+1);
+            fUsage.m_FId = atoi(ss.c_str());
+        }
+    }
+
+    /* 打开文件 */
+    std::ifstream ifs( fPath, std::ios::in | std::ios::binary );
+    if( ifs.is_open()==false ) { goto excp; }
+    
+    /* 读取文件大小 */
+    ifs.seekg(0, std::ios::end);
+    fUsage.m_Size = ifs.tellg();
+
+    {
+        /* 设置读取偏移量 */
+        rOfSet = 0;
+        remainSize = fUsage.m_Size;
+
+        while( remainSize>0 ) {
+            ifs.seekg(rOfSet, std::ios::beg);
+            // CYLOG_PRINT(  std::cout<<  fPath << " Next offset:" << rOfSet << std::endl );
+            pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
+            ifs.read(reinterpret_cast<char*>(pData.get()), 4);
+            
+            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
+            
+            /* 日志过滤 */
+            pData = std::make_unique<uint8_t[]>(item->itemSizeGet());
+            ifs.read(reinterpret_cast<char*>(pData.get()), item->itemSizeGet());
+            if( pFDesc->traverCbGet() && pFDesc->traverFilterGet() ) {  /* 回调及过滤函数均已定义， 则执行 */
+                if( pFDesc->traverFilterGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet()) ) {
+                    pFDesc->traverCbGet()(reinterpret_cast<uint8_t*>(pData.get()), item->itemSizeGet());
+                }
+            }
+            // 日志过滤
+
+            rOfSet += item->itemSizeGet() + 4; /* 4: 记录头大小 */
+            remainSize -= rOfSet+4;
+        }
+
+        fUsage.m_WOfSet = rOfSet;
+    }
+    
+    ifs.close();
+    return CL_OK;
+excp:
+    return CL_EXCP_UNKNOW;
+}
+
 /* 遍历文件，查找可写位置 */
-CL_TYPE_t StoreLinux::fileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
+CL_TYPE_t StoreLinux::multiFilesTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string & fPath,  FileUsage & fUsage ) {
 
     uint32_t remainSize = 0;
     uint32_t rOfSet   = 0;
