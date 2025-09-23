@@ -5,7 +5,7 @@
 #include <time.h>
 #include <cylog_c_api.h>
 
-#if 1
+/* 告警日志的回调与过滤 */
 int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
     if(data==NULL) { goto done; }
 
@@ -15,18 +15,17 @@ done:
     return 0;
 }
 
-// cylog_traversal_filter_t filter
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
     if(data==NULL) { goto ignore; }
 
     cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
-    if( pAlarm->createTm != 1758558674 ) { goto ignore; }
+    if(pAlarm->type!=ALARM_T_3) { goto ignore; }
 
     return 1;
 ignore:
     return 0;
 }
-#endif
+// 告警日志的回调与过滤
 
 void alarm_log_test() {
 
