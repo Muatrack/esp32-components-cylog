@@ -40,6 +40,13 @@ using namespace std;
 
 static std::shared_ptr<StoreAbs> m_pStore = nullptr;
 
+#define CYLOG_INIT_CHECK(gt){   \
+    if( m_pStore==nullptr ) {   \
+        std::cout<<"cylog un-init"<<std::endl;  \
+        goto gt;    \
+    }   \
+}
+
 typedef struct {
     CYLogImplAbs *pLogImpl; // 日志对象
 }cylog_session_t;
@@ -68,60 +75,18 @@ _excp:  \
     pSp;    \
 })
 
-void alarm_log(){
-
-    uint8_t _dataBuf[64] = { 0x0 };
-
-    std::string rootPath = "/sdb/preserved"; //STORE_ROOT_DIR;
-    std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
-    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
-    #ifdef USE_SYSTEM_LINUX
-        m_pStore = std::make_shared<StoreLinux>();
-    #else
-        m_pStore = std::make_shared<StoreEspidf>();
-    #endif
-    CYLogFactoryAbs *pAlarmFactory     = new CyLogAlarmFactory();
-    // CYLogFactoryAbs *pExcpFactory      = new CyLogExcpFactory();
-    CYLogImplAbs    *pAlarmLog    = pAlarmFactory->create( m_pStore, 1024, 4);
-    // CYLogImplAbs    *pExcpLog     = pExcpFactory->create(  m_pStore, "excp", "ex", 1024, 4 );
-
-    std::cout<< __func__<< "()." << __LINE__ << std::endl;
-
-    // 写入日志测试
-    {
-        std::cout<< "------------------- Begin to write log, after 5s -------------------" << std::endl;
-        sleep(5);
-        // 初始化数组
-        for( int i=0;i < (int)sizeof(_dataBuf); i ++ ) { _dataBuf[i] = i; }
-    #if 1
-        std::unique_ptr<uint8_t[]> alarmItemArray;
-        std::unique_ptr<uint8_t[]> excpItemArray;
-        std::cout << std::endl << "---------------------- Gonna write log to file ----------------------" << std::endl;
-
-        uint8_t dLen = 12;
-        for( int i=0; i < 200; i ++ ) {
-            alarmItemArray = std::make_unique<uint8_t[]>(dLen);
-            for( int j=0; j<dLen; j ++ ) { alarmItemArray[j] = i + 1 + j + 1; }
-            pAlarmLog->write( std::move(alarmItemArray), dLen);
-            if((i>0)&&(i%16==0)) {  sleep(2); }
-            // else usleep(100000);
-            // pExcpLog->write( std::move(excpItemArray),  sizeof(_dataBuf));
-            // usleep(200000);
-        }
-    #endif
-    }
-
-    delete pAlarmLog;
-    delete pAlarmFactory;
-}
-
 /*******************************************************************************/
 
 extern "C"
 bool cylog_init(char *rootDir) {
-        
+
     std::string rootPath = rootDir;
     std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl;
+
+    /* 检查文件系统是否已初始化 */
+    if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */
+        CYLOG_INIT_CHECK(excp); /* 借助已有宏定义，跳出 */
+    }
 
     if( !rootDir ) { goto excp; }   /* 参数无效 */    
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
@@ -145,6 +110,8 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount, cylog_t
 
     CYLogFactoryAbs *pFactory = nullptr;
     std::string logPrefix;
+
+    CYLOG_INIT_CHECK(excp);
 
     /* 检查日志类型是否有效, 如无效则调至 label:excp */
     CYLOG_TYPE_CHECK( logType, excp );
@@ -185,6 +152,8 @@ bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t 
     std::unique_ptr<uint8_t[]> pDPtr = nullptr;
     CYLogImplAbs *pLogObj = nullptr;
 
+    CYLOG_INIT_CHECK(excp);
+
     if( (!pData)||(dLen<1)) { goto excp; }
     /* 检查日志类型是否有效, 如无效则跳至 label:excp */
     CYLOG_TYPE_CHECK( logType, excp );
@@ -203,14 +172,12 @@ excp:
     return false;
 }
 
-extern  "C"
-void test_alarm_log() {
-    alarm_log();
-}
+extern "C"
+void cylog_dir_del( char *path ) {
 
-void test_dir_del( std::string path ) {
+    std::string rootPath = std::string(path);
 
-    std::string rootPath = path;
+    CYLOG_INIT_CHECK(excp);
 
     if( m_pStore ) { goto opt; }
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
@@ -219,13 +186,9 @@ void test_dir_del( std::string path ) {
     #else
         m_pStore = std::make_shared<StoreEspidf>();
     #endif
-
 opt:
     // m_pStore->dirDelete(rootPath+"/"+path);
     m_pStore->dirDelete(path);
+excp:;
 }
 
-extern "C"
-void cylog_dir_del( char *path ) {
-    test_dir_del( std::string(path) );
-}
