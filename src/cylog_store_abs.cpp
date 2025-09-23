@@ -214,15 +214,17 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     }
 
     /* 筛选下一个可写文件 */
-    for( size_t i=0;i < fUsage.size(); i++ ) {
-        auto &fu = fUsage[i];
-        CYLOG_PRINT(  std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
-                                                                            <<" size:"<< fu.m_Size 
-                                                                            << " wOffset:"<< std::setw(5) << fu.m_WOfSet
-                                                                            << std::setfill(' ')<<std::setw(9) << (fu.m_IsFull?" full":" not full")
-                                                                            << " | Modify tm:" << fu.m_FMTime
-                                                                            <<std::endl );
-    }
+    CYLOG_PRINT(
+        for( size_t i=0;i < fUsage.size(); i++ ) {
+            auto &fu = fUsage[i];
+            std::cout<<"File id:"<< std::setfill('0')<<std::setw(3)  << static_cast<int>(fu.m_FId)
+                                                                                <<" size:"<< fu.m_Size 
+                                                                                << " wOffset:"<< std::setw(5) << fu.m_WOfSet
+                                                                                << std::setfill(' ')<<std::setw(9) << (fu.m_IsFull?" full":" not full")
+                                                                                << " | Modify tm:" << fu.m_FMTime
+                                                                                <<std::endl;
+        }
+    )
 
     std::unique_ptr<FileUsage> pHitFu = writableFileHit(pFDesc ,fUsage);
     #ifdef USE_ASSERTION
