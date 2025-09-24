@@ -33,7 +33,7 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
         pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount, 64, cylog_alarm_traversal_cb, cylog_alarm_traversal_filter);
     } else {
         pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);
-    }
+    }    
 
     return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }

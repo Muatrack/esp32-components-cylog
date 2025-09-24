@@ -47,13 +47,22 @@ public:
      */
     FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount, uint32_t tailHole=128):
                 m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole),
-                m_TraversalCb(nullptr), m_TraversalFilter(nullptr) {};
+                m_TraversalCb(nullptr), m_TraversalFilter(nullptr),m_cylog_create_ts_get(nullptr) {};
 
     FileDesc(std::string logPath, std::string prefix, uint32_t fSize, uint8_t fCount, uint32_t tailHole, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter):
                 m_LogPath(logPath),m_Prefix(prefix), m_FSize(fSize), m_FCount(fCount),m_TailHole(tailHole),
-                m_TraversalCb(cb), m_TraversalFilter(filter) {};
+                m_TraversalCb(cb), m_TraversalFilter(filter),m_cylog_create_ts_get(nullptr) {};
 
     ~FileDesc() {};
+
+    // uint32_t(*cylog_createts_get_cb_t)( std::unique_ptr<uint8_t[]> &, uint16_t);
+    void itemCreateTsCbSet(cylog_createts_get_cb_t getter) {
+        m_cylog_create_ts_get = getter;
+    }
+
+    cylog_createts_get_cb_t itemCreateTsCbGet() {
+        return m_cylog_create_ts_get;
+    }
 
     /** 读取文件名称前缀 */
     std::string filePrefixGet() { return m_Prefix; };
@@ -77,7 +86,7 @@ public:
     uint32_t tailHoleGet()      { return m_TailHole; }
 
     cylog_traversal_cb_t        traverCbGet() { return m_TraversalCb; }
-    cylog_traversal_filter_t    traverFilterGet() { return m_TraversalFilter; }
+    cylog_traversal_filter_t    traverFilterGet() { return m_TraversalFilter; }    
 private:
 
     /*immutable member */
@@ -93,6 +102,7 @@ private:
 
     cylog_traversal_cb_t m_TraversalCb;    // 应用层，用于接收 与订阅匹配的数据
     cylog_traversal_filter_t m_TraversalFilter;// 应用曾，设置的订阅数据过滤函数
+    cylog_createts_get_cb_t     m_cylog_create_ts_get;
 };
 
 /**

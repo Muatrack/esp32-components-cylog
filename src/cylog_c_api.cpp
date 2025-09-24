@@ -77,6 +77,13 @@ _excp:  \
 
 /*******************************************************************************/
 
+/** 用于 读取有效日志中的 创建时间戳 */
+extern "C" 
+uint32_t cylog_create_ts_get(uint8_t pData[], uint16_t dLen) {
+    cylog_base_t *pBase = (cylog_base_t *)pData;
+    return pBase->createTm;
+}
+
 extern "C"
 bool cylog_init(char *rootDir) {
 

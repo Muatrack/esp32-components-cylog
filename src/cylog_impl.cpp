@@ -1,8 +1,13 @@
 
 #include <private_include/cylog_impl.hpp>
 
+extern "C" __attribute__((weak)) uint32_t cylog_create_ts_get(uint8_t pData[], uint16_t dLen);
+
 CYLogImplAbs::CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc ):m_Store(store), m_pFDesc(std::move(pFDesc)){
-        
+
+    /* 将解析原数据中开始时间戳的函数指针 存储 FileDesc */
+    pFDesc->itemCreateTsCbSet( cylog_create_ts_get );
+    
     /** 建立日志绝对目录 */
     if( m_Store->dirCreate(m_pFDesc->relativePathGet())==CL_OK ) {
         CYLOG_PRINT(  std::cout << "CYLogAlarmImpl log directory " << m_Store->rootDirGet()+"/"+m_pFDesc->relativePathGet() << " get ready." << std::endl );

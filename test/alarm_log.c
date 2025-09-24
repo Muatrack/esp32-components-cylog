@@ -5,6 +5,8 @@
 #include <time.h>
 #include <cylog_c_api.h>
 
+static uint32_t counter = 0;
+
 /* 告警日志的回调与过滤 */
 int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
     if(data==NULL) { goto done; }
@@ -16,10 +18,13 @@ done:
 }
 
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
+
+    printf("%s() counter: %d\n", __func__, ++counter);
+
     if(data==NULL) { goto ignore; }
 
-    cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
-    if(pAlarm->type!=ALARM_T_3) { goto ignore; }
+    // cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
+    // if(pAlarm->type!=ALARM_T_3) { goto ignore; }
 
     return 1;
 ignore:
@@ -31,7 +36,7 @@ void alarm_log_test() {
 
     cylog_init("/tmp/logroot");
 
-    cylog_create( CYLOG_T_ALARM, 40960, 1, NULL, NULL);
+    cylog_create( CYLOG_T_ALARM, 10240, 1, NULL, NULL);
 
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
 
