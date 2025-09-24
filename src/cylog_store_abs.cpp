@@ -37,10 +37,11 @@ static std::unique_ptr<FileUsage> writableFileHit( std::unique_ptr<FileDesc> &fD
     if(fileCount=vFUsage.size(),fileCount<1) { goto excp; }
     goto route_1;
 
-route_1:    /** 
-                规则1: (全新文件)
-                如全部文件的 wOffset 为0, 则使用文件id为0
-            */
+route_1:
+    /** 
+        规则1: (全新文件)
+        如全部文件的 wOffset 为0, 则使用文件id为0
+    */
     bVal = true;
     for( auto &fu : vFUsage ) {
         if( fu.m_WOfSet!=0 ) { bVal=false; break; }    // 如有一个文件，其写偏移量不为0, 表示文件被使用过。 则不能直接使用id为0的文件
@@ -55,9 +56,10 @@ route_1:    /**
         }
     }
 
-route_2:    /** 规则2: (全部写满， 重新覆盖)
-                如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
-            */
+route_2:    
+    /** 规则2: (全部写满， 重新覆盖)
+        如果全部文件均已写满, 比较各文件的最后写入日期, 取日期最小者
+    */
 
     bVal = true;
     // 判断全部文件是否已满
@@ -76,10 +78,11 @@ route_2:    /** 规则2: (全部写满， 重新覆盖)
         goto done; 
     }
 
-route_3:    /** 规则3: (找出正在写入的文件)
-                当部分文件被写入后，排除已写满的文件, 排除空文件. 
-                按照wOffset 由大到小排序，选择wOffset最小的文件
-            */
+route_3:    
+    /** 规则3: (找出正在写入的文件)
+        当部分文件被写入后，排除已写满的文件, 排除空文件. 
+        按照wOffset 由大到小排序，选择wOffset最小的文件
+    */
     _wOffset = 0;
     for( auto &fu : vFUsage ) { // 选择 wOffset 最大的文件
         if( fu.m_IsFull ) { continue; } // 排除已写满的文件
@@ -89,12 +92,13 @@ route_3:    /** 规则3: (找出正在写入的文件)
     if(pHitFUsage) { goto done;  }
     goto route_4;
     
-route_4:   /**
-            * 规则4: (一些文件一些满， 其余文件均为空)
-            * (在空文件-woffset==0, 中选择id最小的)
-            * 1. 排除非空文件
-            * 3. 选出ID最小的文件
-            */
+route_4:
+    /**
+    * 规则4: (一些文件一些满， 其余文件均为空)
+    * (在空文件-woffset==0, 中选择id最小的)
+    * 1. 排除非空文件
+    * 3. 选出ID最小的文件
+    */
 
     _fId = ~1;
     for( auto &fu : vFUsage ) {
@@ -319,7 +323,7 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
             maxTs = itemTs;
             uint32_t tOffset = absOffset + checkedSize + 4 + item->itemSizeGet();
             fUsage.m_WOfSet = tOffset;
-            CYLOG_PRINT( std::cout<<"[ TESTCASE_ITEMCTS ] newer ts of log, ts:"<<maxTs<<" offset:"<<tOffset<<std::endl );
+            // CYLOG_PRINT( std::cout<<"[ TESTCASE_ITEMCTS ] newer ts of log, ts:"<<maxTs<<" offset:"<<tOffset<<std::endl );
         }
     jump:
 
@@ -329,7 +333,7 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
         // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" buf len:"<<dLen<<" checkedSize:"<<checkedSize<<std::endl );
     }
 
-    CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" checkedSize:"<<checkedSize<<std::endl );
+    // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" checkedSize:"<<checkedSize<<std::endl );
     return checkedSize;
 }
 
@@ -377,17 +381,11 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
             checkedSize = memBlockTraverse( pFDesc, fUsage, rOfSet, pData, ifs.gcount() );
             // 遍历数据，检查有效性
 
-            CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<" expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<" remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl );
-            /* test */
-            // checkedSize = CYLOG_TRAVERSAL_BLOCK_SIZE;
-            sleep(1);
-            // test
+            // CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<" expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<" remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl );
 
             rOfSet += checkedSize;
             remainSize -= checkedSize;
         }
-
-        // fUsage.m_WOfSet = rOfSet;
     }
     
     ifs.close();

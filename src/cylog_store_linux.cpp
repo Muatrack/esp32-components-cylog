@@ -123,49 +123,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
     ofe.write( (char*)tailZeroArray, 4);    //写入额外的4个字节0. 当覆盖写的时候便于将就数据自动失效
     pFDesc->wFileOffsetSet( pFDesc->wFileOffsetGet()+ iLen);
 
-    // ofe.flush();
     ofe.close();
-
-    // CYLOG_PRINT(  std::cout << std::endl << "Succ to write file: "<< fPath << " data size:" << iLen << std::endl );
-
-#if 0
-re_write:
-    // 判断当前文件是否能够写下 iLen 长的数据
-    if( (m_curWriteOffset + sizeof(iLen) + iLen + 2) > m_fileMaxLength ) {
-        CYLOG_PRINT(  std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl );
-        // 如已重选文件，则跳出，否则异常时会出现循环-导致死机
-        if( _bReWriten ) {
-            _err = CL_FILE_FULL;
-            goto excp;
-        }
-        CYLOG_PRINT(  std::cout<< "   " << __func__ << "()." << __LINE__ << std::endl );
-        // 当前文件已写满，选择下一个文件
-        nextFileSelect();
-        _bReWriten = true;
-        goto re_write;
-    }
-    {
-        // 写数据到文件
-        std::fstream _ff;
-        if( _ff.open( m_curWriteFilePath, std::ios::binary | std::ios::out | std::ios::in ), !_ff.is_open() ) {
-            CYLOG_PRINT(  std::cout << "     StoreLinux::itemWrite file closed [ Excep ]"  << std::endl );
-            goto excp;
-        }
-        CYLOG_PRINT(  std::cout<< __func__ << "() " << "write to :" << m_curWriteFilePath << 
-                            " offset:" << std::setw(4) << m_curWriteOffset << 
-                            " len:" << iLen << std::endl );
-
-        CyLogUtils::Serializer::Serialize<decltype(iLen)>( iLen, sizeof(iLen), _buf );
-        _ff.seekp( m_curWriteOffset );
-        // _ff.write( (char*)&iLen, sizeof(iLen));
-        _ff.write( (char*)&_buf, sizeof(iLen));
-        _ff.write( (char*)in, iLen );
-        memset( _buf, 0, sizeof(iLen) );
-        _ff.write( (char*)&_buf, sizeof(iLen));  // 此处用于将覆盖写过程中，刚刚写入的数据其后紧跟的字节置零，否则文件写位置的检索将异常。
-        _ff.close();
-        m_curWriteOffset += (sizeof(iLen) + iLen);
-    }
-#endif
 
 excp:
     lockGive();    

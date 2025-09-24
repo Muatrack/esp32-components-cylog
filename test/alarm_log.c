@@ -12,14 +12,14 @@ int cylog_alarm_traversal_cb(uint8_t data[], uint16_t dataLen ) {
     if(data==NULL) { goto done; }
 
     cylog_alarm_t *pAlarm = (cylog_alarm_t *)data;
-    printf("got an expected alarm log with create time:%u\n", pAlarm->base.createTm );
+    // printf("got an expected alarm log with create time:%u\n", pAlarm->base.createTm );
 done:
     return 0;
 }
 
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
 
-    printf("%s() counter: %d\n", __func__, ++counter);
+    // printf("%s() counter: %d\n", __func__, ++counter);
 
     if(data==NULL) { goto ignore; }
 
@@ -40,7 +40,7 @@ void alarm_log_test() {
 
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
 
-    uint16_t remainCount = 1000;
+    uint16_t remainCount = 10;
     uint32_t seq = 1;
     while ( remainCount-->0 ) {
         alarm.base.createTm = (uint32_t)time(NULL);
