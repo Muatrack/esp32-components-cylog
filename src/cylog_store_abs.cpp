@@ -282,31 +282,27 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
     uint32_t remainSize  = dLen;
     uint32_t maxTs = 0;
     uint32_t itemTs = 0;
-
+    
     while ( remainSize>4 ) {
-
-        /* 剩余数据小于4, 不足以实例化. 检索完毕，跳出函数*/
-        // if( remainSize<4 ) { break; }
-        
         std::unique_ptr<uint8_t[]> pHead = std::make_unique<uint8_t[]>(4);
-        /* 拷贝数据头 */
+        /* 拷贝数据头, 大小4个字节 */
         std::copy(pData.get()+checkedSize, pData.get()+checkedSize + 4, pHead.get());
-        
+
         /* 实例化数据 */
         auto item = ItemDesc::itemDeSerialize( pHead, 4 );
+
         /* 读取记录无效，检查字节的索引前进一个字节并再次重复检查  */
-        if( item->isValid()==false ) { 
-            // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" buf len:"<<dLen<<" checkedSize:"<<checkedSize<<std::endl );
+        if( item->isValid()==false ) {
             checkedSize++;
             remainSize --;
             continue; 
         }
 
         /* 检查剩余数据是否能够涵盖数据体, 如不能涵盖，跳出 */
-        if( remainSize<item->itemSizeGet() ) { break; }
+        if( remainSize<(uint32_t)(item->itemSizeGet()+4) ) { break; }
         checkedSize += 4;
         remainSize  -= 4;
-
+    
         /* 如数据有效， 则继续将内存中的数据返回给上层进一步检查 */
         std::unique_ptr<uint8_t[]> pBody = std::make_unique<uint8_t[]>( item->itemSizeGet() );
         std::copy( pData.get() + checkedSize, pData.get() + checkedSize + item->itemSizeGet(), pBody.get());
@@ -321,16 +317,13 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
         if( global_cylog_create_ts_get==nullptr ) { goto jump; }
         if( itemTs=global_cylog_create_ts_get(reinterpret_cast<uint8_t*>(pBody.get()), item->itemSizeGet()), itemTs>maxTs ) {
             maxTs = itemTs;
-            uint32_t tOffset = absOffset + checkedSize + 4 + item->itemSizeGet();
+            uint32_t tOffset = absOffset + checkedSize + item->itemSizeGet();
             fUsage.m_WOfSet = tOffset;
-            // CYLOG_PRINT( std::cout<<"[ TESTCASE_ITEMCTS ] newer ts of log, ts:"<<maxTs<<" offset:"<<tOffset<<std::endl );
         }
     jump:
 
         checkedSize += item->itemSizeGet();
         remainSize  -= item->itemSizeGet();
-
-        // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" buf len:"<<dLen<<" checkedSize:"<<checkedSize<<std::endl );
     }
 
     // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" checkedSize:"<<checkedSize<<std::endl );
@@ -376,12 +369,15 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
             ifs.seekg(rOfSet, std::ios::beg);
             readSize = MIN(remainSize, CYLOG_TRAVERSAL_BLOCK_SIZE);
              /* 4: 记录头大小 */
-            ifs.read(reinterpret_cast<char*>(pData.get()), readSize);            
+            ifs.read(reinterpret_cast<char*>(pData.get()), readSize);
             /* 遍历数据，检查有效性 */
             checkedSize = memBlockTraverse( pFDesc, fUsage, rOfSet, pData, ifs.gcount() );
             // 遍历数据，检查有效性
 
-            // CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<" expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<" remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl );
+            CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<
+                            " expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<
+                            " remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl
+            );
 
             rOfSet += checkedSize;
             remainSize -= checkedSize;

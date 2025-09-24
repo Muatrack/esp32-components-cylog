@@ -36,11 +36,11 @@ void alarm_log_test() {
 
     cylog_init("/tmp/logroot");
 
-    cylog_create( CYLOG_T_ALARM, 10240, 1, NULL, NULL);
+    cylog_create( CYLOG_T_ALARM, 1024, 1, NULL, NULL);
 
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
 
-    uint16_t remainCount = 10;
+    uint16_t remainCount = 50;
     uint32_t seq = 1;
     while ( remainCount-->0 ) {
         alarm.base.createTm = (uint32_t)time(NULL);
@@ -50,7 +50,7 @@ void alarm_log_test() {
         alarm.val = (seq+2)%4096;
 
         cylog_write(CYLOG_T_ALARM, (uint8_t*)&alarm, sizeof(alarm), 10);
-        usleep(100000);
+        usleep(1200000);
     }
     
 }
