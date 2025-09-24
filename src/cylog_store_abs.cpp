@@ -162,25 +162,22 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     /* 保存日志绝对路径 */
     StoreAbs::m_LogRootDir = logRootDir;
 
+    CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | root path:"<< StoreAbs::m_LogRootDir  << std::endl );
     /** 设置信号量初值 */
     sem_init(&StoreAbs::m_signal, 0, concurCount);
 
     /** 检查目录 */
     std::string mp = "/sdb/init";
-    if(fs::exists(mp)) {
-        CYLOG_PRINT(  std::cout << "The path "<< mp << " does exist" << std::endl );
-    } else {
-        CYLOG_PRINT(  std::cout << "The path "<< mp << " does not exist" << std::endl );
-    }
+    CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< mp << (fs::exists(mp)?" does exist":" doesn't exist") << std::endl );
 
     if(fs::exists(StoreAbs::m_LogRootDir)) {
-        CYLOG_PRINT(  std::cout << "The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl );
+        CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl );
         goto done;
     } else {
-        CYLOG_PRINT(  std::cout << "The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl );
+        CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl );
     }
 #if 1
-    fs::create_directory(logRootDir);
+    fs::create_directory( StoreAbs::m_LogRootDir );
 #else
     if(mkdir(StoreAbs::m_LogRootDir.c_str(), 0777)!=0) {
         CYLOG_PRINT(  std::cout << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl );

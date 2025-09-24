@@ -186,7 +186,12 @@ void cylog_dir_del( char *path ) {
 
     std::string rootPath = std::string(path);
 
-    CYLOG_INIT_CHECK("!!! [ cylog ] un-init", excp);
+#ifdef USE_SYSTEM_FREERTOS
+    /* 检查文件系统是否已初始化 */
+    if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */
+        CYLOG_INIT_CHECK("!!! [ cylog ] flash un-formated", excp); /* 借助已有宏定义，跳出 */
+    }
+#endif
 
     if( m_pStore ) { goto opt; }
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
