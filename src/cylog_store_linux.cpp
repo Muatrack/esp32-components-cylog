@@ -116,7 +116,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
 
     wOff = pFDesc->wFileOffsetGet();
     ofe.seekp( wOff, std::ios::beg);
-    CYLOG_PRINT(  std::cout << "Succ to open file: " << fPath << " offset:" << wOff << std::endl );
+    CYLOG_PRINT(  std::cout << "[" << fPath << "] offset:" << wOff << std::endl );
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);

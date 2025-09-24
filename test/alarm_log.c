@@ -19,7 +19,7 @@ done:
 
 int cylog_alarm_traversal_filter(uint8_t data[], uint16_t dataLen) {
 
-    // printf("%s() counter: %d\n", __func__, ++counter);
+    printf("%s() counter: %d\n", __func__, ++counter);
 
     if(data==NULL) { goto ignore; }
 
@@ -52,5 +52,4 @@ void alarm_log_test() {
         cylog_write(CYLOG_T_ALARM, (uint8_t*)&alarm, sizeof(alarm), 10);
         usleep(1200000);
     }
-    
 }
