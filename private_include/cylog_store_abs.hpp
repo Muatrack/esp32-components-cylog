@@ -70,7 +70,7 @@ public:
     * @param dLen:
     * @return <uint32_t>  已检查过的字节数
     */
-    virtual uint32_t memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, std::unique_ptr<uint8_t[]> & pData, uint32_t dLen );
+    virtual uint32_t memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, uint32_t absOffset, std::unique_ptr<uint8_t[]> & pData, uint32_t dLen );
     /* 判断文件/目录是否存在 */
     virtual bool doesExists( std::string & path );
 

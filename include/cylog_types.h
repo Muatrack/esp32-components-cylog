@@ -30,7 +30,7 @@ typedef int (*cylog_traversal_filter_t)(uint8_t data[], uint16_t dataLen);
 /**
  * 定义 读取日志创建时间戳的函数类型
  */
-typedef uint32_t(*cylog_createts_get_cb_t)( uint8_t[], uint16_t);
+typedef uint32_t(*cylog_createts_get_cb_t)( uint8_t pData[], uint16_t dLen);
 
 /*********************************************** 告警日志类型 *************************************************/
 
