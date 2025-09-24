@@ -277,7 +277,7 @@ CL_TYPE_t StoreEspidf::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, st
              /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), readSize);
             
-            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            auto item = ItemDesc::itemDeSerialize( pData, 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
 
             /* 日志过滤 */
@@ -339,7 +339,7 @@ CL_TYPE_t StoreEspidf::multiFilesTraverse(std::unique_ptr<FileDesc> & pFDesc, st
             pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), 4);
             
-            auto item = ItemDesc::itemDeSerialize( std::move(pData), 4 );   /*  */
+            auto item = ItemDesc::itemDeSerialize( pData, 4 );   /*  */
             if( item->isValid()==false ) { break; }  /* 读取记录无效， 此处*/
 
             /* 日志过滤 */

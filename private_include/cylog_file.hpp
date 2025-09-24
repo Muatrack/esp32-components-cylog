@@ -169,7 +169,7 @@ private:
 
 public:
     static std::unique_ptr<ItemDesc> itemSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);    // 序列化    
-    static std::unique_ptr<ItemDesc> itemDeSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen);  // 实例化
+    static std::unique_ptr<ItemDesc> itemDeSerialize(std::unique_ptr<uint8_t[]> &pData, uint16_t dLen);  // 实例化
 };
 
 /******************************* @deprecated *********************************/

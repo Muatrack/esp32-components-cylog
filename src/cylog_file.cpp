@@ -23,7 +23,7 @@ std::unique_ptr<ItemDesc>  ItemDesc::itemSerialize(std::unique_ptr<uint8_t[]> pD
  * @param dLen:  从文件中读取到的数据长度
  * @return 返回 ItemDesc对象指针
 **/
-std::unique_ptr<ItemDesc>  ItemDesc::itemDeSerialize(std::unique_ptr<uint8_t[]> pData, uint16_t dLen) {
+std::unique_ptr<ItemDesc>  ItemDesc::itemDeSerialize(std::unique_ptr<uint8_t[]> &pData, uint16_t dLen) {
     return std::make_unique<ItemDesc>(std::move(pData), dLen, true);
 };
 

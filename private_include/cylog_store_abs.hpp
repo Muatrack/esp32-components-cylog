@@ -63,6 +63,14 @@ public:
     virtual CL_TYPE_t multiFilesTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & ) = 0;
     /* 遍历多文件，查找可写位置 */
     virtual CL_TYPE_t singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::string &,  FileUsage & );
+    /**
+    * 遍历内存块中数据，逐字节匹配有效数据
+    * @param pFdesc: 
+    * @param pData:
+    * @param dLen:
+    * @return <uint32_t>  已检查过的字节数
+    */
+    virtual uint32_t memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, std::unique_ptr<uint8_t[]> & pData, uint32_t dLen );
     /* 判断文件/目录是否存在 */
     virtual bool doesExists( std::string & path );
 
