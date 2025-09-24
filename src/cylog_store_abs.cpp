@@ -273,7 +273,7 @@ excp:
  * [5] 如缓存剩余数据长度不足实例头部定义的长度，当前数据算做为识别。返回当前已识别的数据位置
  * [6] 如缓存剩余数据长度满足实例头部定义的长度，读取的位置更新为内存中当前数据的尾部出数据的长度
 */
-uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, uint32_t absOffset, std::unique_ptr<uint8_t[]> & pData, uint32_t dLen ) {
+uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsage & fUsage, uint32_t absOffset, std::unique_ptr<uint8_t[]> & pData, uint32_t dLen ) {
     uint32_t checkedSize = 0;
     uint32_t remainSize  = dLen;
     uint32_t maxTs = 0;
@@ -317,8 +317,9 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, uint32_
         if( global_cylog_create_ts_get==nullptr ) { goto jump; }
         if( itemTs=global_cylog_create_ts_get(reinterpret_cast<uint8_t*>(pBody.get()), item->itemSizeGet()), itemTs>maxTs ) {
             maxTs = itemTs;
-            pFDesc->wFileOffsetSet( absOffset + checkedSize + 4 + item->itemSizeGet() );
-            CYLOG_PRINT( std::cout<<"[ TESTCASE_ITEMCTS ]got newer ts log, ts:"<<maxTs<<std::endl );
+            uint32_t tOffset = absOffset + checkedSize + 4 + item->itemSizeGet();
+            fUsage.m_WOfSet = tOffset;
+            CYLOG_PRINT( std::cout<<"[ TESTCASE_ITEMCTS ] newer ts of log, ts:"<<maxTs<<" offset:"<<tOffset<<std::endl );
         }
     jump:
 
@@ -373,7 +374,7 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
              /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), readSize);            
             /* 遍历数据，检查有效性 */
-            checkedSize = memBlockTraverse( pFDesc, rOfSet, pData, ifs.gcount() );
+            checkedSize = memBlockTraverse( pFDesc, fUsage, rOfSet, pData, ifs.gcount() );
             // 遍历数据，检查有效性
 
             CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<" expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<" remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl );
@@ -386,7 +387,7 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
             remainSize -= checkedSize;
         }
 
-        fUsage.m_WOfSet = rOfSet;
+        // fUsage.m_WOfSet = rOfSet;
     }
     
     ifs.close();
