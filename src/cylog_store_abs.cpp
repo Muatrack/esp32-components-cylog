@@ -206,6 +206,7 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     fUsage = std::vector<FileUsage>(fList.size());
     /* 遍历文件内的记录，找出下一个可写的位置 */
     for( size_t i=0;i < fList.size(); i++ ) {
+        CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<std::endl );
         auto &fu = fUsage[i];
         fPath = static_cast<std::string>(fList[i]);
         fu.m_Path = fPath;
@@ -278,8 +279,8 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
     uint32_t checkedSize = 0;
     uint32_t remainSize  = dLen;
     uint32_t maxTs = 0;
-    uint32_t itemTs = 0;
-    
+    uint32_t itemTs = 0;    
+
     while ( remainSize>4 ) {
         std::unique_ptr<uint8_t[]> pHead = std::make_unique<uint8_t[]>(4);
         /* 拷贝数据头, 大小4个字节 */
@@ -312,7 +313,7 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
 
         /** 拦截日志，读取其创建时间戳, 找到创建时间最大的日志并记录其偏移量，用作再次写入的位置  */
         if( global_cylog_create_ts_get==nullptr ) { goto jump; }
-        if( itemTs=global_cylog_create_ts_get(reinterpret_cast<uint8_t*>(pBody.get()), item->itemSizeGet()), itemTs>maxTs ) {
+        if( itemTs=global_cylog_create_ts_get(reinterpret_cast<uint8_t*>(pBody.get()), item->itemSizeGet()), itemTs>=maxTs ) {
             maxTs = itemTs;
             uint32_t tOffset = absOffset + checkedSize + item->itemSizeGet();
             fUsage.m_WOfSet = tOffset;
