@@ -31,7 +31,11 @@
 #ifdef CYLOG_ROOT_DIR
     #define STORE_ROOT_DIR  CYLOG_ROOT_DIR
 #else
-    #define STORE_ROOT_DIR  "/tmp/logroot/"     /* 日志根目录 */
+    #ifdef USE_SYSTEM_FREERTOS
+        #define STORE_ROOT_DIR  "/sdb/logroot"     /* 日志根目录 */
+    #else
+        #define STORE_ROOT_DIR  "/tmp/logroot"     /* 日志根目录 */
+    #endif
 #endif
 
 extern void test_adv_prointer();
@@ -85,9 +89,8 @@ uint32_t global_cylog_create_ts_get(uint8_t pData[], uint16_t dLen) {
 }
 
 extern "C"
-bool cylog_init(char *rootDir) {
+bool cylog_init() {
 
-    std::string rootPath = rootDir;
     CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
 
 #ifdef USE_SYSTEM_FREERTOS
@@ -96,9 +99,9 @@ bool cylog_init(char *rootDir) {
         CYLOG_INIT_CHECK("!!! [ cylog ] flash un-formated", excp); /* 借助已有宏定义，跳出 */
     }
 #endif
-
-    if( !rootDir ) { goto excp; }   /* 参数无效 */    
-    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootPath);
+    std::string rootDir = STORE_ROOT_DIR;
+    if( rootDir=="" ) { goto excp; }   /* 参数无效 */
+    StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootDir);
     if( m_pStore ) { goto done; } /* 已初始化 */
 
 #ifdef USE_SYSTEM_LINUX

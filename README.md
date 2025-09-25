@@ -19,10 +19,8 @@
 
 #### 初始化日志组件
 ```c
-    // bool cylog_init(char *rootDir);
-
     // 初始化日志根目录， /sdb/logroot
-    cylog_init("/sdb/logroot");
+    cylog_init();
 ```
 #### 初始化分类日志
 ```c

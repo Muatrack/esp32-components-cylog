@@ -17,7 +17,7 @@ extern "C" {
  * 
  *  - 失败: false
  */
-bool cylog_init(char *rootDir);
+bool cylog_init();
 
 /**
  * 新建分类日志

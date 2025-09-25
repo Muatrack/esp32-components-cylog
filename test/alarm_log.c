@@ -34,7 +34,7 @@ ignore:
 
 void alarm_log_test() {
 
-    cylog_init("/tmp/logroot");
+    cylog_init();
 
     cylog_create( CYLOG_T_ALARM, 1024, 1, NULL, NULL);
 
