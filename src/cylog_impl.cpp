@@ -17,11 +17,9 @@ CYLogImplAbs::CYLogImplAbs( std::shared_ptr<StoreAbs> &store, std::unique_ptr<CL
     m_Store->nextFileSelect( m_pFDesc );
 };
 
-CL_TYPE_t CYLogImplAbs::write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen, uint32_t timeoutTms) {
+bool CYLogImplAbs::write( std::unique_ptr<uint8_t[]> pIn, uint16_t iLen, uint32_t timeoutTms) {
     // 将日志数据序列化
     std::unique_ptr<ItemDesc> pItem = ItemDesc::itemSerialize( std::move(pIn), iLen);
-
     // 将序列化后的数据写入文件
-    storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4, timeoutTms);
-    return CL_OK;
+    return (storeGet()->itemWrite( m_pFDesc, pItem->packData(), iLen+4, timeoutTms)==CL_OK);
 }

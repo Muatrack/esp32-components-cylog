@@ -174,9 +174,7 @@ bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t 
     std::memcpy( pDPtr.get(), pData, dLen );
 
     if(pLogObj=CYLOG_TOBJ_TAKE(logType),!pLogObj) {goto excp;}
-    pLogObj->write( std::move(pDPtr), dLen, timeoutTms);
-
-    return true;
+    return pLogObj->write( std::move(pDPtr), dLen, timeoutTms);
 excp:
     return false;
 }
