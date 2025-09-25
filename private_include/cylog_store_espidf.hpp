@@ -13,7 +13,7 @@ class StoreEspidf : public StoreAbs {
 public:    
     StoreEspidf() = default;
     StoreEspidf(StoreEspidf&s) = delete;
-    ~StoreEspidf() { CYLOG_PRINT(  std::cout << "~StoreEspidf()" << std::endl ); }
+    ~StoreEspidf() { CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~StoreEspidf()" << std::endl ); }
 
 
     /* 新建目录 @param absPath, 新建目录的绝对路径 */

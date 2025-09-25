@@ -22,7 +22,7 @@ public:
 
     CYLogSwitchImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogSwitchImpl(){
-        CYLOG_PRINT(  std::cout << "~CYLogSwitchImpl()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~CYLogSwitchImpl()" << std::endl );
     };
 
 private:

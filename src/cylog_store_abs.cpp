@@ -111,14 +111,14 @@ route_4:
     }
     if(pHitFUsage) { goto done;  }
      
-    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << __FILE__<<":"<<__LINE__<<std::endl );
     goto excp;
 
-    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << __FILE__<<":"<<__LINE__<<std::endl );
 done:
     return pHitFUsage;
 excp:
-    CYLOG_PRINT(  std::cout << __FILE__<<":"<<__LINE__<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << __FILE__<<":"<<__LINE__<<std::endl );
     return nullptr;
 }
 
@@ -145,13 +145,13 @@ static uint32_t getFileLastModifyTm( std::string & fPath ) {
     ).count();
 
     // 输出结果
-    CYLOG_PRINT(  std::cout << "文件: " << fPath << std::endl );
-    CYLOG_PRINT(  std::cout << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl );
-    CYLOG_PRINT(  std::cout << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "文件: " << fPath << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "最后修改时间（时间戳，秒）: " << timestamp_s << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "最后修改时间（时间戳，毫秒）: " << timestamp_ms << std::endl );
 
     // 可选：将时间戳转换为可读时间
     auto c_time = std::chrono::system_clock::to_time_t(time_point);
-    CYLOG_PRINT(  std::cout << "最后修改时间（可读格式）: " << std::ctime(&c_time)<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "最后修改时间（可读格式）: " << std::ctime(&c_time)<<std::endl );
     #endif
 
     return static_cast<uint32_t>(timestamp_s);
@@ -162,27 +162,27 @@ void StoreAbs::StoreInit(uint8_t concurCount, std::string & logRootDir) {
     /* 保存日志绝对路径 */
     StoreAbs::m_LogRootDir = logRootDir;
 
-    CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | root path:"<< StoreAbs::m_LogRootDir  << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "StoreAbs::StoreInit() | root path:"<< StoreAbs::m_LogRootDir  << std::endl );
     /** 设置信号量初值 */
     sem_init(&StoreAbs::m_signal, 0, concurCount);
 
     /** 检查目录 */
     std::string mp = "/sdb/init";
-    CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< mp << (fs::exists(mp)?" does exist":" doesn't exist") << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "StoreAbs::StoreInit() | The path "<< mp << (fs::exists(mp)?" does exist":" doesn't exist") << std::endl );
 
     if(fs::exists(StoreAbs::m_LogRootDir)) {
-        CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " does exist" << std::endl );
         goto done;
     } else {
-        CYLOG_PRINT(  std::cout << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "StoreAbs::StoreInit() | The path "<< StoreAbs::m_LogRootDir << " doesn't exist. Gonna create it" << std::endl );
     }
 #if 1
     fs::create_directory( StoreAbs::m_LogRootDir );
 #else
     if(mkdir(StoreAbs::m_LogRootDir.c_str(), 0777)!=0) {
-        CYLOG_PRINT(  std::cout << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "Fail to create dir: "<< StoreAbs::m_LogRootDir << " errno:"<< errno << std::endl );
     } else {
-        CYLOG_PRINT(  std::cout << "Succ to create dir: "<< StoreAbs::m_LogRootDir << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "Succ to create dir: "<< StoreAbs::m_LogRootDir << std::endl );
     }
 #endif
 done:;
@@ -201,12 +201,12 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     std::vector<FileUsage> fUsage;
     /* 遍历目录下的文件名称及大小 */
     dirTraverse( pFDesc, fList );
-    CYLOG_PRINT(  std::cout << __func__<<"(), file count:"<< fList.size()<<std::endl );    
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << __func__<<"(), file count:"<< fList.size()<<std::endl );    
 
     fUsage = std::vector<FileUsage>(fList.size());
     /* 遍历文件内的记录，找出下一个可写的位置 */
     for( size_t i=0;i < fList.size(); i++ ) {
-        CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<__func__<<"():"<<__LINE__<<std::endl );
         auto &fu = fUsage[i];
         fPath = static_cast<std::string>(fList[i]);
         fu.m_Path = fPath;
@@ -233,13 +233,13 @@ void StoreAbs::nextFileSelect(std::unique_ptr<FileDesc> & pFDesc) {
     #ifdef USE_ASSERTION
         assert(pHitFu);
     #else
-        CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
         return;
     #endif
     pFDesc->wFileOffsetSet(pHitFu->m_WOfSet);
     pFDesc->wFilePathSet(pHitFu->m_Path);
 
-    CYLOG_PRINT(  std::cout<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<"[ Got a writable ] "<<" fsize:"<< static_cast<uint32_t>(pHitFu->m_Size)<<" wOff:"<< std::setw(4) << static_cast<uint32_t>(pHitFu->m_WOfSet) << " path:" << static_cast<std::string>(pHitFu->m_Path)<<std::endl );
 }
 
 #ifdef USE_ASSERTION
@@ -324,7 +324,7 @@ uint32_t StoreAbs::memBlockTraverse( std::unique_ptr<FileDesc> & pFDesc, FileUsa
         remainSize  -= item->itemSizeGet();
     }
 
-    // CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" checkedSize:"<<checkedSize<<std::endl );
+    // CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<__func__<<":"<<__LINE__<<" checkedSize:"<<checkedSize<<std::endl );
     return checkedSize;
 }
 
@@ -358,10 +358,10 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
         rOfSet = 0;
         remainSize = fUsage.m_Size;
 
-        CYLOG_PRINT( std::cout<<__func__<<":"<<__LINE__<<" fPath:"<< fPath << " fsize:"<<fUsage.m_Size<<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<__func__<<":"<<__LINE__<<" fPath:"<< fPath << " fsize:"<<fUsage.m_Size<<std::endl );
 
         pData = std::make_unique<uint8_t[]>( CYLOG_TRAVERSAL_BLOCK_SIZE );
-        CYLOG_PRINT( std::cout<< "CYLOG_TRAVERSAL_BLOCK_SIZE: " << CYLOG_TRAVERSAL_BLOCK_SIZE<< " hole size:"<< pFDesc->tailHoleGet() <<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "CYLOG_TRAVERSAL_BLOCK_SIZE: " << CYLOG_TRAVERSAL_BLOCK_SIZE<< " hole size:"<< pFDesc->tailHoleGet() <<std::endl );
 
         while( remainSize > pFDesc->tailHoleGet() ) {
             ifs.seekg(rOfSet, std::ios::beg);
@@ -372,7 +372,7 @@ CL_TYPE_t StoreAbs::singleFileTraverse(std::unique_ptr<FileDesc> & pFDesc, std::
             checkedSize = memBlockTraverse( pFDesc, fUsage, rOfSet, pData, ifs.gcount() );
             // 遍历数据，检查有效性
 
-            CYLOG_PRINT( std::cout<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<
+            CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<__func__<<"():"<<__LINE__<<" offset: "<<rOfSet<<
                             " expect reading size:"<< readSize << " final read size:"<< ifs.gcount()<<
                             " remain:"<<remainSize<<" checked size:"<<checkedSize <<std::endl
             );

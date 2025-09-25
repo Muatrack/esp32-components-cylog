@@ -22,7 +22,7 @@ public:
 
     CYLogPowerImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogPowerImpl(){
-        CYLOG_PRINT(  std::cout << "~CYLogPowerImpl()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~CYLogPowerImpl()" << std::endl );
     };
 
 private:

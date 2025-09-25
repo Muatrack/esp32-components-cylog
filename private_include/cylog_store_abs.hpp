@@ -37,7 +37,7 @@ public:
     StoreAbs(){};
 
     virtual ~StoreAbs(){
-        CYLOG_PRINT(  std::cout << "~StoreAbs()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~StoreAbs()" << std::endl );
     }
 
     /* 删除指定日志目录 */

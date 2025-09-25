@@ -42,7 +42,7 @@ static std::shared_ptr<StoreAbs> m_pStore = nullptr;
 
 #define CYLOG_INIT_CHECK(msg,gt){   \
     if( m_pStore==nullptr ) {   \
-        CYLOG_PRINT(  std::cout<<msg<<std::endl );  \
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<msg<<std::endl );  \
         goto gt;    \
     }   \
 }
@@ -88,7 +88,7 @@ extern "C"
 bool cylog_init(char *rootDir) {
 
     std::string rootPath = rootDir;
-    CYLOG_PRINT(  std::cout<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
 
 #ifdef USE_SYSTEM_FREERTOS
     /* 检查文件系统是否已初始化 */
@@ -203,6 +203,8 @@ void cylog_dir_del( char *path ) {
 opt:
     // m_pStore->dirDelete(rootPath+"/"+path);
     m_pStore->dirDelete(path);
+#ifdef USE_SYSTEM_FREERTOS
 excp:;
+#endif
 }
 

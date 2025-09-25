@@ -51,7 +51,7 @@ CL_TYPE_t StoreLinux::fileCreate( std::unique_ptr<FileDesc> & pFDesc ) {
         _f.close();
         // 初始文件的大小
         std::filesystem::resize_file( fPath, pFDesc->fileSizeGet() );
-        CYLOG_PRINT(  std::cout<<"Create log file:"<<fPath<<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<"Create log file:"<<fPath<<std::endl );
     }
 
     return CL_OK;
@@ -80,7 +80,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
                 #ifdef USE_ASSERTION
                     assert(false); 
                 #else
-                    CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
+                    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
                     return CL_EXCP_UNKNOW;
                 #endif
             }
@@ -91,7 +91,7 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
             #ifdef USE_ASSERTION
                 assert(false);
             #else
-                CYLOG_PRINT(  std::cout<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
+                CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "[ Fatil exception ] :" << __FILE__<< ":"<< __LINE__ << std::endl );
                 return CL_EXCP_UNKNOW;
             #endif
         }
@@ -103,20 +103,20 @@ CL_TYPE_t StoreLinux::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, con
     if( (pIn==nullptr) || (iLen<1) ) {  goto excp;  }
     // 获取读写资源 
     if( lockTake(timeoutMs) == false ) {
-        CYLOG_PRINT(  std::cout << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "\n------------------------\nFail to get store lock\n" << "------------------------\n" <<endl );
         _err = CL_LOG_BUSY;
         goto lock_excp;
     }
 
     ofe = std::ofstream( fPath, std::ios::in | std::ios::out | std::ios::binary );
     if( ofe.is_open()==false ) {
-        CYLOG_PRINT(  std::cout << "Fail to open file: " << fPath << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "Fail to open file: " << fPath << std::endl );
         goto excp;
     }
 
     wOff = pFDesc->wFileOffsetGet();
     ofe.seekp( wOff, std::ios::beg);
-    CYLOG_PRINT(  std::cout << "[" << fPath << "] offset:" << wOff << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "[" << fPath << "] offset:" << wOff << std::endl );
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
@@ -138,17 +138,17 @@ CL_TYPE_t StoreLinux::dirRead( std::unique_ptr<FileDesc> & pFDesc ) {
 
     std::filesystem:: path absDir = rootDirGet() + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
-    CYLOG_PRINT(  std::cout << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "************** " << __func__ << "(), traverse dir: " << absDir << " **************" << std::endl );
 
     {
         std::filesystem::directory_iterator _dir_iter( absDir );
         for( auto & _dir : _dir_iter ) {
             fPath = _dir.path();
-            CYLOG_PRINT(  std::cout << "  file:" << fPath << std::endl );
+            CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "  file:" << fPath << std::endl );
         }
     }
 
-    CYLOG_PRINT(  std::cout << "************** " << __func__ << " done **************" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "************** " << __func__ << " done **************" << std::endl );
     return CL_OK;
 };
 
@@ -183,7 +183,7 @@ CL_TYPE_t StoreLinux::multiFilesTraverse(std::unique_ptr<FileDesc> & pFDesc, std
 
         while( remainSize>0 ) {
             ifs.seekg(rOfSet, std::ios::beg);
-            // CYLOG_PRINT(  std::cout<<  fPath << " Next offset:" << rOfSet << std::endl );
+            // CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<<  fPath << " Next offset:" << rOfSet << std::endl );
             pData = std::make_unique<uint8_t[]>(4); /* 4: 记录头大小 */
             ifs.read(reinterpret_cast<char*>(pData.get()), 4);
             
@@ -217,14 +217,14 @@ CL_TYPE_t StoreLinux::dirTraverse( std::unique_ptr<FileDesc> & pFDesc, std::vect
 
     std::filesystem::path logDir = rootDirGet() + "/" + pFDesc->relativePathGet() ;
     std::filesystem::path fPath;
-    CYLOG_PRINT(  std::cout << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "************** " << __func__ << "(), traverse dir: " << logDir << " **************" << std::endl );
 
     std::filesystem::directory_iterator _dir_iter( logDir );
     for( auto & _dir : _dir_iter ) {
         fList.push_back(static_cast<std::string>( _dir.path() ));
     }
 
-    CYLOG_PRINT(  std::cout << "************** " << __func__ << " done **************" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "************** " << __func__ << " done **************" << std::endl );
     return CL_OK;
 }
 
@@ -234,17 +234,17 @@ CL_TYPE_t StoreLinux::dirDelete( const std::string & absPath ) {
 
     // 如目录不存在，则跳过
     if( fs::exists(destFile)==false ) { 
-        CYLOG_PRINT(  std::cout << "No such dir: "<<destFile<<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "No such dir: "<<destFile<<std::endl );
         goto done; 
     }
 
     // 删除成功
     if( fs::remove_all(destFile)==false ) { 
-        CYLOG_PRINT(  std::cout << "Fail to del dir: "<<destFile<<std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "Fail to del dir: "<<destFile<<std::endl );
         goto excp; 
     }
 
-    CYLOG_PRINT(  std::cout << "Succ to del dir: "<<destFile<<std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "Succ to del dir: "<<destFile<<std::endl );
 done:
     return CL_OK;
 excp:

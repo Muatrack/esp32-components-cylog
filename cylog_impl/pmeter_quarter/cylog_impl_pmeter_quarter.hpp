@@ -22,7 +22,7 @@ public:
 
     CYLogPMeterQuarterImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogPMeterQuarterImpl(){
-        CYLOG_PRINT(  std::cout << "~CYLogPMeterQuarterImpl()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~CYLogPMeterQuarterImpl()" << std::endl );
     };
 private:
 };

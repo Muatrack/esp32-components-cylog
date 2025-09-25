@@ -19,7 +19,7 @@ CYLogSwitchImpl::CYLogSwitchImpl(const std::string & logDir, std::shared_ptr<Sto
 /******************************************************* Factory *********************************************************/
 
 CYLogImplAbs* CyLogSwitchFactory::create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
-    CYLOG_PRINT(  std::cout << "CyLogExcpFactory::create" << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "CyLogExcpFactory::create" << std::endl );
 
     /** 建立文件对象 */
     std::unique_ptr<CLFile::FileDesc> pFDesc = std::make_unique<CLFile::FileDesc>(logDir, prefix, fileSize, fileCount);

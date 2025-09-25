@@ -22,7 +22,7 @@ public:
 
     CYLogPMeterDayImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogPMeterDayImpl(){
-        CYLOG_PRINT(  std::cout << "~CYLogPMeterDayImpl()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~CYLogPMeterDayImpl()" << std::endl );
     };
 private:
 };

@@ -22,7 +22,7 @@ public:
 
     CYLogAlarmImpl(const std::string & dir, std::shared_ptr<StoreAbs> &store, std::unique_ptr<CLFile::FileDesc> pFDesc );
     ~CYLogAlarmImpl(){
-        CYLOG_PRINT(  std::cout << "~CYLogAlarmImpl()" << std::endl );
+        CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " << "~CYLogAlarmImpl()" << std::endl );
     };
 
     // CL_TYPE_t read(const std::string &path, void* out ) override;
