@@ -16,7 +16,7 @@ public:
     virtual CYLogImplAbs *create(std::shared_ptr<StoreAbs> &store, std::string logDir, uint32_t  fileSize, uint8_t fileCount, std::string prefix, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) = 0;
 
     virtual CYLogImplAbs *create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) = 0;
-    virtual CYLogImplAbs *create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter){ return nullptr; };
+    // virtual CYLogImplAbs *create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter){ return nullptr; };
     
     virtual ~CYLogFactoryAbs(){};
 };

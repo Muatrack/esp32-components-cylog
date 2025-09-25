@@ -38,9 +38,9 @@ CYLogImplAbs* CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, std::s
     return new CYLogAlarmImpl(logDir, store, std::move(pFDesc) );
 }
 
-CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
-    return create(store, "alarm", fileSize, fileCount, "alm", cb, filter);
-}
+// CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount, cylog_traversal_cb_t cb, cylog_traversal_filter_t filter) {
+//     return create(store, "alarm", fileSize, fileCount, "alm", cb, filter);
+// }
 
 CYLogImplAbs * CyLogAlarmFactory::create(std::shared_ptr<StoreAbs> &store, uint32_t  fileSize, uint8_t fileCount) {
     return create(store, "alarm", fileSize, fileCount, "alm", nullptr, nullptr);

@@ -91,6 +91,7 @@ uint32_t global_cylog_create_ts_get(uint8_t pData[], uint16_t dLen) {
 extern "C"
 bool cylog_init() {
 
+    std::string rootDir = STORE_ROOT_DIR;
     CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] "<< "-------------------------------------------" << __func__<< "()." << __LINE__ << "-------------------------------------------" << std::endl );
 
 #ifdef USE_SYSTEM_FREERTOS
@@ -98,12 +99,10 @@ bool cylog_init() {
     if( std::filesystem::exists("/sdb/init")==false ) { /* 文件系统未初始化 */
         CYLOG_INIT_CHECK("!!! [ cylog ] flash un-formated", excp); /* 借助已有宏定义，跳出 */
     }
-#endif
-    std::string rootDir = STORE_ROOT_DIR;
+#endif    
     if( rootDir=="" ) { goto excp; }   /* 参数无效 */
     StoreAbs::StoreInit(STORE_CURR_OPTS_COUNT, rootDir);
     if( m_pStore ) { goto done; } /* 已初始化 */
-
 #ifdef USE_SYSTEM_LINUX
     m_pStore = std::make_shared<StoreLinux>();
 #else
@@ -144,11 +143,12 @@ bool cylog_create(cylog_type_t logType, uint16_t fSize, uint16_t fCount) {
     if( !pFactory ) { goto excp; }
 
     /* 对于有效的日志类型，当其日志对象为空， 为其新建日志对象 */
-    if( logType==CYLOG_T_ALARM ) {
-        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount, nullptr, nullptr);
-    } else {
-        m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
-    }
+    // if( logType==CYLOG_T_ALARM ) {
+    //     m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount, nullptr, nullptr);
+    // } else {
+    //     m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
+    // }
+    m_logSession[logType].pLogImpl = pFactory->create( m_pStore, fSize, fCount);
 
 done:
     if( pFactory ) { delete pFactory; }
