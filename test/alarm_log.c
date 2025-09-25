@@ -36,7 +36,7 @@ void alarm_log_test() {
 
     cylog_init();
 
-    cylog_create( CYLOG_T_ALARM, 1024, 1, NULL, NULL);
+    cylog_create( CYLOG_T_ALARM, 1024, 1);
 
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
 
