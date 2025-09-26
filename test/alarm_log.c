@@ -37,19 +37,31 @@ void alarm_log_test() {
     cylog_init();
 
     cylog_create( CYLOG_T_ALARM, 1024, 1);
+    cylog_create( CYLOG_T_PMETE_QTR, 1024, 1);
 
+    uint8_t buf[58] = {0};
     cylog_alarm_t alarm = { .base.circuit_ID = 1, 0 };
+    cylog_pmeter_t *pemeter = (cylog_pmeter_t *)&buf;
 
     uint16_t remainCount = 50;
     uint32_t seq = 1;
     while ( remainCount-->0 ) {
-        alarm.base.createTm = (uint32_t)time(NULL);
-        alarm.seq = seq ++;
-        if(remainCount%600==0)  alarm.type = ALARM_T_3;
-        else alarm.type = ALARM_T_2;
-        alarm.val = (seq+2)%4096;
-
-        cylog_write(CYLOG_T_ALARM, (uint8_t*)&alarm, sizeof(alarm), 10);
+        #if 0
+        {
+            alarm.base.createTm = (uint32_t)time(NULL);
+            alarm.seq = seq ++;
+            if(remainCount%600==0)  alarm.subType = ALARM_T_3;
+            else alarm.subType = ALARM_T_2;
+            // alarm.data = (seq+2)%4096;
+            cylog_write(CYLOG_T_ALARM, (uint8_t*)&alarm, sizeof(alarm), 10);
+        }
+        #endif
+        {
+            pemeter->base.circuit_ID = 0x0;
+            pemeter->base.createTm = time(NULL);
+            pemeter->data[0] = 100;
+            cylog_write(CYLOG_T_PMETE_QTR, (uint8_t*)pemeter, sizeof(buf), 10);
+        }
         usleep(1200000);
     }
 }
