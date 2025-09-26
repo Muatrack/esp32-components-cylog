@@ -160,7 +160,8 @@ CL_TYPE_t StoreEspidf::itemWrite( std::unique_ptr<CLFile::FileDesc> & pFDesc, co
 
     wOff = pFDesc->wFileOffsetGet();
     ofe.seekp( wOff, std::ios::beg);
-    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " <<"[ "<< fPath << " ] writable offset:" << wOff << std::endl );
+    CYLOG_PRINT( std::cout<<"[ TESTCASE_CYLOG ] " <<"[ "<< fPath << " ] writable offset:" << std::setfill(' ')<<std::setw(5) << wOff 
+                                                                        << " | len:" << std::setfill(' ')<<std::setw(5)<<iLen<<std::endl );
 
     // 写数据到文件
     ofe.write( reinterpret_cast<const char*>(pIn.get()), iLen);
