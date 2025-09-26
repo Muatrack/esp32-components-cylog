@@ -129,7 +129,10 @@ public:
         }
     };
 
-    bool isValid() { return (m_ValidFlag==ITEM_VALID_FLAG); };
+    bool isValid() { 
+         if((m_ValidFlag==ITEM_VALID_FLAG)&&(m_Ver==FILE_VERSION))  return true;
+         else return false;
+    };
     uint16_t itemSizeGet() { return m_OriDlen; };
     uint16_t itemVerGet() { return m_Ver; };
     
