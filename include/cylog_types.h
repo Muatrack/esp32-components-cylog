@@ -62,6 +62,7 @@ typedef enum {
 typedef struct{
     uint16_t    circuit_ID; // 回路ID，经过CRC16(目标SN)得到
     uint32_t    createTm;   /* 发生产生时间戳 */
+    uint8_t     data[0];
 }cylog_base_t;
 
 /** 告警日志数据结构 */
