@@ -78,3 +78,5 @@ target_include_directories(cylog
                 PRIVATE      ./
                 PUBLIC       include
 )
+
+set_target_properties(cylog PROPERTIES POSITION_INDEPENDENT_CODE ON)
