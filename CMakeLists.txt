@@ -30,7 +30,6 @@ else()
     add_compile_definitions(CYLOG_TRAVERSAL_BLOCK_SIZE=4096)
 endif()
 
-add_compile_definitions(CYLOG_RW_CONOPTS)
 add_compile_definitions(USING_CYLOG_DEBUG)
 
 # 定义文件数据结构的版本
@@ -43,10 +42,17 @@ if(CMAKE_BUILD_TYPE)
     SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall") 
 endif()
 
+if(CYLOG_ATTACH_TYPE)
+        set(LIB_TYPE ${CYLOG_ATTACH_TYPE})
+else()
+        set(LIB_TYPE STATIC)
+endif()
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_compile_definitions(USE_SYSTEM_LINUX)
     # add_executable(cylog ${SRCS}
-    add_library(cylog   SHARED
+    
+    add_library(cylog   ${LIB_TYPE}    
                         ${SRCS}
                         #  main.c
                         #  test/alarm_log.c
@@ -66,7 +72,7 @@ else()
     message(ERROR "No system matched")
 endif()
 
-# include(./cmk_include/pre.cmake)
+include(./cmk_include/pre.cmake)
 
 target_include_directories(cylog
                 PRIVATE      ./

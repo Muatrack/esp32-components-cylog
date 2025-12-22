@@ -7,7 +7,7 @@
 * CYLOG_RW_CONOPTS  // 定义读写存储可以同时操作的数量, 缺省值1
 * CYLOG_ROOT_DIR    // 定义用于存储日志的根目录
 * CYLOG_READ_SIZE   // 定义遍历日志时，每次从FLASH读取的字节数量，缺省值4K
-
+* CYLOG_ATTACH_TYPE // 定义组件编译后的成果物类型，可选 SHARED/STATIC(def)
 ### 如何使用
 
 #### 调试日志
