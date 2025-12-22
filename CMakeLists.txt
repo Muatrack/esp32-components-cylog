@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
+if(NOT CMAKE_PROJECT_NAME)
+    project(cylog)
+endif()
+
 SET(CMAKE_BUILD_TYPE "Debug")
 
 set(
