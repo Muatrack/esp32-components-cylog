@@ -98,10 +98,12 @@ public:
         if((wait_tms<1)||(wait_tms>500)) { wait_tms = 10; }
 
         timespec wt = { 
-            .tv_sec = wait_tms/1000,
+            .tv_sec = (long int)(wait_tms/1000),
             .tv_nsec = 
         #ifdef USE_SYSTEM_FREERTOS
         (long uint32_t)
+        #else
+        (long int)
         #endif
             (wait_tms%1000)*1000000
         };

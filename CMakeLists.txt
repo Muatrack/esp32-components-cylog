@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.20)
-project(cylog)
 
 SET(CMAKE_BUILD_TYPE "Debug")
 
@@ -42,13 +41,15 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     add_compile_definitions(USE_SYSTEM_LINUX)
-    add_executable(cylog ${SRCS}
-                         main.c
-                         test/alarm_log.c
+    # add_executable(cylog ${SRCS}
+    add_library(cylog   SHARED
+                        ${SRCS}
+                        #  main.c
+                        #  test/alarm_log.c
                          src/cylog_store_linux.cpp
                          src/cylog_store_espidf.cpp
                         )
-    target_sources(cylog PRIVATE main.c)
+    # target_sources(cylog PRIVATE main.c)
     add_compile_definitions(USE_SYSTEM_LINUX)
     message("CYLOG_SYSTEM is Linux")
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Generic")
@@ -61,7 +62,7 @@ else()
     message(ERROR "No system matched")
 endif()
 
-include(./cmk_include/pre.cmake)
+# include(./cmk_include/pre.cmake)
 
 target_include_directories(cylog
                 PRIVATE      ./

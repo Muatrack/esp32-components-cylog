@@ -4,24 +4,23 @@ then
 	echo "";
 fi
 
-if [ ! -d "build" ];
+if [ ! -d "out" ];
 then
-	mkdir build
+	mkdir out
 	echo 'DIR ./build created.'
 else
 	echo 'DIR ./build exists.'
 fi
 
+rm out/* -rf
 
-cd build
-rm * -rf
-
-cmake -DCMAKE_BUILD_TYPE=Debug ../
-cmake --build ./
+#cmake -DCMAKE_BUILD_TYPE=Debug ../
+cmake -S . -B out
+cmake --build out
 
 # ./cylog
 
-cd ../
+#cd ../
 
 echo ""
 
