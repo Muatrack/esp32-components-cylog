@@ -27,7 +27,7 @@
     // cylog_create(cylog_type_t logType, char *logPath, uint16_t fSize, uint16_t fCount);
 
     // 初始化 告警类型的日志， 日志文件放到目录 alarm 中， 每个文件的大小为1024, 共计使用4个文件作存储
-    cylog_create(CYLOG_T_ALARM, "alarm", 1024, 4); 
+    cylog_create(CYLOG_T_ALARM, 1024, 4); 
 ```
 #### 写数据到日志
 ```c
