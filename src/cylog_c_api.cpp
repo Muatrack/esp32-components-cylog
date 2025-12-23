@@ -159,7 +159,7 @@ excp:
 }
 
 extern "C"
-bool cylog_write(cylog_type_t logType, uint8_t pData[], uint16_t dLen, uint32_t timeoutTms ) {
+bool cylog_write(cylog_type_t logType, uint8_t *pData, uint16_t dLen, uint32_t timeoutTms ) {
 
     std::unique_ptr<uint8_t[]> pDPtr = nullptr;
     CYLogImplAbs *pLogObj = nullptr;
